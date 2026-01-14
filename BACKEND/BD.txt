@@ -1,0 +1,106 @@
+CREATE TABLE "usuario" (
+  "usuario_id" serial PRIMARY KEY,
+  "email" varchar(255) UNIQUE NOT NULL,
+  "password_hash" varchar(255) NOT NULL,
+  "nombre" varchar(100) NOT NULL,
+  "fecha_registro" timestamp DEFAULT (now()),
+  "es_administrador" boolean DEFAULT false
+);
+
+CREATE TABLE "categoria_recurso" (
+  "categoria_id" serial PRIMARY KEY,
+  "nombre" varchar(50) NOT NULL,
+  "descripcion" text
+);
+
+CREATE TABLE "recurso_educativo" (
+  "recurso_id" serial PRIMARY KEY,
+  "titulo" varchar(200) NOT NULL,
+  "descripcion" text,
+  "url_recurso" varchar(500),
+  "tipo_recurso" varchar(50),
+  "fecha_publicacion" timestamp DEFAULT (now()),
+  "es_publico" boolean DEFAULT true,
+  "categoria_id" integer
+);
+
+CREATE TABLE "publicacion" (
+  "publicacion_id" serial PRIMARY KEY,
+  "titulo" varchar(200) NOT NULL,
+  "contenido" text NOT NULL,
+  "es_anonima" boolean DEFAULT false,
+  "fecha_creacion" timestamp DEFAULT (now()),
+  "editada" boolean DEFAULT false,
+  "usuario_id" integer
+);
+
+CREATE TABLE "comentario" (
+  "comentario_id" serial PRIMARY KEY,
+  "contenido" text NOT NULL,
+  "fecha_creacion" timestamp DEFAULT (now()),
+  "publicacion_id" integer,
+  "usuario_id" integer
+);
+
+CREATE TABLE "cuestionario" (
+  "cuestionario_id" serial PRIMARY KEY,
+  "titulo" varchar(200) NOT NULL,
+  "descripcion" text,
+  "fecha_creacion" timestamp DEFAULT (now()),
+  "es_activo" boolean DEFAULT true,
+  "tiempo_limite_minutos" integer
+);
+
+CREATE TABLE "pregunta" (
+  "pregunta_id" serial PRIMARY KEY,
+  "enunciado" text NOT NULL,
+  "puntos" integer DEFAULT 1,
+  "cuestionario_id" integer
+);
+
+CREATE TABLE "opcion_respuesta" (
+  "opcion_id" serial PRIMARY KEY,
+  "texto" text NOT NULL,
+  "es_correcta" boolean DEFAULT false,
+  "retroalimentacion" text,
+  "pregunta_id" integer
+);
+
+CREATE TABLE "intento_cuestionario" (
+  "intento_id" serial PRIMARY KEY,
+  "fecha_intento" timestamp DEFAULT (now()),
+  "puntaje_total" integer,
+  "usuario_id" integer,
+  "cuestionario_id" integer
+);
+
+CREATE TABLE "respuesta_usuario" (
+  "respuesta_id" serial PRIMARY KEY,
+  "intento_id" integer,
+  "pregunta_id" integer,
+  "opcion_seleccionada_id" integer
+);
+
+COMMENT ON COLUMN "cuestionario"."tiempo_limite_minutos" IS 'Tiempo límite para completarlo, 0 = sin límite';
+
+ALTER TABLE "recurso_educativo" ADD FOREIGN KEY ("categoria_id") REFERENCES "categoria_recurso" ("categoria_id");
+
+ALTER TABLE "publicacion" ADD FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("usuario_id");
+
+ALTER TABLE "comentario" ADD FOREIGN KEY ("publicacion_id") REFERENCES "publicacion" ("publicacion_id");
+
+ALTER TABLE "comentario" ADD FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("usuario_id");
+
+ALTER TABLE "pregunta" ADD FOREIGN KEY ("cuestionario_id") REFERENCES "cuestionario" ("cuestionario_id");
+
+ALTER TABLE "opcion_respuesta" ADD FOREIGN KEY ("pregunta_id") REFERENCES "pregunta" ("pregunta_id");
+
+ALTER TABLE "intento_cuestionario" ADD FOREIGN KEY ("usuario_id") REFERENCES "usuario" ("usuario_id");
+
+ALTER TABLE "intento_cuestionario" ADD FOREIGN KEY ("cuestionario_id") REFERENCES "cuestionario" ("cuestionario_id");
+
+ALTER TABLE "respuesta_usuario" ADD FOREIGN KEY ("intento_id") REFERENCES "intento_cuestionario" ("intento_id");
+
+ALTER TABLE "respuesta_usuario" ADD FOREIGN KEY ("pregunta_id") REFERENCES "pregunta" ("pregunta_id");
+
+ALTER TABLE "respuesta_usuario" ADD FOREIGN KEY ("opcion_seleccionada_id") REFERENCES "opcion_respuesta" ("opcion_id");
