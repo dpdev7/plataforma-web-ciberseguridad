@@ -1,9 +1,14 @@
+import uuid
 from django.db import models
 from .usuario import Usuario
 
 
 class Publicacion(models.Model):
-    publicacion_id = models.AutoField(primary_key=True)
+    publicacion_id = models.UUIDField(
+        primary_key=True,       
+        default=uuid.uuid4,     
+        editable=False
+    )
     titulo = models.CharField(max_length=200)
     contenido = models.TextField()
     es_anonima = models.BooleanField(default=False)

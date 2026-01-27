@@ -1,8 +1,13 @@
+import uuid
 from django.db import models
 from .categoria_recurso import CategoriaRecurso
 
 class RecursoEducativo(models.Model):
-    recurso_id = models.AutoField(primary_key=True)
+    recurso_id = models.UUIDField(
+        primary_key=True,      
+        default=uuid.uuid4,     
+        editable=False
+    )
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(null=True, blank=True)
     url_recurso = models.CharField(max_length=500, null=True, blank=True)

@@ -1,7 +1,12 @@
+import uuid
 from django.db import models
 
 class Usuario(models.Model):
-    usuario_id = models.AutoField(primary_key=True)
+    usuario_id = models.UUIDField(
+        primary_key=True,       
+        default=uuid.uuid4,    
+        editable=False
+    )
     email = models.EmailField(unique=True, max_length=255)
     password_hash = models.CharField(max_length=255)
     nombre = models.CharField(max_length=100)

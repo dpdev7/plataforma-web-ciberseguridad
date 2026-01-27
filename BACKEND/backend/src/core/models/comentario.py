@@ -1,10 +1,15 @@
+import uuid
 from django.db import models
 from .publicacion import Publicacion
 from .usuario import Usuario
 
 
 class Comentario(models.Model):
-    comentario_id = models.AutoField(primary_key=True)
+    comentario_id = models.UUIDField(
+        primary_key=True,     
+        default=uuid.uuid4,     
+        editable=False
+    )
     contenido = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 

@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from .intento_cuestionario import IntentoCuestionario
 from .opcion_respuesta import OpcionRespuesta
@@ -5,7 +6,11 @@ from .pregunta import Pregunta
 
 
 class RespuestaUsuario(models.Model):
-    respuesta_id = models.AutoField(primary_key=True)
+    respuesta_id = models.UUIDField(
+        primary_key=True,       
+        default=uuid.uuid4,    
+        editable=False
+    )
 
     intento = models.ForeignKey(
         IntentoCuestionario,

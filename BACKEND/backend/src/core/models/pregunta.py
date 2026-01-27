@@ -1,9 +1,14 @@
+import uuid
 from django.db import models
 from .cuestionario import Cuestionario
 
 
 class Pregunta(models.Model):
-    pregunta_id = models.AutoField(primary_key=True)
+    pregunta_id = models.UUIDField(
+        primary_key=True,      
+        default=uuid.uuid4,     
+        editable=False
+    )
     enunciado = models.TextField()
     puntos = models.IntegerField(default=1)
 

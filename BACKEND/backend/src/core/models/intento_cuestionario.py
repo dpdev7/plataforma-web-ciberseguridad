@@ -1,10 +1,15 @@
+import uuid
 from django.db import models
 from .cuestionario import Cuestionario
 from .usuario import Usuario
 
 
 class IntentoCuestionario(models.Model):
-    intento_id = models.AutoField(primary_key=True)
+    intento_id = models.UUIDField(
+        primary_key=True,      
+        default=uuid.uuid4,    
+        editable=False
+    )
     fecha_intento = models.DateTimeField(auto_now_add=True)
     puntaje_total = models.IntegerField(null=True, blank=True)
 
