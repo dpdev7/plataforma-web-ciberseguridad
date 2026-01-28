@@ -1,4 +1,4 @@
-from ..serializers.usuario_serializer import RegistroUsuarioSerializer
+from ...serializers.usuarios.usuario_serializer import RegistroUsuarioSerializer
 
 def registrar_usuario(data):
     serializer = RegistroUsuarioSerializer(data=data)

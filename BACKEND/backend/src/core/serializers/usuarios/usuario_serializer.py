@@ -1,6 +1,6 @@
 # src/core/services/usuario_service.py
 from rest_framework import serializers
-from ..models.usuario import Usuario
+from ...models.usuario import Usuario
 from django.contrib.auth.hashers import make_password
 
 class RegistroUsuarioSerializer(serializers.Serializer):
