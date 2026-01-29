@@ -11,7 +11,7 @@ class Usuario(models.Model):
     password_hash = models.CharField(max_length=255)
     nombre = models.CharField(max_length=100)
     fecha_registro = models.DateTimeField(auto_now_add=True)
-    es_administrador = models.BooleanField(default=False)
+    es_administrador = models.BooleanField( null=True, blank=True)
 
     class Meta:
         db_table = 'usuario'
