@@ -12,6 +12,7 @@ class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
     fecha_registro = models.DateTimeField(auto_now_add=True)
     es_administrador = models.BooleanField( null=True, blank=True)
+    activo = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'usuario'
