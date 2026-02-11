@@ -7,7 +7,7 @@ urlpatterns = [
     path("health/", health_check_view),
     path("usuario/registro/", registro_usuario),
     path("usuario/login/", login),
-    path('usuario/<uuid:usuario_id>/', eliminar_usuario),
+    path('usuario/delete/<uuid:usuario_id>/', eliminar_usuario),
     path('usuario/get', obtener_usuarios),
-    path('usuario/<uuid:usuario_id>/editar-nombre/', editar_nombre_usuario),
+    path('usuario/update/<uuid:usuario_id>/', editar_nombre_usuario),
 ]
