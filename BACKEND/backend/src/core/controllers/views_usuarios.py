@@ -7,7 +7,7 @@ from ..models.usuario import Usuario
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from ..services.usuarios.usuario_service import RegistroUsuarioSerializer, eliminar_usuario, obtener_usuarios_activos
+from ..services.usuarios.usuario_service import RegistroUsuarioSerializer, obtener_usuarios_activos
 from ..services.usuarios.login_service import login_usuario
 
 @api_view(["POST"])
