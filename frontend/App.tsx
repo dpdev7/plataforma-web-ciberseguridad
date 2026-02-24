@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './src/pages/Login';
 import Register from './src/pages/Register';
