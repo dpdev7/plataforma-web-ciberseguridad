@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import '../styles/Home.css';
 
@@ -7,7 +8,7 @@ function Home() {
     <div className="home">
 
       <nav className="navbar">
-        <span className="navbar-logo">CyberGuard</span>
+        <Link to="/home" className="navbar-logo">CyberGuard</Link>
         <div className="navbar-links">
           <a href="#" style={{ color: 'white' }}>Inicio</a>
           <a href="#">Amenazas</a>
@@ -16,8 +17,9 @@ function Home() {
           <a href="#">Foro</a>
           <a href="#">Herramientas</a>
           <button className="sidebar-btn" onClick={() => setSidebarAbierto(true)}>
-      ☰
+            ☰
           </button>
+          <Link to="/login" className="btn-login">Iniciar sesión</Link>
         </div>
       </nav>
 
