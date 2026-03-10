@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import '../styles/Home.css';
+import { KeyRound, Wifi, Smartphone, Laptop, Bug, FishingHook, Lock, Zap, UserRound, Check, GraduationCap, 
+  MessageCircle, Shield } from "lucide-react";
 
 function Home() {
     const [sidebarAbierto, setSidebarAbierto] = useState(false)
@@ -37,10 +39,10 @@ function Home() {
 
         <div className="sidebar-seccion">
             <p className="sidebar-seccion-titulo">Conceptos Básicos</p>
-            <div className="sidebar-item">🔑 <span>Contraseñas Seguras</span></div>
-            <div className="sidebar-item">📶 <span>Navegación Segura</span></div>
-            <div className="sidebar-item">📱 <span>Protege tu Móvil</span></div>
-            <div className="sidebar-item">🪟 <span>Seguridad en tu PC</span></div>
+            <div className="sidebar-item"><KeyRound className='sidebar-icon' /> <span>Contraseñas Seguras</span></div>
+            <div className="sidebar-item"><Wifi className='sidebar-icon' /><span>Navegación Segura</span></div>
+            <div className="sidebar-item"><Smartphone className='sidebar-icon' /> <span>Protege tu Móvil</span></div>
+            <div className="sidebar-item"><Laptop className='sidebar-icon' /> <span>Seguridad en tu PC</span></div>
         </div>
 
         <div className="sidebar-seccion">
@@ -105,22 +107,30 @@ function Home() {
         </div>
       </section>
 
-      <section className="seccion">
-        <h2>Recursos Adicionales</h2>
-        <p className="seccion-subtitulo">Todo lo que necesitas para fortalecer tu seguridad.</p>
-        <div className="tarjetas-grid">
-          {[
-            { titulo: 'Recursos Educativos', desc: 'Artículos, guías y tutoriales para todos los niveles.' },
-            { titulo: 'Foro de la Comunidad', desc: 'Conecta, pregunta y comparte con otros usuarios.' },
-            { titulo: 'Herramientas de Protección', desc: 'Software y plugins recomendados para tu seguridad.' },
-          ].map((r, i) => (
-            <div key={i} className="tarjeta recurso-tarjeta">
-              <p style={{ fontWeight: 'bold', margin: '0 0 8px' }}>{r.titulo}</p>
-              <p className="tarjeta-texto">{r.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+       <section className="seccion">
+      <h2>Recursos Adicionales</h2>
+      <p className="seccion-subtitulo">
+        Todo lo que necesitas para fortalecer tu seguridad.
+      </p>
+
+      <div className="tarjetas-grid">
+        {[
+          {icono: <GraduationCap size={32} />, titulo: "Recursos Educativos", desc: "Artículos, guías y tutoriales para todos los niveles."},
+          {icono: <MessageCircle size={32} />, titulo: "Foro de la Comunidad", desc: "Conecta, pregunta y comparte con otros usuarios."},
+          {icono: <Shield size={32} />, titulo: "Herramientas de Protección", desc: "Software y plugins recomendados para tu seguridad."}
+        ].map((r, i) => (
+          <div key={i} className="tarjeta recurso-tarjeta">
+            <div className="icono-recurso">{r.icono}</div>
+
+            <p style={{ fontWeight: "bold", margin: "0 0 8px" }}>
+              {r.titulo}
+            </p>
+
+            <p className="tarjeta-texto">{r.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
 
       <section className="seccion">
         <h2>Amenazas digitales más comunes</h2>
@@ -130,14 +140,17 @@ function Home() {
           <div className="amenazas-columna">
             <h3>Tipos de Amenazas</h3>
             {[
-              { icon: '🦠', title: 'Malware', desc: 'Software malicioso que puede dañar tu dispositivo, robar datos o tomar control de tu sistema.' },
-              { icon: '🎣', title: 'Phishing', desc: 'Correos o sitios web fraudulentos que intentan engañarte para robar tu información.' },
-              { icon: '🔒', title: 'Ransomware', desc: 'Software que cifra tus archivos y exige un pago para liberarlos.' },
-              { icon: '💥', title: 'Ataques DDoS', desc: 'Inundación de un servidor con tanto tráfico que se cae.' },
-              { icon: '🕵️', title: 'Ingeniería Social', desc: 'Manipulación psicológica para hacer que divulgues información confidencial.' },
+              { icon: <Bug size={18} />, title: 'Malware', desc: 'Software malicioso que puede dañar tu dispositivo, robar datos o tomar control de tu sistema.' },
+              { icon: <FishingHook size={18} />, title: 'Phishing', desc: 'Correos o sitios web fraudulentos que intentan engañarte para robar tu información.' },
+              { icon: <Lock size={18} />, title: 'Ransomware', desc: 'Software que cifra tus archivos y exige un pago para liberarlos.' },
+              { icon: <Zap size={18} />, title: 'Ataques DDoS', desc: 'Inundación de un servidor con tanto tráfico que se cae.' },
+              { icon: <UserRound size={18} />, title: 'Ingeniería Social', desc: 'Manipulación psicológica para hacer que divulgues información confidencial.' },
             ].map((a, i) => (
               <div key={i} className="amenaza-item">
-                <span className="amenaza-icono">{a.icon}</span>
+                <span className="amenaza-icono">
+                  {a.icon}
+                </span>
+
                 <div>
                   <p className="amenaza-titulo">{a.title}</p>
                   <p className="amenaza-desc">{a.desc}</p>
@@ -157,7 +170,10 @@ function Home() {
               { title: 'Uso de VPN en redes públicas', desc: 'Una VPN cifra tu conexión protegiendo tus datos en redes Wi-Fi públicas inseguras.' },
             ].map((c, i) => (
               <div key={i} className="consejo-item">
-                <span className="consejo-check">✓</span>
+                <span className="consejo-check">
+                  <Check size={14} />
+                </span>
+
                 <div>
                   <p className="consejo-titulo">{c.title}</p>
                   <p className="consejo-desc">{c.desc}</p>
