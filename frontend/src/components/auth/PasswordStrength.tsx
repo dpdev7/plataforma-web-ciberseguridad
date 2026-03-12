@@ -1,21 +1,27 @@
+// Componente visual para mostrar la fortaleza de la contraseña.
 import React, { useState } from 'react';
 import { AlertCircle, CheckCircle2, XCircle, Circle } from 'lucide-react';
 import { validatePassword, getPasswordRequirements } from '../../utils/passwordValidator';
 import styles from './PasswordStrength.module.css';
 
+// Recibe la contraseña a evaluar como prop.
 interface PasswordStrengthProps {
   password: string;
 }
 
 const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) => {
+  // Estado para mostrar/ocultar el tooltip de requisitos.
   const [showTooltip, setShowTooltip] = useState(false);
-  
+
+  // Si no hay contraseña, no se muestra el componente.
   if (!password) return null;
 
+  // Calcula la fortaleza y requisitos de la contraseña usando utilidades.
   const strength = validatePassword(password);
   const requirements = getPasswordRequirements(password);
 
-  // Función que decide qué ícono y qué clase CSS aplicar según el estado de la regla
+  // Determina el ícono y la clase CSS para cada requisito.
+  // Esto permite feedback visual sobre qué reglas se cumplen.
   const getRequirementProps = (req: { met: boolean; hasError?: boolean }) => {
     if (req.hasError) {
       return { Icon: XCircle, className: styles.requirementError };
@@ -26,11 +32,15 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) => {
     return { Icon: Circle, className: styles.requirementNotMet };
   };
 
+  // Renderiza el indicador de fortaleza y los requisitos.
+  // El usuario recibe feedback visual y educativo para mejorar su contraseña.
   return (
     <div className={styles.container}>
+      {/* Header: muestra la etiqueta y el botón de información */}
       <div className={styles.header}>
         <div className={styles.labelWrapper}>
           <span className={styles.label}>Fortaleza</span>
+          {/* Botón para mostrar los requisitos de contraseña segura */}
           <button
             type="button"
             className={styles.infoButton}
@@ -38,7 +48,7 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) => {
             onMouseLeave={() => setShowTooltip(false)}
           >
             <AlertCircle className={styles.infoIcon} />
-            
+            {/* Tooltip con requisitos, ayuda a educar al usuario sobre buenas prácticas */}
             {showTooltip && (
               <div className={styles.tooltip}>
                 <p className={styles.tooltipTitle}>
@@ -48,7 +58,6 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) => {
                   {requirements.map((req, index) => {
                     // Evaluamos la regla actual
                     const { Icon, className } = getRequirementProps(req);
-                    
                     return (
                       <li key={index} className={`${styles.requirement} ${className}`}>
                         <span className={styles.requirementIcon}>
@@ -63,11 +72,12 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) => {
             )}
           </button>
         </div>
+        {/* Etiqueta visual de fortaleza, cambia color según el resultado */}
         <span className={styles.strengthLabel} style={{ color: strength.color }}>
           {strength.label}
         </span>
       </div>
-      
+      {/* Barra visual de fortaleza, ayuda a entender el nivel de seguridad */}
       <div className={styles.barContainer}>
         <div 
           className={styles.bar}

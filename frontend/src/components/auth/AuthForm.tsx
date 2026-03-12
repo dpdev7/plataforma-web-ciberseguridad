@@ -1,7 +1,10 @@
+// Componente principal de autenticación: login, registro, recuperación y verificación.
 import React, { useState } from 'react';
-import { Shield, LogIn, UserPlus, KeyRound, Mail as MailIcon } from 'lucide-react';
+import { Shield, LogIn, UserPlus, KeyRound, Mail as MailIcon, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Input from '../common/Input';
 import PasswordStrength from './PasswordStrength';
+import Footer from '../common/Footer';
 import { validatePassword } from '../../utils/passwordValidator';
 import styles from './AuthForm.module.css';
 
@@ -13,20 +16,16 @@ interface AuthFormProps {
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
-  // Estados comunes
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  
-  // Estados específicos de registro
-  const [username, setUsername] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate();
+
+  const [email, setEmail]                       = useState('');
+  const [password, setPassword]                 = useState('');
+  const [showPassword, setShowPassword]         = useState(false);
+  const [username, setUsername]                 = useState('');
+  const [confirmPassword, setConfirmPassword]   = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
-  // Estado para verificación de email
   const [verificationCode, setVerificationCode] = useState('');
 
-  // Configuración según el tipo
   const config = {
     login: {
       title: 'Accede a tu cuenta',
@@ -71,13 +70,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
   };
 
   const currentConfig = config[type];
-  const Icon = currentConfig.icon;
-  const ButtonIcon = currentConfig.buttonIcon;
+  const Icon          = currentConfig.icon;
+  const ButtonIcon    = currentConfig.buttonIcon;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validaciones según el tipo
     if (type === 'login') {
       if (!email || !password) {
         alert('Por favor completa todos los campos');
@@ -115,11 +113,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       }
     }
 
-    // Ejecutar callback personalizado si existe
     const data: Record<string, string> = {};
-    if (email) data.email = email;
-    if (password) data.password = password;
-    if (username) data.username = username;
+    if (email)            data.email            = email;
+    if (password)         data.password         = password;
+    if (username)         data.username         = username;
     if (verificationCode) data.verificationCode = verificationCode;
 
     if (onSubmit) {
@@ -133,7 +130,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        {/* Header */}
+
+        <button
+          type="button"
+          className={styles.backButton}
+          onClick={() => navigate('/')}
+          aria-label="Volver al inicio"
+        >
+          <ArrowLeft className={styles.backIcon} />
+          <span>Regresar</span>
+        </button>
+
         <div className={styles.header}>
           <div className={styles.iconWrapper}>
             <Icon className={styles.icon} />
@@ -142,9 +149,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
           <p className={styles.subtitle}>{currentConfig.subtitle}</p>
         </div>
 
-        {/* Form */}
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* Username (solo en registro) */}
+
           {type === 'register' && (
             <Input
               label="Nombre de usuario"
@@ -156,7 +162,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Email (login, register, reset-password) */}
           {(type === 'login' || type === 'register' || type === 'reset-password') && (
             <Input
               label={type === 'login' ? 'Correo electrónico o usuario' : 'Correo electrónico'}
@@ -168,7 +173,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Password (login, register) */}
           {(type === 'login' || type === 'register') && (
             <div>
               <Input
@@ -191,7 +195,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             </div>
           )}
 
-          {/* Confirm Password (solo en registro) */}
           {type === 'register' && (
             <Input
               label="Confirmar contraseña"
@@ -205,10 +208,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Password Strength (solo en registro) */}
           {type === 'register' && <PasswordStrength password={password} />}
 
-          {/* Verification Code (solo en verify-email) */}
           {type === 'verify-email' && (
             <Input
               label="Código de verificación"
@@ -220,21 +221,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Submit Button */}
           <button type="submit" className={styles.button}>
             <span>{currentConfig.buttonText}</span>
             <ButtonIcon className={styles.buttonIcon} />
           </button>
         </form>
 
-        {/* Footer */}
-        <p className={styles.footer}>
+        <p className={styles.footerCard}>
           {currentConfig.footerText}{' '}
           <a href={currentConfig.footerLink} className={styles.link}>
             {currentConfig.footerLinkText}
           </a>
         </p>
+
       </div>
+
+      {/* Footer global — se posiciona solo al fondo con position: fixed */}
+      <Footer variant="auth" />
+
     </div>
   );
 };
