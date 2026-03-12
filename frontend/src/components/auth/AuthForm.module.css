@@ -1,14 +1,17 @@
+/* CONTENEDOR PRINCIPAL */
 .container {
   position: fixed;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #0a0f14;
-  padding: 2rem;
+  padding: 1rem;
   overflow-y: auto;
 }
 
+/* CARD DEL FORMULARIO */
 .card {
   width: 100%;
   max-width: 420px;
@@ -18,13 +21,41 @@
   border-radius: 16px;
   padding: 2.5rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
+/* BOTÓN DE REGRESO */
+.backButton {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.backButton:hover { color: #60a5fa; }
+
+.backIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* HEADER DEL CARD */
 .header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
+/* Wrapper del ícono principal con fondo azul tenue y glow */
 .iconWrapper {
   display: inline-flex;
   align-items: center;
@@ -56,12 +87,14 @@
   color: #9ca3af;
 }
 
+/* FORMULARIO */
 .form {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
 }
 
+/* Enlace "¿Olvidaste tu contraseña?" */
 .forgotContainer {
   text-align: right;
   margin-top: 0.5rem;
@@ -75,10 +108,9 @@
   transition: color 0.2s;
 }
 
-.forgotLink:hover {
-  color: #60a5fa;
-}
+.forgotLink:hover { color: #60a5fa; }
 
+/* BOTÓN SUBMIT */
 .button {
   width: 100%;
   padding: 0.95rem;
@@ -98,23 +130,19 @@
   gap: 0.5rem;
 }
 
-.button:hover {
-  background: #0e5fb8;
-  transform: translateY(-1px);
-}
-
-.button:active {
-  transform: scale(0.98);
-}
+.button:hover  { background: #0e5fb8; transform: translateY(-1px); }
+.button:active { transform: scale(0.98); }
 
 .buttonIcon {
   width: 20px;
   height: 20px;
 }
 
-.footer {
+/* FOOTER DEL CARD */
+
+.footerCard {
   text-align: center;
-  margin-top: 1.75rem;
+  margin-top: 1.25rem;
   color: #9ca3af;
   font-size: 0.9rem;
 }
@@ -130,4 +158,68 @@
 .link:hover {
   color: #60a5fa;
   text-decoration: underline;
+}
+
+/* RESPONSIVE — Medio / mobile grande */
+@media (max-width: 520px) {
+  .container {
+    padding: 1rem;
+    justify-content: center;
+    padding-bottom: 70px;
+  }
+
+  .card {
+    padding: 2rem 1.25rem 1.5rem;
+    border-radius: 12px;
+  }
+
+  .header      { margin-bottom: 1.25rem; }
+
+  .iconWrapper { width: 48px; height: 48px; margin-bottom: 0.75rem; }
+  .icon        { width: 24px; height: 24px; }
+
+  .title       { font-size: 1.4rem; }
+  .subtitle    { font-size: 0.82rem; }
+
+  .form        { gap: 0.85rem; }
+
+  .button {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+  }
+
+  .footerCard  { margin-top: 1rem; font-size: 0.85rem; }
+}
+
+/* RESPONSIVE — Mobile pequeño */
+@media (max-width: 380px) {
+  .container {
+    padding: 0.75rem;
+    justify-content: center;
+    padding-bottom: 65px;
+  }
+
+  .card {
+    padding: 1.75rem 1rem 1.25rem;
+    border-radius: 10px;
+  }
+
+  .header      { margin-bottom: 1rem; }
+
+  .iconWrapper { width: 40px; height: 40px; margin-bottom: 0.6rem; }
+  .icon        { width: 20px; height: 20px; }
+
+  .title       { font-size: 1.2rem; }
+  .subtitle    { font-size: 0.78rem; }
+
+  .form        { gap: 0.7rem; }
+
+  .button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .footerCard  { margin-top: 0.85rem; font-size: 0.8rem; }
 }
