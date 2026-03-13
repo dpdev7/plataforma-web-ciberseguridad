@@ -1,0 +1,317 @@
+/* General */
+.amenazas-page {
+  min-height: 100vh;
+  background-color: #0d1117;
+  color: #e6edf3;
+  font-family: inherit;
+}
+
+/* Hero */
+.amenazas-hero {
+  position: relative;
+  text-align: center;
+  padding: 120px 24px 80px;
+  max-width: 700px;
+  margin: 0 auto;
+  overflow: hidden;
+  animation: fadeUp 0.6s ease both;
+}
+.amenazas-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(47, 129, 247, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 129, 247, 0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+  pointer-events: none;
+}
+.amenazas-hero::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(47, 129, 247, 0.15), transparent 70%);
+  pointer-events: none;
+}
+.amenazas-hero__title,
+.amenazas-hero__subtitle {
+  position: relative;
+  z-index: 1;
+}
+.amenazas-hero__title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+.amenazas-hero__subtitle {
+  font-size: 1rem;
+  color: #8b949e;
+  line-height: 1.7;
+}
+
+/* Dashboard estadísticas */
+.amenazas-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+.stat-card {
+  background: #161b22;
+  border: 1px solid #1e3a5f;
+  border-radius: 12px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.stat-card__icon {
+  color: #2f81f7;
+  font-size: 28px;
+}
+.stat-card__valor {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+.stat-card__etiqueta {
+  font-size: 0.8rem;
+  color: #8b949e;
+}
+/* Animaciones stats */
+.stat-card {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: #2f81f7;
+}
+
+/* Tabs */
+.amenazas-tabs {
+  display: flex;
+  gap: 0;
+  max-width: 900px;
+  margin: 0 auto 32px;
+  padding: 0 24px;
+  border-bottom: 2px solid #30363d;
+}
+.amenazas-tab {
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  font-size: 0.95rem;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.amenazas-tab:hover {
+  color: #e6edf3;
+}
+.amenazas-tab--active {
+  color: #2f81f7;
+  border-bottom-color: #2f81f7;
+}
+
+/* ── Contenido ── */
+.amenazas-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* Tipos de amenazas (columna 1) */
+.amenazas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.amenaza-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.amenaza-card--open {
+  border-color: #2f81f7;
+}
+.amenaza-card__header {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: #e6edf3;
+}
+.amenaza-card__titulo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.amenaza-card__icon {
+  color: #2f81f7;
+}
+.amenaza-card__nombre {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.amenaza-card__chevron {
+  color: #8b949e;
+}
+.amenaza-card__body {
+  padding: 0 45px 20px;
+  color: #8b949e;
+  line-height: 1.7;
+}
+.amenaza-card__ejemplo p{
+  font-size: 0.90rem;
+}
+.amenaza-card__ejemplo {
+  display: flex;
+  gap: 12px;
+  background: #0d1117;
+  border-radius: 8px;
+  padding: 14px;
+}
+.amenaza-card__ejemplo .material-symbols-outlined {
+  color: #2f81f7;
+  flex-shrink: 0;
+}
+.amenaza-card__ejemplo strong {
+  display: block;
+  color: #e6edf3;
+  margin-bottom: 6px;
+}
+.consejo-card__ejemplo p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+
+/* Consejos y cómo prevenirse (columna 2) */
+.consejos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.consejo-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.consejo-card--open {
+  border-color: #2f81f7;
+}
+.consejo-card__header {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: #e6edf3;
+}
+.consejo-card__titulo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.consejo-card__icon {
+  color: #2f81f7;
+}
+.consejo-card__titulo {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.consejo-card__chevron {
+  color: #8b949e;
+}
+.consejo-card__body {
+  padding: 0 45px 20px;
+  color: #8b949e;
+  line-height: 1.7;
+}
+.consejo-card__body p {
+  margin-bottom: 16px;
+}
+.consejo-card__ejemplo {
+  display: flex;
+  gap: 12px;
+  background: #0d1117;
+  border-radius: 8px;
+  padding: 14px;
+}
+.consejo-card__ejemplo .material-symbols-outlined {
+  color: #2f81f7;
+  flex-shrink: 0;
+}
+.consejo-card__ejemplo strong {
+  display: block;
+  color: #e6edf3;
+  margin-bottom: 6px;
+}
+.consejo-card__ejemplo p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* Animaciones */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.amenazas-hero {
+  animation: fadeUp 0.6s ease both;
+}
+.amenazas-dashboard {
+  animation: fadeUp 0.6s ease 0.15s both;
+}
+.amenazas-tabs {
+  animation: fadeUp 0.6s ease 0.25s both;
+}
+.amenazas-content {
+  animation: fadeUp 0.6s ease 0.35s both;
+}
+
+.amenaza-card {
+  transition: border-color 0.2s ease;
+}
+.amenaza-card:hover {
+  border-color: #1e3a5f;
+}
+.consejo-card__body {
+  animation: fadeUp 0.80s ease both;
+}
+.amenaza-card__body {
+  animation: fadeUp 0.80s ease both;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .amenazas-hero__title { font-size: 1.6rem; }
+  .amenazas-dashboard { grid-template-columns: repeat(2, 1fr); }
+}
