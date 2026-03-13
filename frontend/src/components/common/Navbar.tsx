@@ -3,7 +3,7 @@
 // En mobile muestra: logo + botón hamburguesa + botón "Ingresar".
 // Props opcionales: solo Home las necesita para el drawer del TOC.
 
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import styles from './Navbar.module.css';
 
@@ -22,11 +22,11 @@ export default function Navbar({ onMenuToggle, menuOpen }: Props) {
       </Link>
 
       <div className={styles.links}>
-        <Link to="/home">Inicio</Link>
-        <Link to="/amenazas">Amenazas</Link>
-        <Link to="/herramientas">Herramientas</Link>
-        <Link to="/biblioteca">Biblioteca</Link>
-        <Link to="/foro">Foro</Link>
+        <NavLink to="/home" className={({ isActive }) => isActive ? styles.activeLink : ''}>Inicio</NavLink>
+        <NavLink to="/amenazas" className={({ isActive }) => isActive ? styles.activeLink : ''}>Amenazas</NavLink>
+        <NavLink to="/herramientas" className={({ isActive }) => isActive ? styles.activeLink : ''}>Herramientas</NavLink>
+        <NavLink to="/biblioteca" className={({ isActive }) => isActive ? styles.activeLink : ''}>Biblioteca</NavLink>
+        <NavLink to="/foro" className={({ isActive }) => isActive ? styles.activeLink : ''}>Foro</NavLink>
         <Link to="/login" className={styles.btnLogin}>Ingresar</Link>
       </div>
 

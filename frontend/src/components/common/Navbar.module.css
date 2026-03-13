@@ -13,6 +13,11 @@
   box-sizing: border-box;
 }
 
+.activeLink {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
 /* Logo */
 .logo {
   display: flex;
@@ -48,7 +53,7 @@
 }
 
 .links a:hover       { color: #e2e8f0; }
-.links a:first-child { color: white; }
+.links a:first-child { color: #94a3b8; }
 
 /* Botón Ingresar */
 .btnLogin {
