@@ -77,9 +77,9 @@
   gap: 10px;
 }
 
-/* Botón hamburguesa */
+/* Botón hamburguesa — oculto en desktop */
 .hamburger {
-  display: flex;
+  display: none;             /* ← oculto en desktop */
   align-items: center;
   justify-content: center;
   background: transparent;
@@ -89,6 +89,7 @@
   padding: 6px;
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
 }
 
 .hamburger:hover {
@@ -103,4 +104,5 @@
   .navbar        { padding: 0 16px; }
   .links         { display: none; }
   .mobileActions { display: flex; }
+  .hamburger     { display: flex; } /* ← aparece en mobile */
 }

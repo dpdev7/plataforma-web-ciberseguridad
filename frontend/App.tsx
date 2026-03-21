@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './src/pages/Login';
-import Register from './src/pages/Register';
+import Login         from './src/pages/Login';
+import Register      from './src/pages/Register';
 import ResetPassword from './src/pages/ResetPassword';
-import VerifyEmail from './src/pages/VerifyEmail';
-import Home from './src/pages/Home';
-import Amenazas from './src/pages/Amenazas'; 
+import VerifyEmail   from './src/pages/VerifyEmail';
+import Home          from './src/pages/Home';
+import Amenazas      from './src/pages/Amenazas';
+import NotFound      from './src/pages/NotFound';
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/home" element={<Home />} />
+
+        {/* Captura cualquier ruta no definida */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

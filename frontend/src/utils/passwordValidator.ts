@@ -1,6 +1,6 @@
 import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
 import * as zxcvbnCommon from '@zxcvbn-ts/language-common';
-import * as zxcvbnEn from '@zxcvbn-ts/language-en';
+import * as zxcvbnEn from '@zxcvbn-ts/language-en'; // Revisar tamaño y relevancia
 import * as zxcvbnEs from '@zxcvbn-ts/language-es-es';
 import type { PasswordStrength } from '../types/auth'; 
 

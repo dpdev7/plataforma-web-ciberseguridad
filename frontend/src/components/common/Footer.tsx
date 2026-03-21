@@ -11,7 +11,7 @@ interface FooterProps {
 export default function Footer({ variant = 'page' }: FooterProps) {
   return (
     <footer className={`${styles.footer} ${variant === 'auth' ? styles.footerAuth : ''}`}>
-      <span>© 2025 CyberGuard. Todos los derechos reservados.</span>
+      <span>© 2026 CyberGuard. Todos los derechos reservados.</span>
       <span>Protege tu mundo digital</span>
     </footer>
   );

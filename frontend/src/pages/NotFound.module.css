@@ -1,0 +1,146 @@
+/* Reset básico */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #0a0f14;
+}
+
+/* Contenedor principal que ocupa toda la pantalla */
+.container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Bloque central con todo el contenido */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  max-width: 480px;
+  /* Ajustar el contenido */
+  margin-top: -40px; /* ajusta según lo que veas */
+}
+
+/* Ícono */
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  background: rgba(17, 115, 212, 0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(17, 115, 212, 0.2);
+  box-shadow: 0 0 24px rgba(17, 115, 212, 0.1);
+  margin-bottom: 8px;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  color: #1173d4;
+}
+
+/* Número 404 grande */
+.code {
+  font-size: 6rem;
+  font-weight: 900;
+  color: #1173d4;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+/* Título */
+.title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+/* Descripción */
+.description {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 4px 0 12px;
+}
+
+/* Botones */
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.btnPrimario {
+  background-color: #1173d4;
+  color: white;
+  font-weight: 700;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.15s;
+}
+
+.btnPrimario:hover {
+  background-color: #0e5fb8;
+  transform: translateY(-1px);
+}
+
+.btnPrimario:active {
+  transform: scale(0.98);
+}
+
+.btnSecundario {
+  background-color: transparent;
+  border: 1px solid #1e3a5f;
+  color: #94a3b8;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btnSecundario:hover {
+  border-color: #1173d4;
+  color: #1173d4;
+}
+
+
+/* Responsive */
+@media (max-width: 480px) {
+  .code {
+    font-size: 4.5rem;
+  }
+  .title {
+    font-size: 1.3rem;
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btnPrimario,
+  .btnSecundario {
+    width: 100%;
+  }
+}
