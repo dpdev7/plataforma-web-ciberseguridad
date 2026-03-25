@@ -315,3 +315,10 @@
   .amenazas-hero__title { font-size: 1.6rem; }
   .amenazas-dashboard { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Elimina focus ring blanco en tabs para mejor apariencia */
+.amenazas-tab:focus,
+.amenazas-tab:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
