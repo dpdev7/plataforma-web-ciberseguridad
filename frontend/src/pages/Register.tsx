@@ -28,13 +28,18 @@ const Register: React.FC = () => {
       const result = await response.json();
 
       if (response.ok) {
-        // 1. Activamos el Toast
         setShowToast(true);
 
-        // 2. Esperamos 2 segundos y redirigimos
         setTimeout(() => {
           setShowToast(false);
-          navigate("/home", { replace: true });
+          // Redirigimos a la verificación pasando el email y el tipo nuevo
+          navigate("/verify-email", {
+            state: {
+              email: data.email,
+              tipo: "VERIFICACION",
+            },
+            replace: true,
+          });
         }, 2000);
       } else {
         alert(`Error: ${result.detail || "Datos inválidos"}`);
@@ -49,11 +54,9 @@ const Register: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full relative">
-      {/* --- TOAST DE ÉXITO --- */}
       {showToast && (
         <div className="fixed top-5 right-5 z-[100] transform transition-all duration-500 ease-in-out">
           <div className="bg-emerald-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 border border-emerald-400">
-            {/* Icono de Check */}
             <div className="bg-white/20 rounded-full p-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -73,14 +76,13 @@ const Register: React.FC = () => {
             <div>
               <p className="font-bold text-sm">¡Registro exitoso!</p>
               <p className="text-xs opacity-90">
-                Redirigiendo al panel principal...
+                Por favor, verifica tu código enviado al correo...
               </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* --- CONTENIDO DEL FORMULARIO --- */}
       <div
         className={
           loading
@@ -89,7 +91,6 @@ const Register: React.FC = () => {
         }
       >
         <AuthForm type="register" onSubmit={handleRegister} />
-
         {loading && !showToast && (
           <div className="flex flex-col items-center mt-6 gap-2">
             <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
