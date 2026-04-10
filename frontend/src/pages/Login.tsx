@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; // 1. Importamos la librería
 import AuthForm from "../components/auth/AuthForm";
 
 const Login: React.FC = () => {
@@ -14,6 +13,7 @@ const Login: React.FC = () => {
     try {
       const response = await fetch("http://localhost:8000/usuario/login/", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -21,13 +21,10 @@ const Login: React.FC = () => {
       const result = await response.json();
 
       if (response.ok) {
-        // 2. GUARDAR EN COOKIE 🍪
-        // Guardamos el token por 1 día, con seguridad básica
-        Cookies.set("auth_token", result.access || result.token, {
-          expires: 1, // 1 día
-          secure: window.location.protocol === "https:", // Solo HTTPS en producción
-          sameSite: "strict",
-        });
+        // El backend lo envía como cookie HttpOnly automáticamente
+
+        // Opcional: guardar datos NO sensibles
+        localStorage.setItem("user_name", result.usuario.nombre);
 
         setShowToast(true);
         setTimeout(() => {
@@ -47,7 +44,6 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen relative">
-      {/* Toast (el mismo que ya tenías) */}
       {showToast && (
         <div className="fixed top-5 right-5 z-[100] animate-bounce">
           <div className="bg-blue-600 text-white px-6 py-4 rounded-xl shadow-2xl border border-blue-400">

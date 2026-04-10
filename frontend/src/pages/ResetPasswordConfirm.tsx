@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 
-
 // Página final del flujo de recuperación de contraseña.
 // Flujo completo:
 //   /reset-password        → usuario ingresa su email
@@ -10,8 +9,8 @@ import AuthForm from "../components/auth/AuthForm";
 //   /reset-password-confirm → esta página — usuario establece su nueva contraseña
 const ResetPasswordConfirm: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const location              = useLocation();
-  const navigate              = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // El email llega desde VerifyEmail.tsx vía navigate('/reset-password-confirm', { state: { email } })
   // Se necesita para enviarlo al backend junto con la nueva contraseña
@@ -21,14 +20,17 @@ const ResetPasswordConfirm: React.FC = () => {
     setLoading(true);
     try {
       // Enviamos el email recuperado del state y la nueva contraseña al backend
-      const response = await fetch("http://localhost:8000/usuario/reset-password-confirm/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email:    emailFromState,
-          password: data.password, // AuthForm ya valida que coincida con confirmPassword
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:8000/usuario/cambiar-password/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: emailFromState,
+            password: data.password, // AuthForm ya valida que coincida con confirmPassword
+          }),
+        },
+      );
 
       if (response.ok) {
         alert("¡Contraseña actualizada correctamente!");
@@ -36,7 +38,9 @@ const ResetPasswordConfirm: React.FC = () => {
         navigate("/login", { replace: true });
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.detail || "No se pudo actualizar la contraseña"}`);
+        alert(
+          `Error: ${errorData.detail || "No se pudo actualizar la contraseña"}`,
+        );
       }
     } catch (error) {
       console.error("Error:", error);
