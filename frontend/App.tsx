@@ -7,6 +7,9 @@ import Home          from './src/pages/Home';
 import Amenazas      from './src/pages/Amenazas';
 import Herramientas from './src/pages/Herramientas';
 import NotFound      from './src/pages/NotFound';
+import ResetPasswordConfirm from './src/pages/ResetPasswordConfirm';
+
+<Route path="/reset-password-confirm" element={<ResetPasswordConfirm />} />
 
 function App() {
   return (
@@ -19,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/reset-password-confirm" element={<ResetPasswordConfirm />} />
         <Route path="/home" element={<Home />} />
 
         {/* Captura cualquier ruta no definida */}
