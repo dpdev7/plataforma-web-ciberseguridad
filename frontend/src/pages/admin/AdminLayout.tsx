@@ -7,8 +7,7 @@ import { Users, Home } from 'lucide-react';
 import './admin.css';
 
 // Lista de módulos del panel admin.
-// Para agregar un nuevo módulo (Biblioteca, Foro, etc.),
-// simplemente añade un nuevo objeto aquí con su ruta, ícono y label.
+// Para agregar un nuevo módulo (Biblioteca, Foro, etc.), se añade un nuevo objeto aquí con su ruta, ícono y label.
 const navItems = [
   { to: '/admin/users', icon: <Users size={17} />, label: 'Usuarios' },
 ];
