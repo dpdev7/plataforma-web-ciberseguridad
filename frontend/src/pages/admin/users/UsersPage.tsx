@@ -1,86 +1,78 @@
-// Página principal de gestión de usuarios del panel admin.
-// Muestra la lista de usuarios con búsqueda, filtro por estado y paginación.
-// Permite editar y eliminar usuarios a través de modales.
-// Los datos actualmente son mock — al conectar el backend,
-// reemplazar MOCK_USERS por un fetch a /api/admin/users/
-
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';  // 👈 agregar useEffect
 import { Pencil, Trash2, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminTable from '../../../components/admin/AdminTable';
 import UserEditModal from './UsersEditModal';
 import UserDeleteModal from './UserDeleteModal';
 
+// 👇 Interfaz actualizada para coincidir con el backend
 interface User {
-  id: number;
-  username: string;
+  id: string;
+  nombre: string;
   email: string;
-  role: 'admin' | 'user';
-  is_active: boolean;
+  es_administrador: boolean;
+  activo: boolean;
 }
 
-// Datos de prueba — reemplazar por fetch al backend
-const MOCK_USERS: User[] = [
-  { id: 1,  username: 'daniel',   email: 'daniel@email.com',   role: 'user', is_active: true },
-  { id: 2,  username: 'ashley',   email: 'ashley@email.com',   role: 'user', is_active: true },
-  { id: 3,  username: 'julian',   email: 'julian@email.com',   role: 'user', is_active: true },
-  { id: 4,  username: 'maria',    email: 'maria@email.com',    role: 'user', is_active: false },
-  { id: 5,  username: 'carlos',   email: 'carlos@email.com',   role: 'user', is_active: false },
-  { id: 6,  username: 'lucia',    email: 'lucia@email.com',    role: 'user', is_active: false },
-  { id: 7,  username: 'pedro',    email: 'pedro@email.com',    role: 'user', is_active: false },
-  { id: 8,  username: 'sofia',    email: 'sofia@email.com',    role: 'user', is_active: false },
-  { id: 9,  username: 'andres',   email: 'andres@email.com',   role: 'user', is_active: false },
-  { id: 10, username: 'valeria',  email: 'valeria@email.com',  role: 'user', is_active: false },
-  { id: 11, username: 'miguel',   email: 'miguel@email.com',   role: 'user', is_active: false },
-  { id: 12, username: 'gabriela', email: 'gabriela@email.com', role: 'user', is_active: false },
-];
-
-// Opciones disponibles para el selector de filas por página
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
 export default function UsersPage() {
-  const [users, setUsers]       = useState<User[]>(MOCK_USERS);
+  const [users, setUsers]       = useState<User[]>([]);  // array vacío, no mock
+  const [loading, setLoading]   = useState(true);        
   const [search, setSearch]     = useState('');
-  const [filter, setFilter]     = useState('all');
-  const [toEdit, setToEdit]     = useState<User | null>(null);   // usuario seleccionado para editar
-  const [toDelete, setToDelete] = useState<User | null>(null);  // usuario seleccionado para eliminar
+  const [filter, setFilter]     = useState('active');
+  const [toEdit, setToEdit]     = useState<User | null>(null);
+  const [toDelete, setToDelete] = useState<User | null>(null);
   const [page, setPage]         = useState(1);
   const [pageSize, setPageSize] = useState(5);
 
-  // Filtra los usuarios según búsqueda y estado.
-  // useMemo evita recalcular en cada render si no cambian las dependencias.
+  // 👇 Fetch real al backend
+  useEffect(() => {
+    fetch("http://localhost:8000/usuario/get/all/", {
+      credentials: "include",
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setUsers(data.result);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   const filtered = useMemo(() => users.filter(u => {
-    const matchSearch = u.username.toLowerCase().includes(search.toLowerCase()) ||
+    const matchSearch = u.nombre.toLowerCase().includes(search.toLowerCase()) ||
                         u.email.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === 'all' ? true : filter === 'active' ? u.is_active : !u.is_active;
+    const matchFilter = filter === 'all' ? true : filter === 'active' ? u.activo : !u.activo;
     return matchSearch && matchFilter;
   }), [users, search, filter]);
 
-  // Cálculos de paginación
   const totalPages  = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated   = filtered.slice((page - 1) * pageSize, page * pageSize);
   const showingFrom = filtered.length === 0 ? 0 : (page - 1) * pageSize + 1;
   const showingTo   = Math.min(page * pageSize, filtered.length);
 
-  // Al buscar o filtrar se reinicia a la página 1
-  const handleSearch   = (val: string) => { setSearch(val);        setPage(1); };
-  const handleFilter   = (val: string) => { setFilter(val);        setPage(1); };
-  const handlePageSize = (val: number) => { setPageSize(val);      setPage(1); };
+  const handleSearch   = (val: string) => { setSearch(val);   setPage(1); };
+  const handleFilter   = (val: string) => { setFilter(val);   setPage(1); };
+  const handlePageSize = (val: number) => { setPageSize(val); setPage(1); };
 
-  // Elimina el usuario del estado local.
-  // Al conectar backend: llamar DELETE /api/admin/users/:id/ antes de actualizar el estado.
   const handleDelete = (user: User) => {
     setUsers(prev => prev.filter(u => u.id !== user.id));
     setToDelete(null);
   };
 
-  // Definición de columnas de la tabla.
-  // La columna 'actions' no existe en el objeto User,
-  // usa render para inyectar los botones de acción.
+  // 👇 Columnas actualizadas con los campos reales del backend
   const columns = [
-    { key: 'username', label: 'Usuario' },
-    { key: 'email',    label: 'Correo'  },
+    { key: 'nombre', label: 'Usuario' },   
+    { key: 'email',  label: 'Correo'  },
     {
-      key: 'is_active',
+      key: 'es_administrador',       
+      label: 'Rol',
+      render: (value: unknown) => (
+        <span className={`badge badge--${value ? 'admin' : 'user'}`}>
+          {value ? 'Admin' : 'Usuario'}
+        </span>
+      ),
+    },
+    {
+      key: 'activo',                    
       label: 'Estado',
       render: (value: unknown) => (
         <span className={`badge badge--${value ? 'active' : 'inactive'}`}>
@@ -106,11 +98,13 @@ export default function UsersPage() {
     },
   ];
 
+  // 👇 Mostrar loading mientras carga
+  if (loading) return <p>Cargando usuarios...</p>;
+
   return (
     <div className="admin-page">
       <h1 className="admin-page__title">Usuarios</h1>
 
-      {/* Toolbar: búsqueda + filtro de estado + botón nuevo usuario */}
       <div className="admin-toolbar">
         <div className="search-box">
           <span className="material-symbols-outlined search-box__icon">search</span>
@@ -123,7 +117,6 @@ export default function UsersPage() {
           />
         </div>
 
-        {/* Filtro por estado: Todos / Activos / Inactivos */}
         <select
           className="filter-select"
           value={filter}
@@ -134,17 +127,14 @@ export default function UsersPage() {
           <option value="inactive">Inactivos</option>
         </select>
 
-        {/* Al conectar backend: este botón abrirá un modal de creación */}
         <button className="btn btn--primary btn--sm">
           <span className="icon-wrap icon-wrap--sm icon-wrap--white"><UserPlus size={14} /></span>
           Nuevo usuario
         </button>
       </div>
 
-      {/* Tabla — recibe solo la página actual de resultados */}
       <AdminTable data={paginated} columns={columns} />
 
-      {/* Paginación: info de resultados + selector de filas + botones de página */}
       <div className="pagination">
         <span className="pagination__info">
           Mostrando {showingFrom}–{showingTo} de {filtered.length}
@@ -194,7 +184,6 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Modal de edición — se monta solo cuando hay un usuario seleccionado */}
       {toEdit && (
         <UserEditModal
           user={toEdit}
@@ -206,7 +195,6 @@ export default function UsersPage() {
         />
       )}
 
-      {/* Modal de confirmación de eliminación */}
       {toDelete && (
         <UserDeleteModal
           user={toDelete}

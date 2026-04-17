@@ -9,20 +9,19 @@
 //   ];
 //   <AdminTable data={users} columns={columns} />
 
+// AdminTable.tsx
 interface Column<T> {
   key: string;
   label: string;
-  // render opcional: permite personalizar el contenido de una celda
-  // (badges, botones, íconos, etc.)
   render?: (value: unknown, row: T) => React.ReactNode;
 }
 
-interface Props<T extends { id: number }> {
+interface Props<T extends { id: number | string }> {
   data: T[];
   columns: Column<T>[];
 }
 
-export default function AdminTable<T extends { id: number }>({ data, columns }: Props<T>) {
+export default function AdminTable<T extends { id: number | string }>({ data, columns }: Props<T>) {
   return (
     <div className="admin-table-wrapper">
       <table className="admin-table">
@@ -38,8 +37,6 @@ export default function AdminTable<T extends { id: number }>({ data, columns }: 
             <tr key={row.id}>
               {columns.map(col => (
                 <td key={col.key}>
-                  {/* Si la columna tiene render personalizado lo usa,
-                      si no muestra el valor como string */}
                   {col.render
                     ? col.render(row[col.key as keyof T], row)
                     : String(row[col.key as keyof T] ?? '')}

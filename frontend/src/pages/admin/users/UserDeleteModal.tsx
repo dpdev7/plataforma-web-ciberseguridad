@@ -2,30 +2,51 @@
 // Muestra el nombre y correo del usuario afectado para evitar eliminaciones accidentales.
 // Al conectar backend: en onConfirm (definido en UsersPage) llamar DELETE /api/admin/users/:id/ antes de actualizar el estado local.
 
+import { useState } from 'react';
 import { Trash2, X } from 'lucide-react';
 
 interface User {
-  id: number;
-  username: string;
+  id: string;
+  nombre: string;
   email: string;
 }
 
 interface Props {
   user: User;
   onClose: () => void;
-  onConfirm: () => void; // ejecuta la eliminación real definida en UsersPage
+  onConfirm: () => void;
 }
 
 export default function UserDeleteModal({ user, onClose, onConfirm }: Props) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`http://localhost:8000/usuario/delete/${user.id}/`, {
+        method: 'PATCH',
+        credentials: 'include',
+      });
+
+      if (!res.ok) throw new Error('Error al eliminar');
+
+      onConfirm(); // 👈 actualiza el estado en UsersPage
+    } catch {
+      setError('No se pudo eliminar el usuario. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    // Click en el overlay cierra el modal sin eliminar
     <div className="modal-overlay" onClick={onClose}>
-      {/* stopPropagation evita que el click dentro del modal lo cierre */}
       <div className="modal" onClick={e => e.stopPropagation()}>
 
         <div className="modal__header">
           <div className="modal__header-left">
-            {/* Ícono en rojo para reforzar la acción destructiva */}
             <span className="icon-wrap icon-wrap--md icon-wrap--danger">
               <Trash2 size={16} />
             </span>
@@ -37,21 +58,23 @@ export default function UserDeleteModal({ user, onClose, onConfirm }: Props) {
         </div>
 
         <div className="modal__body">
-          {/* Mensaje de advertencia con el nombre del usuario resaltado */}
           <p className="delete-confirm__text">
-            ¿Estás seguro que deseas eliminar al usuario{' '}
-            <strong>{user.username}</strong>?
+            ¿Estás seguro que deseas eliminar a{' '}
+            <strong>{user.nombre}</strong>?
             Esta acción no se puede deshacer.
           </p>
-          {/* Correo como referencia adicional del usuario a eliminar */}
           <p className="form-static">{user.email}</p>
+
+          {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
         </div>
 
         <div className="modal__footer">
-          {/* Cancelar — cierra sin hacer nada */}
-          <button className="btn btn--ghost" onClick={onClose}>Cancelar</button>
-          {/* Confirmar — ejecuta la eliminación */}
-          <button className="btn btn--danger" onClick={onConfirm}>Eliminar</button>
+          <button className="btn btn--ghost" onClick={onClose} disabled={loading}>
+            Cancelar
+          </button>
+          <button className="btn btn--danger" onClick={handleDelete} disabled={loading}>
+            {loading ? 'Eliminando...' : 'Eliminar'}
+          </button>
         </div>
 
       </div>

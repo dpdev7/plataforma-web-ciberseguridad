@@ -175,6 +175,19 @@
   }
 }
 
+.adminLink {
+  color: #3b82f6 !important; /* Un azul diferente o más brillante */
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.adminIconMobile {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
 /* =============================================
    RESPONSIVE
 ============================================= */

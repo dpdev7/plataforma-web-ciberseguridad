@@ -8,11 +8,11 @@ import { useState } from 'react';
 import { X, UserCog } from 'lucide-react';
 
 interface User {
-  id: number;
-  username: string;
+  id: string;
+  nombre: string;
   email: string;
-  role: 'admin' | 'user';
-  is_active: boolean;
+  es_administrador: boolean;
+  activo: boolean;
 }
 
 interface Props {
@@ -22,20 +22,39 @@ interface Props {
 }
 
 export default function UserEditModal({ user, onClose, onSave }: Props) {
-  // Solo se editan role e is_active — los demás campos son de solo lectura
-  const [form, setForm] = useState({ role: user.role, is_active: user.is_active });
+  const [form, setForm] = useState({
+    nombre: user.nombre,
+    es_administrador: user.es_administrador,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Fusiona los campos editados con el resto del objeto usuario
-    // Al conectar backend: hacer fetch PATCH aquí y llamar onSave con la respuesta
-    onSave({ ...user, ...form });
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`http://localhost:8000/usuario/update/${user.id}/`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) throw new Error('Error al actualizar el usuario');
+
+      const data = await res.json();
+      onSave({ ...user, ...form });
+    } catch (err) {
+      setError('No se pudo actualizar el usuario. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    // Click en el overlay cierra el modal
     <div className="modal-overlay" onClick={onClose}>
-      {/* stopPropagation evita que el click dentro del modal lo cierre */}
       <div className="modal" onClick={e => e.stopPropagation()}>
 
         <div className="modal__header">
@@ -52,44 +71,42 @@ export default function UserEditModal({ user, onClose, onSave }: Props) {
 
         <form onSubmit={handleSubmit} className="modal__body">
 
-          {/* Campos de solo lectura — informativos */}
-          <div className="form-group">
-            <label>Usuario</label>
-            <p className="form-static">{user.username}</p>
-          </div>
-
           <div className="form-group">
             <label>Correo</label>
             <p className="form-static">{user.email}</p>
           </div>
 
-          {/* Selector de rol — user o admin */}
           <div className="form-group">
-            <label htmlFor="role">Rol</label>
+            <label htmlFor="nombre">Nombre</label>
+            <input
+              id="nombre"
+              type="text"
+              value={form.nombre}
+              onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="es_administrador">Rol</label>
             <select
-              id="role"
-              value={form.role}
-              onChange={e => setForm(f => ({ ...f, role: e.target.value as User['role'] }))}
+              id="es_administrador"
+              value={form.es_administrador ? 'admin' : 'user'}
+              onChange={e => setForm(f => ({ ...f, es_administrador: e.target.value === 'admin' }))}
             >
               <option value="user">Usuario</option>
               <option value="admin">Admin</option>
             </select>
           </div>
 
-          {/* Toggle de estado de la cuenta */}
-          <div className="form-group form-group--row">
-            <label htmlFor="is_active">Cuenta activa</label>
-            <input
-              id="is_active"
-              type="checkbox"
-              checked={form.is_active}
-              onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))}
-            />
-          </div>
+          {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
 
           <div className="modal__footer">
-            <button type="button" className="btn btn--ghost" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn--primary">Guardar</button>
+            <button type="button" className="btn btn--ghost" onClick={onClose} disabled={loading}>
+              Cancelar
+            </button>
+            <button type="submit" className="btn btn--primary" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar'}
+            </button>
           </div>
 
         </form>
