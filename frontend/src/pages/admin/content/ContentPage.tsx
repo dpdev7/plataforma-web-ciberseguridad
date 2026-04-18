@@ -19,7 +19,7 @@ export default function ContentPage() {
   const [toEdit,     setToEdit]     = useState<Recurso | null>(null);
   const [toDelete,   setToDelete]   = useState<Recurso | null>(null);
 
-  // ── Fetch inicial ──
+  // Fetch inicial
   const fetchRecursos = async () => {
     setLoading(true);
     setError(null);
@@ -46,7 +46,7 @@ export default function ContentPage() {
 
   useEffect(() => { fetchRecursos(); }, []);
 
-  // ── Filtrado local ──
+  // Filtrado local
   const filtrados = useMemo(() => recursos.filter(r => {
     if (filtroTipo !== 'all' && r.tipo !== filtroTipo) return false;
     if (busqueda.trim()) {
@@ -56,7 +56,7 @@ export default function ContentPage() {
     return true;
   }), [recursos, busqueda, filtroTipo]);
 
-  // ── Crear ──
+  // Crear
   const handleCreate = async (data: Omit<Recurso, 'id'>) => {
     try {
       const res = await fetch(`${API_BASE}/categoria/recurso-edu/crear/`, {
@@ -79,7 +79,7 @@ export default function ContentPage() {
     }
   };
 
-  // ── Editar ──
+  // Editar
   const handleEdit = async (data: Recurso) => {
     try {
       const res = await fetch(`${API_BASE}/categoria/recurso-edu/editar/${data.id}/`, {
@@ -101,7 +101,7 @@ export default function ContentPage() {
     }
   };
 
-  // ── Eliminar ──
+  // Eliminar
   const handleDelete = async () => {
     if (!toDelete) return;
     try {

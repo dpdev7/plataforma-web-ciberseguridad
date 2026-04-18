@@ -1,4 +1,3 @@
-// src/pages/admin/content/ContentDeleteModal.tsx
 import { Trash2, X } from 'lucide-react';
 import type { Recurso } from '../../../types/adminContent';
 

@@ -1,4 +1,3 @@
-// src/pages/admin/content/ContentEditModal.tsx
 import { useState } from 'react';
 import { X, Pencil } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
