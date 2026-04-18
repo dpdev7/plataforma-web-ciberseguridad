@@ -536,3 +536,38 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+/* ── Inputs de formulario ──────────────────── */
+/* Usados en los modales de crear/editar contenido */
+.form-input {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus { border-color: var(--accent); }
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Dos columnas lado a lado dentro de un modal */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Modal más ancho para formularios con más campos */
+.modal--lg { max-width: 540px; }
+
+/* Badge de tipo de recurso */
+.badge--tipo { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
