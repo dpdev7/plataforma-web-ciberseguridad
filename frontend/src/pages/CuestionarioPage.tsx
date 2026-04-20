@@ -50,7 +50,7 @@ export default function CuestionarioPage() {
     setError(null);
 
     // Trae todos y filtra el que coincide con el UUID del id
-    fetch(`${API_BASE}/api/cuestionario/obtener/all/`)
+    fetch(`${API_BASE}/cuestionario/obtener/all/`)
       .then(res => {
         if (!res.ok) throw new Error(`Error ${res.status}`);
         return res.json();

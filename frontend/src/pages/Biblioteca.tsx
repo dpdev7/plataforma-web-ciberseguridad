@@ -199,7 +199,7 @@ export default function Biblioteca() {
      * Mapea la respuesta al tipo `Recurso` normalizado.
      */
     const fetchCuestionarios = () =>
-      fetch(`${API_BASE}/api/categoria/recurso-edu/obtener/all/`)
+      fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/`)
         .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
         .then((data: any) => data.result.map((c: any): Recurso => ({
           id:          c.cuestionario_id,
@@ -217,7 +217,7 @@ export default function Biblioteca() {
      * Mapea la respuesta al tipo `Recurso` normalizado.
      */
     const fetchRecursos = (tipo?: string) =>
-      fetch(`${API_BASE}/api/recurso/obtener/all/${tipo ? `?tipo_recurso=${tipo}` : ''}`)
+      fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/${tipo ? `?tipo_recurso=${tipo}` : ''}`)
         .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
         .then((data: any) => data.result.map((r: any): Recurso => ({
           id:               r.recurso_id,
