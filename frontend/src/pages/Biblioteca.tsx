@@ -199,7 +199,7 @@ export default function Biblioteca() {
      * Mapea la respuesta al tipo `Recurso` normalizado.
      */
     const fetchCuestionarios = () =>
-      fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/`)
+      fetch(`${API_BASE}/cuestionario/obtener/all/`)
         .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
         .then((data: any) => data.result.map((c: any): Recurso => ({
           id:          c.cuestionario_id,

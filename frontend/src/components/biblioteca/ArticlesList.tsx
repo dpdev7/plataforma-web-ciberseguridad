@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import type { Recurso } from '../../types/biblioteca';
 
@@ -20,10 +19,11 @@ export default function ArticlesList({ recursos, onLimpiar }: Props) {
   return (
     <div className="bib-list">
       {recursos.map(r => (
-        // Link envuelve la fila completa
-        <Link
+        <a                                   
           key={r.id}
-          to={`/biblioteca/articulo/${r.id}`}
+          href={r.urlRecurso ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
           className="bib-row"
           style={{ textDecoration: 'none' }}
         >
@@ -44,7 +44,7 @@ export default function ArticlesList({ recursos, onLimpiar }: Props) {
           <div className="bib-row__meta">
             {r.tiempoLectura ? <span>{r.tiempoLectura} min</span> : null}
           </div>
-        </Link>
+        </a>
       ))}
     </div>
   );

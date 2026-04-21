@@ -1,5 +1,4 @@
 import type { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, FileText } from 'lucide-react';
 import type { Recurso } from '../../types/biblioteca';
 
@@ -13,13 +12,6 @@ const TIPO_LABEL: Record<string, string> = {
   articulo:     'Artículo',
   guia:         'Guía',
   cuestionario: 'Cuestionario',
-};
-
-// Genera la ruta correcta según el tipo del recurso
-const getPath = (r: Recurso) => {
-  if (r.tipo === 'guia')         return `/biblioteca/guia/${r.id}`;
-  if (r.tipo === 'cuestionario') return `/biblioteca/cuestionario/${r.id}`;
-  return `/biblioteca/articulo/${r.id}`;
 };
 
 interface Props {
@@ -41,10 +33,11 @@ export default function FeaturedGrid({ recursos, onLimpiar }: Props) {
   return (
     <div className="bib-featured">
       {recursos.map((r, i) => (
-        // Link envuelve toda la card — navega a la vista correcta
-        <Link
+        <a
           key={r.id}
-          to={getPath(r)}
+          href={r.urlRecurso ?? '#'}           // 👈 URL externa del backend
+          target="_blank"
+          rel="noopener noreferrer"
           className={`bib-card ${i === 0 ? 'bib-card--wide' : ''}`}
           style={{ textDecoration: 'none' }}
         >
@@ -71,7 +64,7 @@ export default function FeaturedGrid({ recursos, onLimpiar }: Props) {
               Leer <ArrowRight size={12} />
             </span>
           </div>
-        </Link>
+        </a>
       ))}
     </div>
   );
