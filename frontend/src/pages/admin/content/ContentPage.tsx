@@ -2,9 +2,12 @@ import { useState, useMemo, useEffect } from 'react';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
 import { CATEGORIAS } from '../../../types/adminContent';
+import CategoryCreateModal from './CategoryCreateModal';
+import CategoryDeleteModal from './CategoryDeleteModal';
 import ContentCreateModal from './ContentCreateModal';
 import ContentEditModal   from './ContentEditModal';
 import ContentDeleteModal from './ContentDeleteModal';
+
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
@@ -18,6 +21,46 @@ export default function ContentPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [toEdit,     setToEdit]     = useState<Recurso | null>(null);
   const [toDelete,   setToDelete]   = useState<Recurso | null>(null);
+  
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<{ nombre: string; descripcion: string } | null>(null);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<{ nombre: string; descripcion: string } | null>(null);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [categories, setCategories] = useState<{ nombre: string; descripcion: string }[]>(() => {
+  const saved = localStorage.getItem('categories');
+  return saved ? JSON.parse(saved) : [];
+});
+
+const handleDeleteCategory = () => {
+  if (deleteIndex !== null) {
+    const nuevas = categories.filter((_, i) => i !== deleteIndex);
+    setCategories(nuevas);
+  }
+
+  setCategoryToDelete(null);
+  setDeleteIndex(null);
+};
+
+useEffect(() => {
+  localStorage.setItem('categories', JSON.stringify(categories));
+}, [categories]);
+  
+
+
+  const handleCreateCategory = (data: { nombre: string; descripcion: string }) => {
+  if (editIndex !== null) {
+    const updated = [...categories];
+    updated[editIndex] = data;
+    setCategories(updated);
+    setEditIndex(null);
+    setCategoryToEdit(null);
+  } else {
+    setCategories(prev => [...prev, data]);
+  }
+
+  setShowCategoryModal(false);
+};
 
   // Fetch inicial
   const fetchRecursos = async () => {
@@ -142,10 +185,17 @@ export default function ContentPage() {
           <option value="articulo">Artículos</option>
           <option value="guia">Guías</option>
         </select>
+
+        <div style={{ display: 'flex', gap: '10px', marginLeft: 'auto' }}>
         <button className="btn btn--primary" onClick={() => setShowCreate(true)}>
-          <Plus size={15} /> Nuevo recurso
+              + Nuevo recurso
         </button>
-      </div>
+
+        <button className="btn btn--primary" onClick={() => setShowCategoryModal(true)}>
+              + Nueva categoría
+        </button>
+          </div>
+            </div>
 
       <div className="admin-table-wrapper">
         <table className="admin-table">
@@ -198,6 +248,59 @@ export default function ContentPage() {
         </table>
       </div>
 
+      <div className="admin-table-wrapper" style={{ marginTop: '30px' }}>
+        <table className="admin-table" style={{ tableLayout: 'fixed', width: '100%' }}>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+      {categories.length === 0 ? (
+        <tr>
+          <td colSpan={3} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-dim)' }}>
+            No hay categorías aún
+          </td>
+        </tr>
+      ) : (
+        categories.map((cat, index) => (
+          <tr key={index}>
+            <td style={{ fontWeight: 600, color: '#f1f5f9' }}>
+              {cat.nombre}
+            </td>
+
+            <td style={{ color: 'var(--text-dim)' }}>
+              {cat.descripcion}
+            </td>
+
+            <td>
+              <div className="table-actions">
+                <button
+                  className="btn btn--ghost btn--sm"
+                  onClick={() => { setCategoryToEdit(cat); setEditIndex(index); setShowCategoryModal(true); }}
+                >
+                   <Pencil size={13} /> Editar
+                </button>
+
+                <button
+                  className="btn btn--danger btn--sm"
+                  onClick={() => {
+                    setCategoryToDelete(cat);
+                    setDeleteIndex(index);
+                  }}
+                >
+                  <Trash2 size={13} /> Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+</div>
       {showCreate && (
         <ContentCreateModal onClose={() => setShowCreate(false)} onConfirm={handleCreate} />
       )}
@@ -206,6 +309,14 @@ export default function ContentPage() {
       )}
       {toDelete && (
         <ContentDeleteModal recurso={toDelete} onClose={() => setToDelete(null)} onConfirm={handleDelete} />
+      )}
+      {showCategoryModal && (
+        <CategoryCreateModal onClose={() => {setShowCategoryModal(false); setCategoryToEdit(null); setEditIndex(null);}}
+                             onConfirm={handleCreateCategory} initialData={categoryToEdit || undefined} />
+      )}
+      {categoryToDelete && (
+        <CategoryDeleteModal onClose={() => { setCategoryToDelete(null); setDeleteIndex(null);}}
+                             onConfirm={handleDeleteCategory} categoryName={categoryToDelete.nombre} />
       )}
     </>
   );
