@@ -16,7 +16,7 @@ interface Comentario {
   comentario_id: string;
   contenido: string;
   fecha_creacion: string;
-  usuario: { usuario_id: string };
+  usuario: { usuario_id: string; nombre?: string };
 }
 
 interface Publicacion {
@@ -26,7 +26,7 @@ interface Publicacion {
   es_anonima: boolean;
   fecha_creacion: string;
   editada: boolean;
-  usuario: { usuario_id: string } | null;
+  usuario: { usuario_id: string; nombre?: string } | null;
   comentarios: Comentario[];
 }
 
@@ -212,7 +212,7 @@ if (!publicacion) {
               {publicacion.es_anonima ? 'person_off' : 'account_circle'}
             </span>
             <div>
-              <strong>{publicacion.es_anonima ? 'Anónimo' : 'Usuario'}</strong>
+              <strong>{publicacion.es_anonima ? 'Anónimo' : (publicacion.usuario?.nombre ?? 'Usuario')}</strong>
               <span className="hilo-fecha">
                 · Publicado {tiempoRelativo(publicacion.fecha_creacion)}
                 {publicacion.editada && ' · editado'}
@@ -241,7 +241,7 @@ if (!publicacion) {
               <div key={com.comentario_id} className="comentario-card">
                 <div className="comentario-card__header">
                   <span className="material-symbols-outlined comentario-avatar">account_circle</span>
-                  <strong>Usuario</strong>
+                  <strong>{com.usuario?.nombre ?? 'Usuario'}</strong>
                   <span className="hilo-fecha">· {tiempoRelativo(com.fecha_creacion)}</span>
                 </div>
                 <p className="comentario-card__contenido">{com.contenido}</p>
