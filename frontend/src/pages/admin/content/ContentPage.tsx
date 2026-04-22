@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
+import { Search, Pencil, Trash2 } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
 import { CATEGORIAS } from '../../../types/adminContent';
 import CategoryCreateModal from './CategoryCreateModal';

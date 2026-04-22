@@ -17,7 +17,7 @@ interface Comentario {
   comentario_id: string;
   contenido: string;
   fecha_creacion: string;
-  usuario: { usuario_id: string };
+  usuario: { usuario_id: string; nombre?: string };
 }
 
 interface Publicacion {
@@ -27,7 +27,7 @@ interface Publicacion {
   es_anonima: boolean;
   fecha_creacion: string;
   editada: boolean;
-  usuario: { usuario_id: string } | null;
+  usuario: { usuario_id: string; nombre?: string } | null;
   comentarios: Comentario[];
   categoria?: string;
   etiquetas?: string[];
@@ -322,7 +322,7 @@ setPublicaciones(resultado);
                   </p>
                   <div className="hilo-card__meta">
                     <span>
-                      Por <strong>{pub.es_anonima ? 'Anónimo' : 'Usuario'}</strong>
+                      Por <strong>{pub.es_anonima ? 'Anónimo' : (pub.usuario?.nombre ?? 'Usuario')}</strong>
                     </span>
                     <span>· {tiempoRelativo(pub.fecha_creacion)}</span>
                     <span>
