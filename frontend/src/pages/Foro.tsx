@@ -100,6 +100,7 @@ export default function Foro() {
   const [publicaciones, setPublicaciones] = useState<Publicacion[]>([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [busqueda, setBusqueda] = useState('');
+  const [ordenHilos, setOrdenHilos] = useState<'recientes' | 'antiguos'>('recientes');
 
   // Nuevo hilo
   const [titulo, setTitulo] = useState('');
@@ -173,8 +174,15 @@ setPublicaciones(resultado);
   setContenido('');
   setPublicaciones(prev => [{
     ...data.result,
+    usuario: esAnonima
+      ? null
+      : {
+          usuario_id: usuario?.id ?? '',
+          nombre: usuario?.nombre
+        },
     comentarios: data.result.comentarios ?? [],
   }, ...prev]);
+
 } else {
         setError('Error al crear el hilo.');
       }
@@ -240,6 +248,15 @@ setPublicaciones(resultado);
     );
   }
 
+  const publicacionesOrdenadas = [...publicaciones].sort((a, b) => {
+  const fechaA = new Date(a.fecha_creacion).getTime();
+  const fechaB = new Date(b.fecha_creacion).getTime();
+
+  return ordenHilos === 'recientes'
+    ? fechaB - fechaA
+    : fechaA - fechaB;
+});
+
   return (
     <div className="foro-page">
       <Navbar />
@@ -296,6 +313,27 @@ setPublicaciones(resultado);
           />
         </div>
 
+        {/* Filtros */}
+        <div className="foro-filtros">
+          <label className="foro-filtros__label">Ordenar hilos:</label>
+
+          <div className="foro-toggle">
+            <button
+              className={`foro-toggle__btn ${ordenHilos === 'recientes' ? 'active' : ''}`}
+              onClick={() => setOrdenHilos('recientes')}
+            >
+              Más recientes
+            </button>
+
+            <button
+              className={`foro-toggle__btn ${ordenHilos === 'antiguos' ? 'active' : ''}`}
+              onClick={() => setOrdenHilos('antiguos')}
+            >
+              Más antiguos
+              </button>
+          </div>
+        </div>
+        
         {/* Lista de publicaciones */}
         <div className="foro-lista">
           {publicacionesFiltradas.length === 0 ? (
@@ -304,7 +342,7 @@ setPublicaciones(resultado);
               <p>No se encontraron hilos.</p>
             </div>
           ) : (
-            publicacionesFiltradas.map(pub => (
+            publicacionesOrdenadas.map((pub) => (
               <Link
                 key={pub.publicacion_id}
                 to={`/foro/${pub.publicacion_id}`}
