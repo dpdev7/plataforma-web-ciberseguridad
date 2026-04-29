@@ -11,27 +11,27 @@ export default function DenunciaSection() {
       <div className="denuncia-caja">
         <h2>Denunciar un Delito Cibernético</h2>
         <p>
-          Si has sido víctima de un delito cibernético, es importante denunciarlo a las
-          autoridades competentes. Puedes encontrar información y recursos en los
-          siguientes enlaces:
+          Si has sido víctima de un delito cibernético en Barranquilla o Colombia,
+          puedes reportarlo a las autoridades competentes a través de los siguientes
+          canales oficiales. Actuar rápido aumenta las posibilidades de recuperar
+          tu información y detener a los responsables.
         </p>
         <div className="denuncia-botones">
-          {/* Enlaces externos con noopener noreferrer para prevenir tabnapping */}
           <a
-            href=""
+            href="https://caivirtual.policia.gov.co"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primario"
           >
-            Canal denuncia 1
+            CAI Virtual - Policía Nacional
           </a>
           <a
-            href=""
+            href="https://adenunciar.policia.gov.co/Adenunciar/Login.aspx?ReturnUrl=%2fAdenunciar%2fdefault.aspx"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-denuncia-secundario"
           >
-            Canal denuncia 2
+            Fiscalía General - Denuncia en Línea
           </a>
         </div>
       </div>

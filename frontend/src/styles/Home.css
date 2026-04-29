@@ -73,6 +73,71 @@
   z-index: 90;
 }
 
+/* ============================================
+   SIDEBAR MEJORADO
+============================================= */
+
+/* Encabezado con label y porcentaje */
+.toc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.toc-progreso-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+/* Barra de progreso */
+.toc-barra-fondo {
+  width: 100%;
+  height: 3px;
+  background-color: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.toc-barra-relleno {
+  height: 100%;
+  background-color: var(--accent);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* Número de sección */
+.toc-item-numero {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  min-width: 20px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+.toc-item.active .toc-item-numero {
+  color: var(--accent);
+}
+
+/* Footer del sidebar */
+.toc-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.toc-footer-icon {
+  font-size: 16px;
+  color: var(--accent);
+  opacity: 0.7;
+}
+
 /* Scrollbar personalizada en WebKit */
 .toc-sidebar::-webkit-scrollbar       { width: 4px; }
 .toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -642,6 +707,50 @@
 
 /* Footer — empuja el margen izquierdo para no quedar detrás del sidebar */
 .home-footer-wrapper { margin-left: var(--toc-width); }
+
+/* ============================================
+   ANIMACIONES DE ENTRADA
+============================================= */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero */
+.hero-content {
+  animation: fadeUp 0.7s ease both;
+}
+
+/* Secciones — cada una aparece con un retraso escalonado */
+#conceptos    { animation: fadeUp 0.6s ease 0.1s both; }
+#estadisticas { animation: fadeUp 0.6s ease 0.15s both; }
+#amenazas     { animation: fadeUp 0.6s ease 0.2s both; }
+#recursos     { animation: fadeUp 0.6s ease 0.25s both; }
+#denuncia     { animation: fadeUp 0.6s ease 0.3s both; }
+
+/* Cards — hover suave */
+.card-item {
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card-item:hover {
+  transform: translateY(-3px);
+}
+
+/* Estadísticas — hover suave */
+.estadistica-item {
+  transition: transform 0.2s;
+}
+.estadistica-item:hover {
+  transform: translateY(-3px);
+}
+
+/* Recursos — hover suave */
+.recurso-tarjeta {
+  transition: border-color 0.2s, transform 0.2s;
+}
+.recurso-tarjeta:hover {
+  transform: translateY(-3px);
+}
 
 /* ============================================
    RESPONSIVE

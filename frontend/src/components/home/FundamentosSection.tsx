@@ -29,9 +29,7 @@ export default function FundamentosSection() {
             ser un objetivo. Entender estos fundamentos es el primer paso para tomar
             decisiones informadas y navegar de forma más segura.
           </p>
-          <a href="#amenazas" className="btn-primario fundamentos-cta">
-            Conoce los tipos de amenazas →
-          </a>
+          
         </div>
 
         {/* Columna derecha: timeline vertical de pilares */}

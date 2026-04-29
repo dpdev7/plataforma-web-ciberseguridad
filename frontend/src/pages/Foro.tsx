@@ -152,7 +152,7 @@ export default function Foro() {
           contenido,
           es_anonima:  esAnonima,
           usuario_id:  usuario?.id ?? '',
-          categoria:   categoriaHilo || null,  // 👈 enviar categoria
+          categoria: categoriaHilo !== '' ? categoriaHilo : null,  
         }),
       });
       if (data.success) {

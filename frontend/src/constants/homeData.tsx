@@ -22,10 +22,10 @@ export const ARTICULOS = [
 
 // Cifras destacadas de la sección Estadísticas
 export const ESTADISTICAS = [
-  { num: '2,200+', label: 'Ataques Diarios', desc: 'Ciberataques registrados cada día a nivel global' },
-  { num: '$4.5M',  label: 'Costo Promedio',  desc: 'Pérdidas promedio por brecha de seguridad' },
-  { num: '95%',    label: 'Error Humano',    desc: 'De los incidentes son causados por personas' },
-  { num: '300B',   label: 'Contraseñas',     desc: 'Contraseñas en uso a nivel mundial' },
+  { num: '2.200+', label: 'Ataques Diarios',   desc: 'Ciberataques registrados cada día a nivel global en 2024' },
+  { num: '$4.9M',  label: 'Costo Promedio',    desc: 'Pérdidas promedio por brecha de datos en 2024, según IBM' },
+  { num: '94%',    label: 'Llega por Correo',  desc: 'Del malware se distribuye a través de correos electrónicos' },
+  { num: '+300%',  label: 'Aumento Phishing',  desc: 'Incremento de ataques de phishing desde 2020 según la APWG' },
 ];
 
 // Tarjetas de recursos con enlace a páginas internas
@@ -53,9 +53,9 @@ export const RECURSOS = [
   },
 ];
 
-// Lista de amenazas. Usa íconos SVG de Lucide (no Material Symbols) porque se renderizan dentro de tarjetas con fondo flex, no como font-icon.
+// Lista de amenazas. 
 export const AMENAZAS = [
-  { icon: <Bug size={20} />,       title: 'Malware',           desc: 'Software malicioso que puede dañar tu dispositivo, robar datos o tomar control del sistema.' },
+  { icon: <Bug size={20} />,       title: 'Malware',           desc: 'término que abarca cualquier tipo de software malicioso diseñado para dañar o explotar cualquier dispositivo, servicio o red programable.' },
   { icon: <Lock size={20} />,      title: 'Phishing',          desc: 'Correos falsos que suplantan entidades legítimas para robar tus credenciales o datos bancarios.' },
   { icon: <Lock size={20} />,      title: 'Ransomware',        desc: 'Cifra tus archivos y exige un pago para liberarlos, a menudo con un plazo límite.' },
   { icon: <Zap size={20} />,       title: 'Ataques DDoS',      desc: 'Inundación de un servidor con tráfico para dejarlo inaccesible a usuarios legítimos.' },
