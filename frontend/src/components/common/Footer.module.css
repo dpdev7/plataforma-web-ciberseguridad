@@ -29,13 +29,11 @@
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .footer {
-    flex-direction: column;
-    gap: 8px;
-    text-align: center;
-    padding: 20px;
+    display: none;
   }
 
   .footerAuth {
+    display: flex;
     flex-direction: column;
     gap: 4px;
     padding: 12px 20px;

@@ -720,6 +720,7 @@
   }
 }
 
+
 /* ── Responsive sidebar ── */
 @media (max-width: 700px) {
   .foro-layout { grid-template-columns: 1fr; }

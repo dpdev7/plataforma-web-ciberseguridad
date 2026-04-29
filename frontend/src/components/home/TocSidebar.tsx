@@ -3,7 +3,7 @@
 // Se muestra con clase 'open' cuando isOpen=true
 // El overlay oscuro cierra el drawer al hacer clic
 
-import { TOC_ITEMS } from '../../constants/homeData';
+import { TOC_ITEMS } from '../../constants/homeData'; // AÑADIR ARTICULOS SI SE DESEA SECCIÓN DE GUÍAS RECOMENDADAS
 
 interface Props {
   activeSection: string;
@@ -58,6 +58,19 @@ export default function TocSidebar({ activeSection, onScrollTo, isOpen, onClose 
               {label}
             </button>
           ))}
+
+          {/* 
+          <div className="toc-divider" />
+
+          <p className="toc-header" style={{ marginTop: 4 }}>Guías Recomendadas</p>
+          {ARTICULOS.map((a, i) => (
+            <div key={i} className="toc-articulo">
+              <p className="toc-articulo-titulo">{a.titulo}</p>
+              <p className="toc-articulo-tiempo">⏱ {a.tiempo}</p>
+            </div>
+          ))}
+          */}
+
         </nav>
 
         {/* Footer del sidebar */}

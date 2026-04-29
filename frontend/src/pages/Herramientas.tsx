@@ -280,31 +280,30 @@ export default function Herramientas() {
         </p>
       </header>
 
-      {/* Navegación por pestañas — el tab activo recibe borde inferior azul */}
-      <div className="herramientas-tabs">
-        {([
-          { id: 'validador',   label: 'Validador de Contraseñas' },
-          { id: 'generador',   label: 'Generador de Contraseñas' },
-          { id: 'encriptador', label: 'Encriptador AES-256'      },
-        ] as { id: Tab; label: string }[]).map(tab => (
-          <button
-            key={tab.id}
-            className={`herramientas-tab ${activeTab === tab.id ? 'herramientas-tab--active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-            type="button"
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Navegación por pestañas */}
+      <div className="herramientas-tabs-container">
+        <div className="herramientas-tabs">
+          {([
+            { id: 'validador',   label: 'Validador de Contraseñas' },
+            { id: 'generador',   label: 'Generador de Contraseñas' },
+            { id: 'encriptador', label: 'Encriptador AES-256'      },
+          ] as { id: Tab; label: string }[]).map(tab => (
+            <button
+              key={tab.id}
+              className={`herramientas-tab ${activeTab === tab.id ? 'herramientas-tab--active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              type="button"
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <main className="herramientas-content">
 
-        {/* ════════════════════════════════
-            PESTAÑA 1: Validador de Contraseñas
-            Usa ValidadorFortaleza para mostrar barra de progreso + requisitos
-            con la misma lógica del formulario de registro.
-            ════════════════════════════════ */}
+        {/* PESTAÑA 1: Validador de Contraseñas - Misma lógica del formulario de registro.
+             */}
         {activeTab === 'validador' && (
           <div className="herramienta-panel">
             <h2 className="panel-title">Validador de Fortaleza de Contraseña</h2>
@@ -333,10 +332,7 @@ export default function Herramientas() {
           </div>
         )}
 
-        {/* ════════════════════════════════
-            PESTAÑA 2: Generador de Contraseñas
-            Flujo educativo en 3 pasos: longitud → tipos de caracteres → generar
-            ════════════════════════════════ */}
+        {/* PESTAÑA 2: Generador de Contraseñas */}
         {activeTab === 'generador' && (
           <div className="herramienta-panel">
             <h2 className="panel-title">Generador de Contraseñas Seguras</h2>
@@ -423,11 +419,7 @@ export default function Herramientas() {
           </div>
         )}
 
-        {/* ════════════════════════════════
-            PESTAÑA 3: Encriptador AES-256-GCM
-            Permite cifrar y descifrar texto con clave personalizada.
-            Todo el procesamiento ocurre en el navegador (Web Crypto API).
-            ════════════════════════════════ */}
+        {/* PESTAÑA 3: Encriptador AES-256-GCM - Todo el procesamiento ocurre en el navegador (Web Crypto API).*/}
         {activeTab === 'encriptador' && (
           <div className="herramienta-panel">
             <h2 className="panel-title">Encriptador de Texto AES-256</h2>
