@@ -13,6 +13,7 @@ import Amenazas     from './src/pages/Amenazas';
 import Herramientas from './src/pages/Herramientas';
 import Foro         from './src/pages/Foro';
 import Hilo         from './src/pages/Hilo';
+import BottomNav from './src/components/common/BottomNav';
 import Biblioteca       from './src/pages/Biblioteca';
 import ArticuloPage     from './src/pages/ArticuloPage';
 import GuiaPage         from './src/pages/GuiaPage';
@@ -63,6 +64,7 @@ function App() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <BottomNav />
     </BrowserRouter>
   );
 }

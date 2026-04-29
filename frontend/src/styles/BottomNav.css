@@ -1,0 +1,67 @@
+/* Solo visible en móvil */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: #0d1117;
+    border-top: 1px solid #21262d;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    justify-content: space-around;
+    align-items: center;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .bottom-nav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    text-decoration: none;
+    color: #8b949e;
+    transition: color 0.2s;
+    padding: 4px 0;
+    position: relative;
+  }
+
+  .bottom-nav__item--active {
+    color: #2f81f7;
+  }
+
+  /* Punto indicador activo */
+  .bottom-nav__item--active::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 3px;
+    background: #2f81f7;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .bottom-nav__icon {
+    font-size: 22px;
+    transition: transform 0.2s;
+  }
+
+  .bottom-nav__item--active .bottom-nav__icon {
+    transform: translateY(-2px);
+  }
+
+  .bottom-nav__label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+}

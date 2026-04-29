@@ -752,6 +752,11 @@
   transform: translateY(-3px);
 }
 
+@media (max-width: 768px) {
+  /* Espacio para la bottom nav */
+  body { padding-bottom: 80px; }
+}
+
 /* ============================================
    RESPONSIVE
 ============================================= */
@@ -823,5 +828,7 @@
   .hero h1            { font-size: 19px; }
   .hero p             { font-size: 13px; }
   .estadistica-numero { font-size: 28px; }
-  .estadisticas-grid  { grid-template-columns: 1fr; } /* 2 → 1 columna */
+  .estadisticas-grid { grid-template-columns: 1fr; }
+  .estadistica-item { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 20px; }
+  .estadistica-item:first-child { border-top: none; padding-top: 0; }
 }

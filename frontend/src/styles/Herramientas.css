@@ -56,21 +56,31 @@
   line-height: 1.7;
 }
 
-/* Pestañas */
-.herramientas-tabs {
-  display: flex;
+/* Pestañas - Contenedor con scroll horizontal */
+.herramientas-tabs-container {
+  width: 100%;
   max-width: 900px;
   margin: 0 auto 32px;
   padding: 0 24px;
-  padding-bottom: 2px;
-  border-bottom: 2px solid #30363d;
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+
+.herramientas-tabs-container::-webkit-scrollbar { display: none; }
+
+/* Pestañas */
+.herramientas-tabs {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 2px;
+  border-bottom: 2px solid #30363d;
+  width: max-content;
+  min-width: 100%;
   animation: fadeUp 0.6s ease 0.2s both;
 }
-.herramientas-tabs::-webkit-scrollbar { display: none; }
 .herramientas-tab {
   background: transparent;
   border: none;
@@ -82,6 +92,7 @@
   margin-bottom: -2px;
   transition: color 0.2s, border-color 0.2s;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .herramientas-tab:hover { color: #e6edf3; }
 .herramientas-tab--active {
@@ -94,6 +105,7 @@
   outline: none;
   box-shadow: none;
 }
+
 
 /* Contenido */
 .herramientas-content {
@@ -527,11 +539,13 @@
 }
 .tooltip-cerrar:hover { color: #e6edf3; }
 
+
 /* Animaciones */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
 
 /* Responsive */
 @media (max-width: 700px) {
