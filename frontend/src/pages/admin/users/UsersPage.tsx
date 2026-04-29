@@ -1,10 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';  // 👈 agregar useEffect
+import { useState, useMemo, useEffect } from 'react';
 import { Pencil, Trash2, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react';
-import AdminTable from '../../../components/admin/AdminTable';
-import UserEditModal from './UsersEditModal';
+import AdminTable      from '../../../components/admin/AdminTable';
+import UserEditModal   from './UsersEditModal';
 import UserDeleteModal from './UserDeleteModal';
+import UserCreateModal from './UserCreateModal';  // 👈
 
-// 👇 Interfaz actualizada para coincidir con el backend
 interface User {
   id: string;
   nombre: string;
@@ -16,26 +16,25 @@ interface User {
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
 export default function UsersPage() {
-  const [users, setUsers]       = useState<User[]>([]);  // array vacío, no mock
-  const [loading, setLoading]   = useState(true);        
-  const [search, setSearch]     = useState('');
-  const [filter, setFilter]     = useState('active');
-  const [toEdit, setToEdit]     = useState<User | null>(null);
-  const [toDelete, setToDelete] = useState<User | null>(null);
-  const [page, setPage]         = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [users,     setUsers]     = useState<User[]>([]);
+  const [loading,   setLoading]   = useState(true);
+  const [search,    setSearch]    = useState('');
+  const [filter,    setFilter]    = useState('active');
+  const [toEdit,    setToEdit]    = useState<User | null>(null);
+  const [toDelete,  setToDelete]  = useState<User | null>(null);
+  const [showCreate, setShowCreate] = useState(false);  // 👈
+  const [page,      setPage]      = useState(1);
+  const [pageSize,  setPageSize]  = useState(5);
 
-  // 👇 Fetch real al backend
-  useEffect(() => {
-    fetch("http://localhost:8000/usuario/get/all/", {
-      credentials: "include",
-    })
+  const fetchUsers = () => {
+    setLoading(true);
+    fetch("http://localhost:8000/usuario/get/all/", { credentials: "include" })
       .then(res => res.json())
-      .then(data => {
-        if (data.success) setUsers(data.result);
-      })
+      .then(data => { if (data.success) setUsers(data.result); })
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { fetchUsers(); }, []);
 
   const filtered = useMemo(() => users.filter(u => {
     const matchSearch = u.nombre.toLowerCase().includes(search.toLowerCase()) ||
@@ -53,17 +52,11 @@ export default function UsersPage() {
   const handleFilter   = (val: string) => { setFilter(val);   setPage(1); };
   const handlePageSize = (val: number) => { setPageSize(val); setPage(1); };
 
-  const handleDelete = (user: User) => {
-    setUsers(prev => prev.filter(u => u.id !== user.id));
-    setToDelete(null);
-  };
-
-  // 👇 Columnas actualizadas con los campos reales del backend
   const columns = [
-    { key: 'nombre', label: 'Usuario' },   
+    { key: 'nombre', label: 'Usuario' },
     { key: 'email',  label: 'Correo'  },
     {
-      key: 'es_administrador',       
+      key: 'es_administrador',
       label: 'Rol',
       render: (value: unknown) => (
         <span className={`badge badge--${value ? 'admin' : 'user'}`}>
@@ -72,7 +65,7 @@ export default function UsersPage() {
       ),
     },
     {
-      key: 'activo',                    
+      key: 'activo',
       label: 'Estado',
       render: (value: unknown) => (
         <span className={`badge badge--${value ? 'active' : 'inactive'}`}>
@@ -98,7 +91,6 @@ export default function UsersPage() {
     },
   ];
 
-  // 👇 Mostrar loading mientras carga
   if (loading) return <p>Cargando usuarios...</p>;
 
   return (
@@ -127,7 +119,10 @@ export default function UsersPage() {
           <option value="inactive">Inactivos</option>
         </select>
 
-        <button className="btn btn--primary btn--sm">
+        <button
+          className="btn btn--primary btn--sm"
+          onClick={() => setShowCreate(true)}  // 👈
+        >
           <span className="icon-wrap icon-wrap--sm icon-wrap--white"><UserPlus size={14} /></span>
           Nuevo usuario
         </button>
@@ -162,7 +157,6 @@ export default function UsersPage() {
             >
               <ChevronLeft size={15} />
             </button>
-
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
               <button
                 key={n}
@@ -172,7 +166,6 @@ export default function UsersPage() {
                 {n}
               </button>
             ))}
-
             <button
               className="page-btn"
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
@@ -184,14 +177,18 @@ export default function UsersPage() {
         </div>
       </div>
 
+      {showCreate && (
+        <UserCreateModal
+          onClose={() => setShowCreate(false)}
+          onConfirm={() => { fetchUsers(); setShowCreate(false); }}  
+        />
+      )}
+
       {toEdit && (
         <UserEditModal
           user={toEdit}
           onClose={() => setToEdit(null)}
-          onSave={(updated) => {
-            setUsers(prev => prev.map(u => u.id === updated.id ? updated : u));
-            setToEdit(null);
-          }}
+          onSave={() => { fetchUsers(); setToEdit(null); }}
         />
       )}
 
@@ -199,7 +196,7 @@ export default function UsersPage() {
         <UserDeleteModal
           user={toDelete}
           onClose={() => setToDelete(null)}
-          onConfirm={() => handleDelete(toDelete)}
+          onConfirm={() => { fetchUsers(); setToDelete(null); }}
         />
       )}
     </div>

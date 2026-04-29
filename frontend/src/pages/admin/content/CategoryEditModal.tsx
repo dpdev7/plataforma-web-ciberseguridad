@@ -1,16 +1,24 @@
 import { useState } from 'react';
 import { X, BookOpen } from 'lucide-react';
 
-interface Props {
-  onClose: () => void;
-  onConfirm: (data: { nombre: string; descripcion: string }) => void;
-  initialData?: { nombre: string; descripcion: string };
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+
+interface Categoria {
+  categoria_id: string;
+  nombre: string;
+  descripcion: string;
 }
 
-export default function CategoryCreateModal({ onClose, onConfirm, initialData }: Props) {
+interface Props {
+  categoria: Categoria;
+  onClose:   () => void;
+  onConfirm: () => void;
+}
+
+export default function CategoryEditModal({ categoria, onClose, onConfirm }: Props) {
   const [form, setForm] = useState({
-    nombre:      initialData?.nombre      || '',
-    descripcion: initialData?.descripcion || '',
+    nombre:      categoria.nombre,
+    descripcion: categoria.descripcion,
   });
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
@@ -24,20 +32,17 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:8000/categoria/crear/', {
-        method: 'POST',
+      const res = await fetch(`${API_BASE}/categoria/editar/${categoria.categoria_id}/`, {
+        method:      'PATCH',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        headers:     { 'Content-Type': 'application/json' },
+        body:        JSON.stringify(form),
       });
 
       const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message ?? 'Error al editar');
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.message ?? 'Error al crear la categoría');
-      }
-
-      onConfirm(form); // 👈 avisa al padre que se creó exitosamente
+      onConfirm();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error de conexión');
     } finally {
@@ -51,21 +56,15 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
 
         <div className="modal__header">
           <div className="modal__header-left">
-            <span className="icon-wrap icon-wrap--md">
-              <BookOpen size={16} />
-            </span>
-            <h2 className="modal__title">
-              {initialData ? 'Editar categoría' : 'Nueva categoría'}
-            </h2>
+            <span className="icon-wrap icon-wrap--md"><BookOpen size={16} /></span>
+            <h2 className="modal__title">Editar categoría</h2>
           </div>
-          <button className="modal__close" onClick={onClose}>
-            <X size={18} />
-          </button>
+          <button className="modal__close" onClick={onClose}><X size={18} /></button>
         </div>
 
         <div className="modal__body">
           <div className="form-group">
-            <label>Título</label>
+            <label>Nombre</label>
             <input
               className="form-input"
               placeholder="Ej: Seguridad Web"
@@ -82,20 +81,17 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
               onChange={e => set('descripcion', e.target.value)}
             />
           </div>
-
           {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
         </div>
 
         <div className="modal__footer">
-          <button className="btn btn--ghost" onClick={onClose} disabled={loading}>
-            Cancelar
-          </button>
+          <button className="btn btn--ghost" onClick={onClose} disabled={loading}>Cancelar</button>
           <button
             className="btn btn--primary"
             onClick={handleSubmit}
             disabled={!form.nombre.trim() || loading}
           >
-            {loading ? 'Creando...' : initialData ? 'Guardar cambios' : 'Crear categoría'}
+            {loading ? 'Guardando...' : 'Guardar cambios'}
           </button>
         </div>
 

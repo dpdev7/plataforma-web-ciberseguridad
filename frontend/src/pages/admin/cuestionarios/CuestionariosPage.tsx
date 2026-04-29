@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Plus, Search, Trash2, ListChecks } from 'lucide-react';
 import type { Cuestionario } from '../../../types/adminContent';
 import CuestionarioCreateModal    from './CuestionarioCreateModal';
 import CuestionarioEditModal      from './CuestionarioEditModal';
 import CuestionarioDeleteModal    from './CuestionarioDeleteModal';
 import CuestionarioPreguntasModal from './CuestionarioPreguntasModal';
+import { Plus, Search, Trash2, ListChecks, Pencil } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
@@ -139,16 +139,20 @@ export default function CuestionariosPage() {
                     {c.esActivo ? 'Activo' : 'Inactivo'}
                   </span>
                 </td>
-                <td>
-                  <div className="table-actions">
-                    <button className="btn btn--ghost btn--sm" onClick={() => setToPreguntas(c)}>
-                      <ListChecks size={13} /> Preguntas
-                    </button>
-                    <button className="btn btn--danger btn--sm" onClick={() => setToDelete(c)}>
-                      <Trash2 size={13} /> Eliminar
-                    </button>
-                  </div>
-                </td>
+<td>
+  <div className="table-actions">
+    <button className="btn btn--ghost btn--sm" onClick={() => setToPreguntas(c)}>
+      <ListChecks size={13} /> Preguntas
+    </button>
+        <button className="btn btn--ghost btn--sm" onClick={() => setToEdit(c)}>  {/* 👈 agregado */}
+      <Pencil size={13} /> Editar
+    </button>
+    <button className="btn btn--danger btn--sm" onClick={() => setToDelete(c)}>
+      <Trash2 size={13} /> Eliminar
+    </button>
+  </div>
+</td>
+
               </tr>
             ))}
           </tbody>

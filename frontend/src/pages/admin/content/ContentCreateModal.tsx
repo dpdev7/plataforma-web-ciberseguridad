@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';  // 👈 agregar useEffect
 import { X, BookOpen } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
-import { CATEGORIAS } from '../../../types/adminContent';
+
+interface Categoria {
+  categoria_id: string;
+  nombre: string;
+}
 
 interface Props {
   onClose:   () => void;
@@ -9,14 +13,34 @@ interface Props {
 }
 
 export default function ContentCreateModal({ onClose, onConfirm }: Props) {
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+
   const [form, setForm] = useState({
     titulo:      '',
     descripcion: '',
     urlRecurso:  '',
     tipo:        'articulo' as TipoRecurso,
-    categoria:   'redes',
+    categoria:   '',
     esPublico:   true,
   });
+
+  // 👇 Fetch de categorías reales
+  useEffect(() => {
+    fetch('http://localhost:8000/categoria/obtener/all/', {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setCategorias(data.result);
+          // Selecciona la primera categoría por defecto
+          if (data.result.length > 0) {
+            setForm(prev => ({ ...prev, categoria: data.result[0].categoria_id }));
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const set = (key: string, value: unknown) =>
     setForm(prev => ({ ...prev, [key]: value }));
@@ -78,9 +102,17 @@ export default function ContentCreateModal({ onClose, onConfirm }: Props) {
             </div>
             <div className="form-group">
               <label>Categoría</label>
-              <select value={form.categoria} onChange={e => set('categoria', e.target.value)}>
-                {CATEGORIAS.map(c => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
+              <select
+                value={form.categoria}
+                onChange={e => set('categoria', e.target.value)}
+              >
+                {categorias.length === 0 && (
+                  <option value="">Cargando categorías...</option>
+                )}
+                {categorias.map(c => (
+                  <option key={c.categoria_id} value={c.categoria_id}>
+                    {c.nombre}
+                  </option>
                 ))}
               </select>
             </div>
