@@ -17,14 +17,14 @@ export default function HeroSection() {
       {/* Contenido centrado sobre el overlay */}
       <div className="hero-content">
         <h1>
-          Lorem ipsum dolor sit amet.<br />
-          <span>Lorem, ipsum dolor.</span>
-        </h1>
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit dolorem
-          perferendis ea adipisci! Vitae expedita ad culpa nemo. Lorem ipsum dolor
-          sit amet consectetur.
-        </p>
+  Tu seguridad digital<br />
+  <span>empieza aquí.</span>
+</h1>
+<p>
+  Aprende a identificar amenazas, protege tu información y navega con
+  confianza. CyberGuard es tu guía práctica en ciberseguridad para
+  ciudadanos y organizaciones de Barranquilla y Colombia.
+</p>
       </div>
 
       {/* hero::after en CSS aplica degradados en los 4 bordes

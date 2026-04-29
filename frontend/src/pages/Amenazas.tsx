@@ -27,7 +27,7 @@ const AMENAZAS: Amenaza[] = [
     icono: 'bug_report',
     nombre: 'Malware',
     descripcion:
-      'El malware, o software malicioso, es un término amplio que describe cualquier programa o código diseñado para infiltrarse, dañar o deshabilitar sistemas informáticos. Incluye virus, spyware, troyanos y más.',
+      'El malware es software malintencionado diseñado para interrumpir, dañar o obtener acceso no autorizado a los sistemas informáticos. Los ciberdelincuentes usan malware para infectar dispositivos con el fin de robar datos, obtener credenciales bancarias, vender acceso a recursos informáticos o información personal, o extorsionar pagos de las víctimas.',
     ejemploPractico:
       'Un usuario descarga un editor de video "gratuito" de un sitio web no oficial. Al instalarlo, también instala un keylogger que registra cada pulsación de tecla, capturando contraseñas y enviándolas a los atacantes.',
   },
@@ -36,7 +36,7 @@ const AMENAZAS: Amenaza[] = [
     icono: 'phishing',
     nombre: 'Phishing',
     descripcion:
-      'El phishing es una forma de ciberataque basada en la ingeniería social. Los atacantes se hacen pasar por entidades de confianza para engañar a las víctimas y hacer que revelen información confidencial.',
+      'El phishing es un tipo de ciberataque que utiliza correos electrónicos, mensajes de texto, llamadas telefónicas o sitios web fraudulentos para engañar a la gente y hacer que comparta datos confidenciales, descargue malware o se exponga a la ciberdelincuencia.',
     ejemploPractico:
       'Recibes un correo que aparenta ser de tu banco, alertándote de un problema con tu pago. El enlace te dirige a una página falsa diseñada para robar tus datos de tarjeta.',
   },
@@ -45,7 +45,7 @@ const AMENAZAS: Amenaza[] = [
     icono: 'lock',
     nombre: 'Ransomware',
     descripcion:
-      'El ransomware impide a los usuarios acceder a su sistema o archivos personales y exige el pago de un rescate para recuperarlos. Los ciberdelincuentes cifran los archivos y amenazan con borrarlos.',
+      'El ransomware es un tipo de malware que retiene como rehenes los datos confidenciales o el dispositivo de una víctima, amenazando con mantenerlos bloqueados, o algo peor, a menos que la víctima pague un rescate al atacante.',
     ejemploPractico:
       'Un empleado abre un archivo adjunto malicioso en un correo electrónico. El ransomware cifra todos los documentos de la empresa y exige 2 bitcoins para entregar la clave de descifrado.',
   },
@@ -54,7 +54,7 @@ const AMENAZAS: Amenaza[] = [
     icono: 'sync_alt',
     nombre: 'Ataque de Intermediario (MitM)',
     descripcion:
-      'Un ataque MitM ocurre cuando un atacante intercepta secretamente la comunicación entre dos partes, pudiendo observar, modificar o robar información sin que las partes se den cuenta.',
+      'Un ataque Man-in-the-Middle (MitM), o "hombre en el medio", es una ciberamenaza donde un atacante intercepta secretamente la comunicación entre dos partes (ej. usuario y sitio web) para espiar, robar credenciales o modificar datos en tiempo real. Es común en redes Wi-Fi públicas no seguras y el atacante se posiciona entre el usuario y el router.',
     ejemploPractico:
       'Te conectas a una red Wi-Fi gratuita en una cafetería. Un atacante intercepta tu tráfico y captura tus credenciales de inicio de sesión bancario.',
   },
@@ -63,7 +63,7 @@ const AMENAZAS: Amenaza[] = [
     icono: 'cloud_off',
     nombre: 'Ataques DDoS',
     descripcion:
-      'Un ataque de denegación de servicio distribuido busca hacer que un servicio en línea sea inaccesible, inundando el servidor con tráfico falso desde múltiples fuentes (botnets).',
+      'Un ataque de denegación de servicio distribuido (DDoS) es un intento malintencionado de interrumpir el tráfico normal de un servidor, servicio o red determinada, sobrecargando el objetivo o su infraestructura asociada con una avalancha de tráfico de Internet.',
     ejemploPractico:
       'Un grupo de cibercriminales lanza un ataque DDoS contra el sitio web de comercio electrónico de una corporación durante una venta importante, causando pérdidas millonarias.',
   },
@@ -72,7 +72,7 @@ const AMENAZAS: Amenaza[] = [
     icono: 'code',
     nombre: 'Inyección SQL',
     descripcion:
-      'La inyección SQL aprovecha vulnerabilidades en la base de datos de una aplicación web para "inyectar" código malicioso en campos de entrada, permitiendo acceso no autorizado a datos.',
+      'La inyección de código SQL* (Structured Query Language) es una técnica de inyección de código que se utiliza para modificar u obtener datos de bases de datos SQL. Mediante la inserción de sentencias SQL especializadas en un campo de entrada, un atacante puede ejecutar comandos que permitan obtener datos de la base de datos, destruir datos confidenciales u otras manipulaciones.',
     ejemploPractico:
       'En un campo de nombre de usuario, en lugar de un nombre, un atacante ingresa una instrucción SQL especial que hace que la base de datos devuelva todos los usuarios y contraseñas.',
   },
