@@ -18,7 +18,7 @@ const Register: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/registro/", {
+      const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/registro/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

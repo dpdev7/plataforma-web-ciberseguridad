@@ -18,7 +18,7 @@ export default function CategoryDeleteModal({ onClose, onConfirm, categoryName, 
     setError(null);
 
     try {
-      const res = await fetch(`http://backend-web-ciberseguridad.onrender.com/categoria/eliminar/${categoryId}/`, {
+      const res = await fetch(`https://backend-web-ciberseguridad.onrender.com/categoria/eliminar/${categoryId}/`, {
         method: 'DELETE',
         credentials: 'include',
       });

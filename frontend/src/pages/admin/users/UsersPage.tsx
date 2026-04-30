@@ -29,7 +29,7 @@ export default function UsersPage() {
 
   const fetchUsers = () => {
     setLoading(true);
-    fetch("http://backend-web-ciberseguridad.onrender.com/usuario/get/all/", { credentials: "include" })
+    fetch("https://backend-web-ciberseguridad.onrender.com/usuario/get/all/", { credentials: "include" })
       .then(res => res.json())
       .then(data => { if (data.success) setUsers(data.result); })
       .finally(() => setLoading(false));

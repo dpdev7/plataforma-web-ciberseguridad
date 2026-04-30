@@ -11,7 +11,7 @@ const ResetPassword: React.FC = () => {
     setLoading(false);
     try {
       const response = await fetch(
-        "http://backend-web-ciberseguridad.onrender.com/usuario/solicitar-codigo/",
+        "https://backend-web-ciberseguridad.onrender.com/usuario/solicitar-codigo/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

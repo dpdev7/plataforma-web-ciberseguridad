@@ -27,7 +27,7 @@ export default function UserDeleteModal({ user, onClose, onConfirm }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`http://backend-web-ciberseguridad.onrender.com/usuario/delete/${user.id}/`, {
+      const res = await fetch(`https://backend-web-ciberseguridad.onrender.com/usuario/delete/${user.id}/`, {
         method: 'PATCH',
         credentials: 'include',
       });

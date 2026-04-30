@@ -15,7 +15,7 @@ const VerifyEmail: React.FC = () => {
   const handleVerifyEmail = async (data: Record<string, string>) => {
     setLoading(true);
     try {
-      const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/verificar/", {
+      const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/verificar/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

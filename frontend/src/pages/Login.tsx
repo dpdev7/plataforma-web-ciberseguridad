@@ -12,7 +12,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/login/", {
+      const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/login/", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

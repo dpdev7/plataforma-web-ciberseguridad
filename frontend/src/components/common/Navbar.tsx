@@ -36,7 +36,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/me/", {
+        const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/me/", {
           method: "GET",
           credentials: "include", 
         });
@@ -59,7 +59,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   }, []);
 
   const handleLogout = async () => {
-    await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/logout/", {
+    await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/logout/", {
       method: "POST",
       credentials: "include",
     });
