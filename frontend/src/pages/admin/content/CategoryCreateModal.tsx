@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, BookOpen } from 'lucide-react';
+import { API_URL } from '../../../utils/api';  // 👈 ajusta el path según tu estructura
 
 interface Props {
   onClose: () => void;
@@ -24,7 +25,7 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:8000/categoria/crear/', {
+      const res = await fetch(`${API_URL}/categoria/crear/`, {  // 👈 corregido
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -37,7 +38,7 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
         throw new Error(data.message ?? 'Error al crear la categoría');
       }
 
-      onConfirm(form); // 👈 avisa al padre que se creó exitosamente
+      onConfirm(form);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error de conexión');
     } finally {
@@ -82,7 +83,6 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
               onChange={e => set('descripcion', e.target.value)}
             />
           </div>
-
           {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
         </div>
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';  // 👈 agregar useEffect
 import { X, BookOpen } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
 
+
 interface Categoria {
   categoria_id: string;
   nombre: string;
@@ -26,9 +27,9 @@ export default function ContentCreateModal({ onClose, onConfirm }: Props) {
 
   // 👇 Fetch de categorías reales
   useEffect(() => {
-    fetch('http://localhost:8000/categoria/obtener/all/', {
-      credentials: 'include',
-    })
+fetch(`backend-web-ciberseguridad.onrender.com/categoria/obtener/all/`, {
+  credentials: 'include',
+})
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -136,5 +137,4 @@ export default function ContentCreateModal({ onClose, onConfirm }: Props) {
 
       </div>
     </div>
-  );
-}
+  )}

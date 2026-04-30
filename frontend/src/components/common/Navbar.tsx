@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ShieldCheck } from "lucide-react"; // Añadí ShieldCheck para el ícono de admin
 import styles from "./Navbar.module.css";
 
+
 interface NavbarProps {
   onMenuToggle?: () => void;
   menuOpen?: boolean;
@@ -35,7 +36,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:8000/usuario/me/", {
+        const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/me/", {
           method: "GET",
           credentials: "include", 
         });
@@ -58,7 +59,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   }, []);
 
   const handleLogout = async () => {
-    await fetch("http://localhost:8000/usuario/logout/", {
+    await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/logout/", {
       method: "POST",
       credentials: "include",
     });

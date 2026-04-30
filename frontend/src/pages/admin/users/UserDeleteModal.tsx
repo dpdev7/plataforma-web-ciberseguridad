@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { Trash2, X } from 'lucide-react';
 
+
 interface User {
   id: string;
   nombre: string;
@@ -26,7 +27,7 @@ export default function UserDeleteModal({ user, onClose, onConfirm }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`http://localhost:8000/usuario/delete/${user.id}/`, {
+      const res = await fetch(`http://backend-web-ciberseguridad.onrender.com/usuario/delete/${user.id}/`, {
         method: 'PATCH',
         credentials: 'include',
       });

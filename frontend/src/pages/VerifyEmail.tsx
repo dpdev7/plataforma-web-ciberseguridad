@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 
+
 const VerifyEmail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
@@ -14,7 +15,7 @@ const VerifyEmail: React.FC = () => {
   const handleVerifyEmail = async (data: Record<string, string>) => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/usuario/verificar/", {
+      const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/verificar/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

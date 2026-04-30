@@ -35,7 +35,7 @@ export default function UserEditModal({ user, onClose, onSave }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`http://localhost:8000/usuario/update/${user.id}/`, {
+      const res = await fetch(`http://backend-web-ciberseguridad.onrender.com/usuario/update/${user.id}/`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

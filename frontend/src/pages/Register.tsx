@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 
+
 const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -17,7 +18,7 @@ const Register: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/usuario/registro/", {
+      const response = await fetch("http://backend-web-ciberseguridad.onrender.com/usuario/registro/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

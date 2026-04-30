@@ -3,7 +3,8 @@ import { Pencil, Trash2, UserPlus, ChevronLeft, ChevronRight } from 'lucide-reac
 import AdminTable      from '../../../components/admin/AdminTable';
 import UserEditModal   from './UsersEditModal';
 import UserDeleteModal from './UserDeleteModal';
-import UserCreateModal from './UserCreateModal';  // 👈
+import UserCreateModal from './UserCreateModal'; 
+
 
 interface User {
   id: string;
@@ -28,7 +29,7 @@ export default function UsersPage() {
 
   const fetchUsers = () => {
     setLoading(true);
-    fetch("http://localhost:8000/usuario/get/all/", { credentials: "include" })
+    fetch("http://backend-web-ciberseguridad.onrender.com/usuario/get/all/", { credentials: "include" })
       .then(res => res.json())
       .then(data => { if (data.success) setUsers(data.result); })
       .finally(() => setLoading(false));

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 
+
 // Página final del flujo de recuperación de contraseña.
 // Flujo completo:
 //   /reset-password        → usuario ingresa su email
@@ -21,7 +22,7 @@ const ResetPasswordConfirm: React.FC = () => {
     try {
       // Enviamos el email recuperado del state y la nueva contraseña al backend
       const response = await fetch(
-        "http://localhost:8000/usuario/cambiar-password/",
+        "http://backend-web-ciberseguridad.onrender.com/usuario/cambiar-password/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
