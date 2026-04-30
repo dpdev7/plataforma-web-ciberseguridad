@@ -44,7 +44,6 @@ export default function UserEditModal({ user, onClose, onSave }: Props) {
 
       if (!res.ok) throw new Error('Error al actualizar el usuario');
 
-      //const data = await res.json();
       onSave({ ...user, ...form });
     } catch (err) {
       setError('No se pudo actualizar el usuario. Intenta de nuevo.');
