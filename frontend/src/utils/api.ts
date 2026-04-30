@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+export const API_URL = "https://backend-web-ciberseguridad.onrender.com";
 
 export const apiFetch = async (endpoint: string, options?: RequestInit) => {
   const res = await fetch(`${API_URL}${endpoint}`, {
