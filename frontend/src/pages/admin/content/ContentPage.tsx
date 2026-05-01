@@ -87,6 +87,7 @@ export default function ContentPage() {
           url_recurso:  data.urlRecurso,
           tipo_recurso: data.tipo,
           es_publico:   data.esPublico,
+          categoria_id: data.categoria,
         }),
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -106,6 +107,7 @@ export default function ContentPage() {
           url_recurso:  data.urlRecurso,
           tipo_recurso: data.tipo,
           es_publico:   data.esPublico,
+          categoria_id: data.categoria,
         }),
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);

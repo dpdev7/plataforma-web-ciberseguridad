@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Pencil } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
-import { CATEGORIAS } from '../../../types/adminContent';
+import { API_URL } from '../../../utils/api';
+
+interface Categoria {
+  categoria_id: string;
+  nombre: string;
+}
 
 interface Props {
   recurso:   Recurso;
@@ -10,7 +15,23 @@ interface Props {
 }
 
 export default function ContentEditModal({ recurso, onClose, onConfirm }: Props) {
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [form, setForm] = useState({ ...recurso });
+
+  useEffect(() => {
+    fetch(`${API_URL}/categoria/obtener/all/`, {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setCategorias(data.result);
+        }
+      })
+      .catch((err) => {
+        console.log('CATEGORIAS ERROR:', err);
+      });
+  }, []);
 
   const set = (key: string, value: unknown) =>
     setForm(prev => ({ ...prev, [key]: value }));
@@ -64,9 +85,17 @@ export default function ContentEditModal({ recurso, onClose, onConfirm }: Props)
             </div>
             <div className="form-group">
               <label>Categoría</label>
-              <select value={form.categoria} onChange={e => set('categoria', e.target.value)}>
-                {CATEGORIAS.map(c => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
+              <select
+                value={form.categoria}
+                onChange={e => set('categoria', e.target.value)}
+              >
+                {categorias.length === 0 && (
+                  <option value="">Cargando categorías...</option>
+                )}
+                {categorias.map(c => (
+                  <option key={c.categoria_id} value={c.categoria_id}>
+                    {c.nombre}
+                  </option>
                 ))}
               </select>
             </div>
