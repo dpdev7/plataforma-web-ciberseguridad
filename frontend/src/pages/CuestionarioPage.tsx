@@ -5,7 +5,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import '../styles/cuestionario.css';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
 
 // Tipos locales alineados con la respuesta del backend
 interface OpcionAPI {

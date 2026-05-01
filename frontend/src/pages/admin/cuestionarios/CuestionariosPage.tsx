@@ -6,7 +6,7 @@ import CuestionarioDeleteModal    from './CuestionarioDeleteModal';
 import CuestionarioPreguntasModal from './CuestionarioPreguntasModal';
 import { Plus, Search, Trash2, ListChecks, Pencil } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
 
 export default function CuestionariosPage() {
   const [cuestionarios, setCuestionarios] = useState<Cuestionario[]>([]);
