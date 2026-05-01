@@ -8,7 +8,7 @@ import ContentCreateModal  from './ContentCreateModal';
 import ContentEditModal    from './ContentEditModal';
 import ContentDeleteModal  from './ContentDeleteModal';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
 
 interface Categoria {
   categoria_id: string;

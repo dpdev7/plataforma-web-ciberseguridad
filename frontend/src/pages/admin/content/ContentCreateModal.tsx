@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';  // 👈 agregar useEffect
 import { X, BookOpen } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
+import { API_URL } from '../../../utils/api';
 
 
 interface Categoria {
@@ -26,22 +27,23 @@ export default function ContentCreateModal({ onClose, onConfirm }: Props) {
   });
 
   // 👇 Fetch de categorías reales
-  useEffect(() => {
-fetch(`backend-web-ciberseguridad.onrender.com/categoria/obtener/all/`, {
-  credentials: 'include',
-})
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setCategorias(data.result);
-          // Selecciona la primera categoría por defecto
-          if (data.result.length > 0) {
-            setForm(prev => ({ ...prev, categoria: data.result[0].categoria_id }));
-          }
+useEffect(() => {
+  fetch(`${API_URL}/categoria/obtener/all/`, {
+    credentials: 'include',
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        setCategorias(data.result);
+        if (data.result.length > 0) {
+          setForm(prev => ({ ...prev, categoria: data.result[0].categoria_id }));
         }
-      })
-      .catch(() => {});
-  }, []);
+      }
+    })
+    .catch((err) => {
+      console.log('CATEGORIAS ERROR:', err); 
+    });
+}, []);
 
   const set = (key: string, value: unknown) =>
     setForm(prev => ({ ...prev, [key]: value }));
