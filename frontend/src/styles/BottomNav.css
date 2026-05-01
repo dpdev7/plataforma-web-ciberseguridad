@@ -1,4 +1,13 @@
-/* Solo visible en móvil */
+/* ============================================
+   BOTTOM NAV
+   Solo visible en móvil
+============================================= */
+
+:root {
+  --bottom-nav-height: 64px;
+  --bottom-nav-safe-space: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+}
+
 .bottom-nav {
   display: none;
 }
@@ -7,37 +16,52 @@
   .bottom-nav {
     display: flex;
     position: fixed;
-    bottom: 0;
     left: 0;
     right: 0;
+    bottom: 0;
     z-index: 200;
-    background: #0d1117;
-    border-top: 1px solid #21262d;
-    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    min-height: var(--bottom-nav-height);
     justify-content: space-around;
     align-items: center;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom, 0px));
+    background: rgba(13, 17, 23, 0.96);
+    border-top: 1px solid #21262d;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.22);
   }
 
   .bottom-nav__item {
     display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 52px;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 3px;
-    flex: 1;
-    text-decoration: none;
-    color: #8b949e;
-    transition: color 0.2s;
     padding: 4px 0;
     position: relative;
+    text-decoration: none;
+    color: #8b949e;
+    transition: color 0.2s, transform 0.2s, background 0.2s;
+    border-radius: 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .bottom-nav__item:hover {
+    color: #c9d1d9;
+  }
+
+  .bottom-nav__item:active {
+    transform: scale(0.98);
   }
 
   .bottom-nav__item--active {
     color: #2f81f7;
+    background: rgba(47, 129, 247, 0.08);
   }
 
-  /* Punto indicador activo */
   .bottom-nav__item--active::before {
     content: '';
     position: absolute;
@@ -52,7 +76,9 @@
 
   .bottom-nav__icon {
     font-size: 22px;
+    line-height: 1;
     transition: transform 0.2s;
+    flex-shrink: 0;
   }
 
   .bottom-nav__item--active .bottom-nav__icon {
@@ -63,5 +89,7 @@
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.02em;
+    line-height: 1.1;
+    white-space: nowrap;
   }
 }

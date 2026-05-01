@@ -1,15 +1,5 @@
-// Página principal de la Biblioteca de recursos educativos.
-// Permite explorar artículos, guías y cuestionarios de ciberseguridad,
-// con filtros por tipo de contenido, tema y búsqueda por texto.
-
-import { useState, useEffect, useMemo } from 'react';
-import {
-  Search,
-  LayoutGrid,
-  List,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 import {
   TIPOS,
   type TipoContenido,
@@ -24,62 +14,29 @@ import QuizzesList from '../components/biblioteca/QuizzesList';
 import heroBiblioteca from '../assets/images/cyber-library.webp';
 import '../styles/biblioteca.css';
 
-/** URL base de la API. Se toma de la variable de entorno o usa producción como fallback. */
 const API_BASE =
   import.meta.env.VITE_API_URL ?? 'https://backend-web-ciberseguridad.onrender.com';
 
-/** Estructura de tema consumida por el sidebar. */
 type TemaSidebar = {
   id: string;
   label: string;
 };
 
-/** Modos de visualización del panel principal. */
-type VistaBiblioteca = 'grid' | 'list';
-
 export default function Biblioteca() {
-  // Estado de filtros
-
-  /** Tipo de contenido actualmente seleccionado en el sidebar ('all' muestra todos). */
   const [tipoActivo, setTipoActivo] = useState<TipoContenido | 'all'>('all');
-
-  /** Tema actualmente seleccionado en el sidebar ('all' muestra todos los temas). */
   const [temaActivo, setTemaActivo] = useState<string>('all');
-
-  /** Texto ingresado en el buscador del hero para filtrar por título o descripción. */
   const [busqueda, setBusqueda] = useState('');
-
-  /** Controla si el menú mobile del Navbar está abierto o cerrado. */
   const [menuOpen, setMenuOpen] = useState(false);
 
-  /** Modo de visualización del listado principal: cuadrícula o lista. */
-  const [vista, setVista] = useState<VistaBiblioteca>('grid');
-
-  /** Cantidad de recursos a mostrar por página. */
-  const [filasPorPagina, setFilasPorPagina] = useState<number>(12);
-
-  /** Página actual de la paginación. */
-  const [paginaActual, setPaginaActual] = useState<number>(1);
-
-  // Estado de datos remotos
-
-  /** Lista completa de recursos cargados desde la API. */
   const [recursos, setRecursos] = useState<Recurso[]>([]);
-
-  /** Lista de categorías reales cargadas desde el backend para poblar el sidebar. */
   const [temas, setTemas] = useState<TemaSidebar[]>([]);
-
-  /** Indica si hay una petición en curso para mostrar el estado de carga. */
-  const [loading, setLoading] = useState<boolean>(false);
-
-  /** Mensaje de error si alguna petición a la API falla; null si no hay error. */
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch de categorías
-  /**
-   * Carga las categorías reales creadas desde el panel admin.
-   * Estas categorías se usan como temas dinámicos en el sidebar.
-   */
+  const [vista, setVista] = useState<'grid' | 'list'>('grid');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [porPagina, setPorPagina] = useState(9);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -91,12 +48,15 @@ export default function Biblioteca() {
         const data = await response.json();
         const categorias = Array.isArray(data?.result) ? data.result : [];
 
-        const categoriasMapeadas: TemaSidebar[] = categorias
-          .map((categoria: any) => ({
-            id: String(categoria.nombre ?? '').trim(),
-            label: String(categoria.nombre ?? '').trim(),
-          }))
-          .filter((categoria: TemaSidebar) => categoria.id !== '');
+        const categoriasMapeadas: TemaSidebar[] = categorias.map((categoria: any) => ({
+          id: String(
+            categoria.categoria_id ??
+              categoria.id ??
+              categoria.nombre ??
+              crypto.randomUUID()
+          ),
+          label: String(categoria.nombre ?? 'General'),
+        }));
 
         if (!cancelled) {
           setTemas(categoriasMapeadas);
@@ -116,24 +76,12 @@ export default function Biblioteca() {
     };
   }, []);
 
-  // Fetch de recursos y cuestionarios
-  /**
-   * Carga en paralelo:
-   * - recursos educativos
-   * - cuestionarios
-   *
-   * Luego unifica ambos resultados en un solo arreglo para que la biblioteca
-   * pueda filtrarlos, ordenarlos y paginarlos desde un mismo flujo.
-   */
   useEffect(() => {
     let cancelled = false;
 
     setLoading(true);
     setError(null);
 
-    /**
-     * Obtiene cuestionarios desde la API y los adapta al tipo `Recurso`.
-     */
     const fetchCuestionarios = () =>
       fetch(`${API_BASE}/cuestionario/obtener/all/`)
         .then((r) => {
@@ -145,8 +93,8 @@ export default function Biblioteca() {
             (c: any): Recurso => ({
               id: c.cuestionario_id,
               tipo: 'cuestionario',
-              tema: c.categoria?.nombre ?? '',
-              titulo: c.titulo ?? '',
+              tema: c.categoria?.nombre ?? c.tema?.nombre ?? c.tema ?? 'general',
+              titulo: c.titulo,
               descripcion: c.descripcion ?? '',
               esPublico: c.es_activo,
               preguntas: c.preguntas?.length ?? 0,
@@ -154,11 +102,12 @@ export default function Biblioteca() {
           )
         );
 
-    /**
-     * Obtiene artículos y guías desde el endpoint general de recursos.
-     */
-    const fetchRecursos = () =>
-      fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/`)
+    const fetchRecursos = (tipo?: string) =>
+      fetch(
+        `${API_BASE}/categoria/recurso-edu/obtener/all/${
+          tipo ? `?tipo_recurso=${tipo}` : ''
+        }`
+      )
         .then((r) => {
           if (!r.ok) throw new Error(`Error ${r.status}`);
           return r.json();
@@ -168,21 +117,33 @@ export default function Biblioteca() {
             (r: any): Recurso => ({
               id: r.recurso_id,
               tipo: r.tipo_recurso as TipoContenido,
-              tema: r.categoria?.nombre ?? '',
-              titulo: r.titulo ?? '',
+              tema: r.categoria?.nombre ?? 'general',
+              titulo: r.titulo,
               descripcion: r.descripcion ?? '',
               urlRecurso: r.url_recurso,
+              imagen: r.imagen ?? r.imagen_url ?? null,
               esPublico: r.es_publico,
               fechaPublicacion: r.fecha_publicacion,
+              tiempoLectura: r.tiempo_lectura ?? r.tiempoLectura ?? undefined,
             })
           )
         );
 
-    Promise.all([fetchRecursos(), fetchCuestionarios()])
-      .then(([res, quiz]) => {
-        if (!cancelled) {
-          setRecursos([...res, ...quiz]);
-        }
+    let promise: Promise<Recurso[]>;
+
+    if (tipoActivo === 'all') {
+      promise = Promise.all([fetchRecursos(), fetchCuestionarios()]).then(
+        ([res, quiz]) => [...res, ...quiz]
+      );
+    } else if (tipoActivo === 'cuestionario') {
+      promise = fetchCuestionarios();
+    } else {
+      promise = fetchRecursos(tipoActivo);
+    }
+
+    promise
+      .then((data) => {
+        if (!cancelled) setRecursos(data);
       })
       .catch((err) => {
         if (!cancelled) {
@@ -190,37 +151,53 @@ export default function Biblioteca() {
         }
       })
       .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tipoActivo]);
 
-  // Filtrado por tipo
-  /**
-   * Aplica el filtro principal del sidebar:
-   * - all
-   * - articulo
-   * - guia
-   * - cuestionario
-   */
-  const recursosFiltradosPorTipo = useMemo(() => {
-    if (tipoActivo === 'all') return recursos;
-    return recursos.filter((r) => r.tipo === tipoActivo);
-  }, [recursos, tipoActivo]);
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
 
-  // Filtrado por tema y búsqueda
-  /**
-   * Aplica filtros secundarios:
-   * - categoría/tema
-   * - texto ingresado en el buscador
-   */
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [tipoActivo, temaActivo, busqueda, vista, porPagina]);
+
+  const conteoPorTema = useMemo(
+    () =>
+      recursos.reduce<Record<string, number>>((acc, r) => {
+        acc[r.tema] = (acc[r.tema] ?? 0) + 1;
+        return acc;
+      }, {}),
+    [recursos]
+  );
+
+  const temasSidebar = useMemo(() => {
+    const base = [...temas];
+    const existentes = new Set(base.map((t) => t.id));
+
+    recursos.forEach((recurso) => {
+      if (!existentes.has(recurso.tema)) {
+        base.push({
+          id: recurso.tema,
+          label: recurso.tema,
+        });
+        existentes.add(recurso.tema);
+      }
+    });
+
+    return base;
+  }, [temas, recursos]);
+
   const filtrados = useMemo(() => {
-    return recursosFiltradosPorTipo.filter((r) => {
+    return recursos.filter((r) => {
       if (temaActivo !== 'all' && r.tema !== temaActivo) return false;
 
       if (busqueda.trim()) {
@@ -233,196 +210,125 @@ export default function Biblioteca() {
 
       return true;
     });
-  }, [recursosFiltradosPorTipo, temaActivo, busqueda]);
+  }, [recursos, temaActivo, busqueda]);
 
-  // Orden estable del listado
-  /**
-   * Ordena primero por fecha descendente y, si no existe diferencia,
-   * usa el título para mantener un orden estable y predecible.
-   */
-  const ordenados = useMemo(() => {
-    return [...filtrados].sort((a, b) => {
-      const fechaA = a.fechaPublicacion ? new Date(a.fechaPublicacion).getTime() : 0;
-      const fechaB = b.fechaPublicacion ? new Date(b.fechaPublicacion).getTime() : 0;
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / porPagina));
 
-      if (fechaB !== fechaA) return fechaB - fechaA;
+  const paginados = useMemo(() => {
+    const inicio = (paginaActual - 1) * porPagina;
+    const fin = inicio + porPagina;
+    return filtrados.slice(inicio, fin);
+  }, [filtrados, paginaActual, porPagina]);
 
-      return a.titulo.localeCompare(b.titulo, 'es', {
-        sensitivity: 'base',
-      });
-    });
-  }, [filtrados]);
-
-  // Paginación
-  /**
-   * Calcula el total de páginas según el total de resultados y
-   * la cantidad seleccionada por página.
-   */
-  const totalPaginas = useMemo(() => {
-    return Math.max(1, Math.ceil(ordenados.length / filasPorPagina));
-  }, [ordenados.length, filasPorPagina]);
-
-  /**
-   * Reinicia la página actual cuando cambia cualquiera de los filtros principales,
-   * la cantidad por página o el modo de vista.
-   */
-  useEffect(() => {
-    setPaginaActual(1);
-  }, [tipoActivo, temaActivo, busqueda, filasPorPagina, vista]);
-
-  /**
-   * Si por un cambio de filtros la página actual queda fuera de rango,
-   * la ajusta al nuevo máximo disponible.
-   */
   useEffect(() => {
     if (paginaActual > totalPaginas) {
       setPaginaActual(totalPaginas);
     }
   }, [paginaActual, totalPaginas]);
 
-  /**
-   * Obtiene únicamente los elementos correspondientes a la página actual.
-   */
-  const recursosPaginados = useMemo(() => {
-    const inicio = (paginaActual - 1) * filasPorPagina;
-    const fin = inicio + filasPorPagina;
-    return ordenados.slice(inicio, fin);
-  }, [ordenados, paginaActual, filasPorPagina]);
-
-  // Bloqueo de scroll cuando el menú mobile está abierto
-  /**
-   * Evita scroll del body mientras el menú mobile del navbar está abierto.
-   */
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [menuOpen]);
-
-  // Métricas para el sidebar
-  /**
-   * Cuenta cuántos recursos pertenecen a cada tema para mostrarlos
-   * como badges o contadores en el sidebar.
-   */
-  const conteoPorTema = useMemo(() => {
-    return recursos.reduce<Record<string, number>>((acc, r) => {
-      if (!r.tema) return acc;
-      acc[r.tema] = (acc[r.tema] ?? 0) + 1;
-      return acc;
-    }, {});
-  }, [recursos]);
-
-  // Temas dinámicos del sidebar
-  /**
-   * Construye la lista final de temas del sidebar:
-   * - parte de las categorías cargadas desde backend,
-   * - añade temas presentes en recursos si aún no existen.
-   */
-  const temasSidebar = useMemo(() => {
-    const base = [...temas];
-    const existentes = new Set(base.map((t) => t.id));
-
-    recursos.forEach((recurso) => {
-      const tema = recurso.tema?.trim();
-      if (!tema) return;
-
-      if (!existentes.has(tema)) {
-        base.push({
-          id: tema,
-          label: tema,
-        });
-        existentes.add(tema);
-      }
-    });
-
-    return base.sort((a, b) =>
-      a.label.localeCompare(b.label, 'es', { sensitivity: 'base' })
-    );
-  }, [temas, recursos]);
-
-  /**
-   * Inserta una opción global para poder volver fácilmente
-   * al estado sin filtro de categorías.
-   */
-  const temasSidebarConTodos = useMemo(() => {
-    return [{ id: 'all', label: 'Todas las categorías' }, ...temasSidebar];
-  }, [temasSidebar]);
-
-  // Acciones
-  /**
-   * Limpia filtros secundarios visibles en la UI:
-   * - tema
-   * - búsqueda
-   */
-  const limpiarFiltros = () => {
-    setTemaActivo('all');
-    setBusqueda('');
-  };
-
-  /**
-   * Avanza una página sin sobrepasar el límite máximo.
-   */
-  const irPaginaSiguiente = () => {
-    setPaginaActual((prev) => Math.min(prev + 1, totalPaginas));
-  };
-
-  /**
-   * Retrocede una página sin bajar de la primera.
-   */
-  const irPaginaAnterior = () => {
-    setPaginaActual((prev) => Math.max(prev - 1, 1));
-  };
-
-  // Derivados para paneles
-  /**
-   * Separa los recursos paginados por tipo para reutilizar
-   * los componentes ya existentes según la vista seleccionada.
-   */
-  const articulos = recursosPaginados.filter((r) => r.tipo === 'articulo');
-  const guias = recursosPaginados.filter((r) => r.tipo === 'guia');
-  const cuestionarios = recursosPaginados.filter((r) => r.tipo === 'cuestionario');
-
-  /** Etiqueta legible del panel actual. */
   const panelLabel =
     tipoActivo === 'all'
       ? 'Todos los recursos'
       : TIPOS.find((t) => t.id === tipoActivo)?.label ?? '';
 
-  /** Etiqueta legible del tema activo. */
   const temaActivoLabel =
-    temaActivo === 'all'
-      ? 'Todas las categorías'
-      : temasSidebar.find((t) => t.id === temaActivo)?.label ?? temaActivo;
+    temasSidebar.find((t) => t.id === temaActivo)?.label ?? temaActivo;
+
+  const limpiarFiltros = () => {
+    setTemaActivo('all');
+    setBusqueda('');
+    setPaginaActual(1);
+  };
+
+  const aplicarTipo = (tipo: TipoContenido | 'all') => {
+    setTipoActivo(tipo);
+    setMenuOpen(false);
+  };
+
+  const aplicarTema = (tema: string) => {
+    setTemaActivo(tema);
+    setMenuOpen(false);
+  };
+
+  const renderContenido = () => {
+    if (tipoActivo === 'cuestionario') {
+      return <QuizzesList recursos={paginados} onLimpiar={limpiarFiltros} />;
+    }
+
+    if (vista === 'list') {
+      return <ArticlesList recursos={paginados} onLimpiar={limpiarFiltros} />;
+    }
+
+    return <FeaturedGrid recursos={paginados} onLimpiar={limpiarFiltros} />;
+  };
+
+  const numerosPagina = useMemo(() => {
+    const total = totalPaginas;
+    const actual = paginaActual;
+
+    if (total <= 5) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    if (actual <= 3) return [1, 2, 3, 4, 5];
+    if (actual >= total - 2) {
+      return [total - 4, total - 3, total - 2, total - 1, total];
+    }
+
+    return [actual - 2, actual - 1, actual, actual + 1, actual + 2];
+  }, [paginaActual, totalPaginas]);
 
   return (
     <div className="biblioteca">
-      {/* Barra de navegación principal con soporte para menú mobile */}
       <Navbar
         onMenuToggle={() => setMenuOpen((prev) => !prev)}
         menuOpen={menuOpen}
       />
 
-      <div className="biblioteca__body">
-        {/* Sidebar de filtros por tipo y categoría */}
-        <BibSidebar
-          tipos={TIPOS}
-          temas={temasSidebarConTodos}
-          tipoActivo={tipoActivo}
-          temaActivo={temaActivo}
-          conteoPorTema={conteoPorTema}
-          onTipoChange={setTipoActivo}
-          onTemaChange={setTemaActivo}
+      {menuOpen && (
+        <button
+          type="button"
+          className="biblioteca__mobile-backdrop"
+          aria-label="Cerrar filtros"
+          onClick={() => setMenuOpen(false)}
         />
+      )}
+
+      <div className="biblioteca__body">
+        <aside
+          className={`biblioteca__sidebar-shell ${
+            menuOpen ? 'biblioteca__sidebar-shell--open' : ''
+          }`}
+        >
+          <div className="biblioteca__mobile-sidebar-header">
+            <span>Filtros</span>
+            <button
+              type="button"
+              className="biblioteca__mobile-close"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Cerrar filtros"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          <BibSidebar
+            tipos={TIPOS}
+            temas={temasSidebar}
+            tipoActivo={tipoActivo}
+            temaActivo={temaActivo}
+            conteoPorTema={conteoPorTema}
+            onTipoChange={aplicarTipo}
+            onTemaChange={aplicarTema}
+          />
+        </aside>
 
         <main className="biblioteca__content">
-          {/* Hero principal con imagen, descripción y buscador */}
           <div
             className="biblioteca__hero"
             style={{ backgroundImage: `url(${heroBiblioteca})` }}
           >
             <div className="biblioteca__hero-overlay" />
-
             <div className="biblioteca__hero-body">
               <h1>
                 Aprende a protegerte
@@ -435,7 +341,6 @@ export default function Biblioteca() {
                 en ciberseguridad.
               </p>
 
-              {/* Campo de búsqueda en tiempo real */}
               <div className="biblioteca__search">
                 <Search size={14} className="biblioteca__search-icon" />
                 <input
@@ -450,7 +355,6 @@ export default function Biblioteca() {
             </div>
           </div>
 
-          {/* Contenedor principal de resultados */}
           <div className="biblioteca__section">
             <div className="biblioteca__section-header">
               <div className="biblioteca__section-left">
@@ -459,133 +363,126 @@ export default function Biblioteca() {
               </div>
 
               <div className="biblioteca__section-right">
-                {/* Chip para limpiar el tema activo */}
                 {temaActivo !== 'all' && (
                   <button
-                    type="button"
                     className="biblioteca__chip"
                     onClick={limpiarFiltros}
+                    type="button"
                   >
                     {temaActivoLabel}
                     <span className="biblioteca__chip-remove">✕</span>
                   </button>
                 )}
 
-                {/* Contador de resultados totales luego de filtros */}
                 <span className="biblioteca__result-count">
                   {loading
                     ? '…'
-                    : `${ordenados.length} resultado${ordenados.length !== 1 ? 's' : ''}`}
+                    : `${filtrados.length} resultado${filtrados.length !== 1 ? 's' : ''}`}
                 </span>
               </div>
             </div>
 
-            {/* Toolbar superior: tamaño de página, cambio de vista y paginación */}
-            {!loading && !error && ordenados.length > 0 && (
+            {!loading && !error && (
               <div className="biblioteca__toolbar">
                 <div className="biblioteca__toolbar-left">
-                  {/* Selector de cantidad de elementos por página */}
-                  <label
-                    className="biblioteca__rows-label"
-                    htmlFor="rows-per-page"
+                  <button
+                    type="button"
+                    className="biblioteca__toolbar-filter-btn"
+                    onClick={() => setMenuOpen(true)}
                   >
-                    Mostrar
-                  </label>
+                    <SlidersHorizontal size={16} />
+                    <span>Filtros</span>
+                  </button>
 
-                  <select
-                    id="rows-per-page"
-                    className="biblioteca__rows-select"
-                    value={filasPorPagina}
-                    onChange={(e) => setFilasPorPagina(Number(e.target.value))}
-                  >
-                    <option value={4}>4</option>
-                    <option value={6}>6</option>
-                    <option value={8}>8</option>
-                    <option value={12}>12</option>
-                  </select>
+                  <div className="biblioteca__rows-group">
+                    <span className="biblioteca__rows-label">Mostrar</span>
 
-                  <span className="biblioteca__rows-suffix">por página</span>
-
-                  {/* Switch entre vista en cuadrícula y vista en lista */}
-                  <div
-                    className="biblioteca__view-switch"
-                    role="group"
-                    aria-label="Cambiar vista"
-                  >
-                    <button
-                      type="button"
-                      className={`biblioteca__view-btn ${
-                        vista === 'grid' ? 'biblioteca__view-btn--active' : ''
-                      }`}
-                      onClick={() => setVista('grid')}
-                      aria-pressed={vista === 'grid'}
-                      title="Vista en cuadrícula"
+                    <select
+                      className="biblioteca__rows-select"
+                      value={porPagina}
+                      onChange={(e) => setPorPagina(Number(e.target.value))}
+                      aria-label="Cantidad de resultados por página"
                     >
-                      <LayoutGrid size={16} />
-                      <span>Cuadrícula</span>
-                    </button>
+                      <option value={6}>6</option>
+                      <option value={9}>9</option>
+                      <option value={12}>12</option>
+                    </select>
 
-                    <button
-                      type="button"
-                      className={`biblioteca__view-btn ${
-                        vista === 'list' ? 'biblioteca__view-btn--active' : ''
-                      }`}
-                      onClick={() => setVista('list')}
-                      aria-pressed={vista === 'list'}
-                      title="Vista en lista"
-                    >
-                      <List size={16} />
-                      <span>Lista</span>
-                    </button>
+                    <span className="biblioteca__rows-suffix">por página</span>
                   </div>
                 </div>
 
                 <div className="biblioteca__toolbar-right">
-                  {/* Resumen de paginación */}
-                  <span className="biblioteca__page-summary">
-                    Página {paginaActual} de {totalPaginas}
-                  </span>
+                  {tipoActivo !== 'cuestionario' && (
+                    <div className="biblioteca__view-switch">
+                      <button
+                        type="button"
+                        className={`biblioteca__view-btn ${
+                          vista === 'grid' ? 'biblioteca__view-btn--active' : ''
+                        }`}
+                        onClick={() => setVista('grid')}
+                      >
+                        <span>Cuadrícula</span>
+                      </button>
 
-                  {/* Flecha anterior estilo admin usando Lucide.
-                      Lucide usa currentColor, por eso el color visible se controla desde CSS. */}
-                  <button
-                    className="page-btn biblioteca__page-btn"
-                    onClick={irPaginaAnterior}
-                    disabled={paginaActual === 1}
-                    aria-label="Página anterior"
-                    title="Página anterior"
-                  >
-                    <ChevronLeft size={15} />
-                  </button>
+                      <button
+                        type="button"
+                        className={`biblioteca__view-btn ${
+                          vista === 'list' ? 'biblioteca__view-btn--active' : ''
+                        }`}
+                        onClick={() => setVista('list')}
+                      >
+                        <span>Lista</span>
+                      </button>
+                    </div>
+                  )}
 
-                  {/* Indicador de página activa */}
-                  <button
-                    type="button"
-                    className="page-btn page-btn--active biblioteca__page-btn biblioteca__page-btn--active"
-                  >
-                    {paginaActual}
-                  </button>
+                  <div className="biblioteca__desktop-pagination">
+                    <span className="biblioteca__page-summary">
+                      Página {paginaActual} de {totalPaginas}
+                    </span>
 
-                  {/* Flecha siguiente estilo admin usando Lucide */}
-                  <button
-                    className="page-btn biblioteca__page-btn"
-                    onClick={irPaginaSiguiente}
-                    disabled={paginaActual === totalPaginas}
-                    aria-label="Página siguiente"
-                    title="Página siguiente"
-                  >
-                    <ChevronRight size={15} />
-                  </button>
+                    <button
+                      type="button"
+                      className="biblioteca__page-btn"
+                      disabled={paginaActual === 1}
+                      onClick={() => setPaginaActual((p) => Math.max(1, p - 1))}
+                    >
+                      ←
+                    </button>
+
+                    {numerosPagina.map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        className={`biblioteca__page-btn ${
+                          n === paginaActual ? 'biblioteca__page-btn--active' : ''
+                        }`}
+                        onClick={() => setPaginaActual(n)}
+                      >
+                        {n}
+                      </button>
+                    ))}
+
+                    <button
+                      type="button"
+                      className="biblioteca__page-btn"
+                      disabled={paginaActual === totalPaginas}
+                      onClick={() =>
+                        setPaginaActual((p) => Math.min(totalPaginas, p + 1))
+                      }
+                    >
+                      →
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Estado de carga */}
             {loading && (
               <div className="biblioteca__loading">Cargando recursos…</div>
             )}
 
-            {/* Estado de error */}
             {error && !loading && (
               <div className="biblioteca__error">
                 <p>No se pudieron cargar los recursos.</p>
@@ -593,57 +490,43 @@ export default function Biblioteca() {
               </div>
             )}
 
-            {/* Render de paneles según tipo y modo de vista */}
             {!loading && !error && (
               <>
-                {tipoActivo === 'all' && vista === 'grid' && (
-                  <FeaturedGrid
-                    recursos={recursosPaginados}
-                    onLimpiar={limpiarFiltros}
-                  />
-                )}
+                {renderContenido()}
 
-                {tipoActivo === 'all' && vista === 'list' && (
-                  <ArticlesList
-                    recursos={recursosPaginados}
-                    onLimpiar={limpiarFiltros}
-                  />
-                )}
+                {totalPaginas > 1 && (
+                  <div className="biblioteca__mobile-pagination">
+                    <button
+                      type="button"
+                      className="biblioteca__mobile-page-btn"
+                      disabled={paginaActual === 1}
+                      onClick={() =>
+                        setPaginaActual((p) => Math.max(1, p - 1))
+                      }
+                    >
+                      ← Anterior
+                    </button>
 
-                {tipoActivo === 'articulo' && vista === 'grid' && (
-                  <FeaturedGrid recursos={articulos} onLimpiar={limpiarFiltros} />
-                )}
+                    <span className="biblioteca__mobile-page-indicator">
+                      Página {paginaActual} de {totalPaginas}
+                    </span>
 
-                {tipoActivo === 'articulo' && vista === 'list' && (
-                  <ArticlesList recursos={articulos} onLimpiar={limpiarFiltros} />
-                )}
-
-                {tipoActivo === 'guia' && vista === 'grid' && (
-                  <FeaturedGrid recursos={guias} onLimpiar={limpiarFiltros} />
-                )}
-
-                {tipoActivo === 'guia' && vista === 'list' && (
-                  <ArticlesList recursos={guias} onLimpiar={limpiarFiltros} />
-                )}
-
-                {tipoActivo === 'cuestionario' && vista === 'grid' && (
-                  <FeaturedGrid
-                    recursos={cuestionarios}
-                    onLimpiar={limpiarFiltros}
-                  />
-                )}
-
-                {tipoActivo === 'cuestionario' && vista === 'list' && (
-                  <QuizzesList
-                    recursos={cuestionarios}
-                    onLimpiar={limpiarFiltros}
-                  />
+                    <button
+                      type="button"
+                      className="biblioteca__mobile-page-btn"
+                      disabled={paginaActual === totalPaginas}
+                      onClick={() =>
+                        setPaginaActual((p) => Math.min(totalPaginas, p + 1))
+                      }
+                    >
+                      Siguiente →
+                    </button>
+                  </div>
                 )}
               </>
             )}
           </div>
 
-          {/* Footer principal */}
           <Footer />
         </main>
       </div>
