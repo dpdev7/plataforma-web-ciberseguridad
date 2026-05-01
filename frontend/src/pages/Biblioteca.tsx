@@ -3,7 +3,13 @@
 // con filtros por tipo de contenido, tema y búsqueda por texto.
 
 import { useState, useEffect, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import {
+  Search,
+  LayoutGrid,
+  List,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import {
   TIPOS,
   type TipoContenido,
@@ -28,8 +34,11 @@ type TemaSidebar = {
   label: string;
 };
 
+/** Modos de visualización del panel principal. */
+type VistaBiblioteca = 'grid' | 'list';
+
 export default function Biblioteca() {
-  // Estado de filtros 
+  // Estado de filtros
 
   /** Tipo de contenido actualmente seleccionado en el sidebar ('all' muestra todos). */
   const [tipoActivo, setTipoActivo] = useState<TipoContenido | 'all'>('all');
@@ -43,6 +52,15 @@ export default function Biblioteca() {
   /** Controla si el menú mobile del Navbar está abierto o cerrado. */
   const [menuOpen, setMenuOpen] = useState(false);
 
+  /** Modo de visualización del listado principal: cuadrícula o lista. */
+  const [vista, setVista] = useState<VistaBiblioteca>('grid');
+
+  /** Cantidad de recursos a mostrar por página. */
+  const [filasPorPagina, setFilasPorPagina] = useState<number>(12);
+
+  /** Página actual de la paginación. */
+  const [paginaActual, setPaginaActual] = useState<number>(1);
+
   // Estado de datos remotos
 
   /** Lista completa de recursos cargados desde la API. */
@@ -52,35 +70,33 @@ export default function Biblioteca() {
   const [temas, setTemas] = useState<TemaSidebar[]>([]);
 
   /** Indica si hay una petición en curso para mostrar el estado de carga. */
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   /** Mensaje de error si alguna petición a la API falla; null si no hay error. */
   const [error, setError] = useState<string | null>(null);
 
   // Fetch de categorías
   /**
-   * Carga las categorías creadas desde admin.
-   * Estas reemplazan los temas estáticos que antes venían de mocks o constantes fijas.
+   * Carga las categorías reales creadas desde el panel admin.
+   * Estas categorías se usan como temas dinámicos en el sidebar.
    */
   useEffect(() => {
     let cancelled = false;
 
     const fetchCategorias = async () => {
       try {
-        const response = await fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/`);
+        const response = await fetch(`${API_BASE}/categoria/obtener/all/`);
         if (!response.ok) throw new Error(`Error ${response.status}`);
 
         const data = await response.json();
         const categorias = Array.isArray(data?.result) ? data.result : [];
 
-        /**
-         * Usamos `nombre` como `id` porque el filtro de tema compara contra
-         * `recurso.tema`, y ese valor también será el nombre de la categoría.
-         */
-        const categoriasMapeadas: TemaSidebar[] = categorias.map((categoria: any) => ({
-          id: String(categoria.nombre ?? ''),
-          label: String(categoria.nombre ?? ''),
-        })).filter((categoria: TemaSidebar) => categoria.id.trim() !== '');
+        const categoriasMapeadas: TemaSidebar[] = categorias
+          .map((categoria: any) => ({
+            id: String(categoria.nombre ?? '').trim(),
+            label: String(categoria.nombre ?? '').trim(),
+          }))
+          .filter((categoria: TemaSidebar) => categoria.id !== '');
 
         if (!cancelled) {
           setTemas(categoriasMapeadas);
@@ -95,10 +111,6 @@ export default function Biblioteca() {
 
     fetchCategorias();
 
-    /**
-     * Evita actualizar estado si el componente se desmonta
-     * antes de que la petición termine.
-     */
     return () => {
       cancelled = true;
     };
@@ -106,9 +118,12 @@ export default function Biblioteca() {
 
   // Fetch de recursos y cuestionarios
   /**
-   * Carga todos los recursos y cuestionarios una sola vez.
-   * Como no vamos a depender del backend para filtrar por tipo,
-   * el filtrado se hará completamente en frontend.
+   * Carga en paralelo:
+   * - recursos educativos
+   * - cuestionarios
+   *
+   * Luego unifica ambos resultados en un solo arreglo para que la biblioteca
+   * pueda filtrarlos, ordenarlos y paginarlos desde un mismo flujo.
    */
   useEffect(() => {
     let cancelled = false;
@@ -117,8 +132,7 @@ export default function Biblioteca() {
     setError(null);
 
     /**
-     * Obtiene los cuestionarios y los adapta a la forma `Recurso`
-     * para unificarlos con artículos y guías en una sola lista.
+     * Obtiene cuestionarios desde la API y los adapta al tipo `Recurso`.
      */
     const fetchCuestionarios = () =>
       fetch(`${API_BASE}/cuestionario/obtener/all/`)
@@ -132,7 +146,7 @@ export default function Biblioteca() {
               id: c.cuestionario_id,
               tipo: 'cuestionario',
               tema: c.categoria?.nombre ?? '',
-              titulo: c.titulo,
+              titulo: c.titulo ?? '',
               descripcion: c.descripcion ?? '',
               esPublico: c.es_activo,
               preguntas: c.preguntas?.length ?? 0,
@@ -141,8 +155,7 @@ export default function Biblioteca() {
         );
 
     /**
-     * Obtiene todos los recursos educativos sin filtrar por tipo en backend.
-     * Luego el frontend se encarga de separarlos por artículo, guía, etc.
+     * Obtiene artículos y guías desde el endpoint general de recursos.
      */
     const fetchRecursos = () =>
       fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/`)
@@ -156,7 +169,7 @@ export default function Biblioteca() {
               id: r.recurso_id,
               tipo: r.tipo_recurso as TipoContenido,
               tema: r.categoria?.nombre ?? '',
-              titulo: r.titulo,
+              titulo: r.titulo ?? '',
               descripcion: r.descripcion ?? '',
               urlRecurso: r.url_recurso,
               esPublico: r.es_publico,
@@ -182,10 +195,6 @@ export default function Biblioteca() {
         }
       });
 
-    /**
-     * Limpieza para evitar race conditions o intentos de setState
-     * sobre un componente desmontado.
-     */
     return () => {
       cancelled = true;
     };
@@ -193,8 +202,11 @@ export default function Biblioteca() {
 
   // Filtrado por tipo
   /**
-   * Filtra primero por tipo de contenido.
-   * Si el usuario está en "all", se conserva la lista completa.
+   * Aplica el filtro principal del sidebar:
+   * - all
+   * - articulo
+   * - guia
+   * - cuestionario
    */
   const recursosFiltradosPorTipo = useMemo(() => {
     if (tipoActivo === 'all') return recursos;
@@ -203,11 +215,9 @@ export default function Biblioteca() {
 
   // Filtrado por tema y búsqueda
   /**
-   * Aplica sobre la lista ya filtrada por tipo:
-   * - filtro por tema/categoría
-   * - búsqueda por título o descripción
-   *
-   * useMemo evita recalcular esta lista en renders no relacionados.
+   * Aplica filtros secundarios:
+   * - categoría/tema
+   * - texto ingresado en el buscador
    */
   const filtrados = useMemo(() => {
     return recursosFiltradosPorTipo.filter((r) => {
@@ -225,10 +235,63 @@ export default function Biblioteca() {
     });
   }, [recursosFiltradosPorTipo, temaActivo, busqueda]);
 
+  // Orden estable del listado
+  /**
+   * Ordena primero por fecha descendente y, si no existe diferencia,
+   * usa el título para mantener un orden estable y predecible.
+   */
+  const ordenados = useMemo(() => {
+    return [...filtrados].sort((a, b) => {
+      const fechaA = a.fechaPublicacion ? new Date(a.fechaPublicacion).getTime() : 0;
+      const fechaB = b.fechaPublicacion ? new Date(b.fechaPublicacion).getTime() : 0;
+
+      if (fechaB !== fechaA) return fechaB - fechaA;
+
+      return a.titulo.localeCompare(b.titulo, 'es', {
+        sensitivity: 'base',
+      });
+    });
+  }, [filtrados]);
+
+  // Paginación
+  /**
+   * Calcula el total de páginas según el total de resultados y
+   * la cantidad seleccionada por página.
+   */
+  const totalPaginas = useMemo(() => {
+    return Math.max(1, Math.ceil(ordenados.length / filasPorPagina));
+  }, [ordenados.length, filasPorPagina]);
+
+  /**
+   * Reinicia la página actual cuando cambia cualquiera de los filtros principales,
+   * la cantidad por página o el modo de vista.
+   */
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [tipoActivo, temaActivo, busqueda, filasPorPagina, vista]);
+
+  /**
+   * Si por un cambio de filtros la página actual queda fuera de rango,
+   * la ajusta al nuevo máximo disponible.
+   */
+  useEffect(() => {
+    if (paginaActual > totalPaginas) {
+      setPaginaActual(totalPaginas);
+    }
+  }, [paginaActual, totalPaginas]);
+
+  /**
+   * Obtiene únicamente los elementos correspondientes a la página actual.
+   */
+  const recursosPaginados = useMemo(() => {
+    const inicio = (paginaActual - 1) * filasPorPagina;
+    const fin = inicio + filasPorPagina;
+    return ordenados.slice(inicio, fin);
+  }, [ordenados, paginaActual, filasPorPagina]);
+
   // Bloqueo de scroll cuando el menú mobile está abierto
   /**
-   * Bloquea el scroll del body mientras el menú mobile está abierto,
-   * para evitar que el fondo se desplace detrás del overlay del menú.
+   * Evita scroll del body mientras el menú mobile del navbar está abierto.
    */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -239,8 +302,8 @@ export default function Biblioteca() {
 
   // Métricas para el sidebar
   /**
-   * Cuenta cuántos recursos pertenecen a cada tema.
-   * Esto alimenta los badges o contadores visibles en el sidebar.
+   * Cuenta cuántos recursos pertenecen a cada tema para mostrarlos
+   * como badges o contadores en el sidebar.
    */
   const conteoPorTema = useMemo(() => {
     return recursos.reduce<Record<string, number>>((acc, r) => {
@@ -252,9 +315,9 @@ export default function Biblioteca() {
 
   // Temas dinámicos del sidebar
   /**
-   * Parte de las categorías del backend y además agrega cualquier tema que
-   * ya venga presente en los recursos pero no haya aparecido en el endpoint
-   * de categorías.
+   * Construye la lista final de temas del sidebar:
+   * - parte de las categorías cargadas desde backend,
+   * - añade temas presentes en recursos si aún no existen.
    */
   const temasSidebar = useMemo(() => {
     const base = [...temas];
@@ -273,43 +336,65 @@ export default function Biblioteca() {
       }
     });
 
-    return base;
+    return base.sort((a, b) =>
+      a.label.localeCompare(b.label, 'es', { sensitivity: 'base' })
+    );
   }, [temas, recursos]);
 
-  /** Lista final para mostrar en sidebar, incluyendo la opción raíz. */
+  /**
+   * Inserta una opción global para poder volver fácilmente
+   * al estado sin filtro de categorías.
+   */
   const temasSidebarConTodos = useMemo(() => {
-    return [
-      { id: 'all', label: 'Todas las categorías' },
-      ...temasSidebar,
-    ];
+    return [{ id: 'all', label: 'Todas las categorías' }, ...temasSidebar];
   }, [temasSidebar]);
 
   // Acciones
-  /** Restablece el filtro de tema y el texto de búsqueda a sus valores iniciales. */
+  /**
+   * Limpia filtros secundarios visibles en la UI:
+   * - tema
+   * - búsqueda
+   */
   const limpiarFiltros = () => {
     setTemaActivo('all');
     setBusqueda('');
   };
 
-  // Derivados para los paneles de contenido
-  /** Separa los recursos filtrados por tipo para pasarlos a cada componente visual. */
-  const articulos = filtrados.filter((r) => r.tipo === 'articulo');
-  const guias = filtrados.filter((r) => r.tipo === 'guia');
-  const cuestionarios = filtrados.filter((r) => r.tipo === 'cuestionario');
+  /**
+   * Avanza una página sin sobrepasar el límite máximo.
+   */
+  const irPaginaSiguiente = () => {
+    setPaginaActual((prev) => Math.min(prev + 1, totalPaginas));
+  };
 
-  /** Etiqueta legible del tipo activo para mostrar en el encabezado de la sección. */
+  /**
+   * Retrocede una página sin bajar de la primera.
+   */
+  const irPaginaAnterior = () => {
+    setPaginaActual((prev) => Math.max(prev - 1, 1));
+  };
+
+  // Derivados para paneles
+  /**
+   * Separa los recursos paginados por tipo para reutilizar
+   * los componentes ya existentes según la vista seleccionada.
+   */
+  const articulos = recursosPaginados.filter((r) => r.tipo === 'articulo');
+  const guias = recursosPaginados.filter((r) => r.tipo === 'guia');
+  const cuestionarios = recursosPaginados.filter((r) => r.tipo === 'cuestionario');
+
+  /** Etiqueta legible del panel actual. */
   const panelLabel =
     tipoActivo === 'all'
       ? 'Todos los recursos'
       : TIPOS.find((t) => t.id === tipoActivo)?.label ?? '';
 
-  /** Etiqueta del tema activo para mostrar en el chip de filtro. */
+  /** Etiqueta legible del tema activo. */
   const temaActivoLabel =
     temaActivo === 'all'
       ? 'Todas las categorías'
       : temasSidebar.find((t) => t.id === temaActivo)?.label ?? temaActivo;
 
-  // Render
   return (
     <div className="biblioteca">
       {/* Barra de navegación principal con soporte para menú mobile */}
@@ -319,7 +404,7 @@ export default function Biblioteca() {
       />
 
       <div className="biblioteca__body">
-        {/* Sidebar con filtros de tipo y categorías dinámicas */}
+        {/* Sidebar de filtros por tipo y categoría */}
         <BibSidebar
           tipos={TIPOS}
           temas={temasSidebarConTodos}
@@ -331,23 +416,26 @@ export default function Biblioteca() {
         />
 
         <main className="biblioteca__content">
-          {/* Hero — sección destacada con imagen de fondo, título y buscador principal */}
+          {/* Hero principal con imagen, descripción y buscador */}
           <div
             className="biblioteca__hero"
             style={{ backgroundImage: `url(${heroBiblioteca})` }}
           >
             <div className="biblioteca__hero-overlay" />
+
             <div className="biblioteca__hero-body">
               <h1>
                 Aprende a protegerte
                 <br />
                 <span>en el mundo digital</span>
               </h1>
+
               <p>
-                Artículos, guías y cuestionarios para fortalecer tu conocimiento en ciberseguridad.
+                Artículos, guías y cuestionarios para fortalecer tu conocimiento
+                en ciberseguridad.
               </p>
 
-              {/* Campo de búsqueda: filtra recursos por título y descripción en tiempo real */}
+              {/* Campo de búsqueda en tiempo real */}
               <div className="biblioteca__search">
                 <Search size={14} className="biblioteca__search-icon" />
                 <input
@@ -362,7 +450,7 @@ export default function Biblioteca() {
             </div>
           </div>
 
-          {/* Sección principal de resultados */}
+          {/* Contenedor principal de resultados */}
           <div className="biblioteca__section">
             <div className="biblioteca__section-header">
               <div className="biblioteca__section-left">
@@ -371,27 +459,133 @@ export default function Biblioteca() {
               </div>
 
               <div className="biblioteca__section-right">
-                {/* Chip del tema activo: permite quitar el filtro con un clic */}
+                {/* Chip para limpiar el tema activo */}
                 {temaActivo !== 'all' && (
-                  <button className="biblioteca__chip" onClick={limpiarFiltros}>
+                  <button
+                    type="button"
+                    className="biblioteca__chip"
+                    onClick={limpiarFiltros}
+                  >
                     {temaActivoLabel}
                     <span className="biblioteca__chip-remove">✕</span>
                   </button>
                 )}
 
-                {/* Contador de resultados; muestra '…' durante la carga */}
+                {/* Contador de resultados totales luego de filtros */}
                 <span className="biblioteca__result-count">
                   {loading
                     ? '…'
-                    : `${filtrados.length} resultado${filtrados.length !== 1 ? 's' : ''}`}
+                    : `${ordenados.length} resultado${ordenados.length !== 1 ? 's' : ''}`}
                 </span>
               </div>
             </div>
 
-            {/* Estado de carga mientras se resuelven las peticiones a la API */}
-            {loading && <div className="biblioteca__loading">Cargando recursos…</div>}
+            {/* Toolbar superior: tamaño de página, cambio de vista y paginación */}
+            {!loading && !error && ordenados.length > 0 && (
+              <div className="biblioteca__toolbar">
+                <div className="biblioteca__toolbar-left">
+                  {/* Selector de cantidad de elementos por página */}
+                  <label
+                    className="biblioteca__rows-label"
+                    htmlFor="rows-per-page"
+                  >
+                    Mostrar
+                  </label>
 
-            {/* Mensaje de error si la carga falló */}
+                  <select
+                    id="rows-per-page"
+                    className="biblioteca__rows-select"
+                    value={filasPorPagina}
+                    onChange={(e) => setFilasPorPagina(Number(e.target.value))}
+                  >
+                    <option value={4}>4</option>
+                    <option value={6}>6</option>
+                    <option value={8}>8</option>
+                    <option value={12}>12</option>
+                  </select>
+
+                  <span className="biblioteca__rows-suffix">por página</span>
+
+                  {/* Switch entre vista en cuadrícula y vista en lista */}
+                  <div
+                    className="biblioteca__view-switch"
+                    role="group"
+                    aria-label="Cambiar vista"
+                  >
+                    <button
+                      type="button"
+                      className={`biblioteca__view-btn ${
+                        vista === 'grid' ? 'biblioteca__view-btn--active' : ''
+                      }`}
+                      onClick={() => setVista('grid')}
+                      aria-pressed={vista === 'grid'}
+                      title="Vista en cuadrícula"
+                    >
+                      <LayoutGrid size={16} />
+                      <span>Cuadrícula</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`biblioteca__view-btn ${
+                        vista === 'list' ? 'biblioteca__view-btn--active' : ''
+                      }`}
+                      onClick={() => setVista('list')}
+                      aria-pressed={vista === 'list'}
+                      title="Vista en lista"
+                    >
+                      <List size={16} />
+                      <span>Lista</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="biblioteca__toolbar-right">
+                  {/* Resumen de paginación */}
+                  <span className="biblioteca__page-summary">
+                    Página {paginaActual} de {totalPaginas}
+                  </span>
+
+                  {/* Flecha anterior estilo admin usando Lucide.
+                      Lucide usa currentColor, por eso el color visible se controla desde CSS. */}
+                  <button
+                    className="page-btn biblioteca__page-btn"
+                    onClick={irPaginaAnterior}
+                    disabled={paginaActual === 1}
+                    aria-label="Página anterior"
+                    title="Página anterior"
+                  >
+                    <ChevronLeft size={15} />
+                  </button>
+
+                  {/* Indicador de página activa */}
+                  <button
+                    type="button"
+                    className="page-btn page-btn--active biblioteca__page-btn biblioteca__page-btn--active"
+                  >
+                    {paginaActual}
+                  </button>
+
+                  {/* Flecha siguiente estilo admin usando Lucide */}
+                  <button
+                    className="page-btn biblioteca__page-btn"
+                    onClick={irPaginaSiguiente}
+                    disabled={paginaActual === totalPaginas}
+                    aria-label="Página siguiente"
+                    title="Página siguiente"
+                  >
+                    <ChevronRight size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Estado de carga */}
+            {loading && (
+              <div className="biblioteca__loading">Cargando recursos…</div>
+            )}
+
+            {/* Estado de error */}
             {error && !loading && (
               <div className="biblioteca__error">
                 <p>No se pudieron cargar los recursos.</p>
@@ -399,28 +593,57 @@ export default function Biblioteca() {
               </div>
             )}
 
-            {/* Paneles de contenido según el tipo activo */}
+            {/* Render de paneles según tipo y modo de vista */}
             {!loading && !error && (
               <>
-                {tipoActivo === 'all' && (
-                  <FeaturedGrid recursos={filtrados} onLimpiar={limpiarFiltros} />
+                {tipoActivo === 'all' && vista === 'grid' && (
+                  <FeaturedGrid
+                    recursos={recursosPaginados}
+                    onLimpiar={limpiarFiltros}
+                  />
                 )}
 
-                {tipoActivo === 'articulo' && (
+                {tipoActivo === 'all' && vista === 'list' && (
+                  <ArticlesList
+                    recursos={recursosPaginados}
+                    onLimpiar={limpiarFiltros}
+                  />
+                )}
+
+                {tipoActivo === 'articulo' && vista === 'grid' && (
+                  <FeaturedGrid recursos={articulos} onLimpiar={limpiarFiltros} />
+                )}
+
+                {tipoActivo === 'articulo' && vista === 'list' && (
                   <ArticlesList recursos={articulos} onLimpiar={limpiarFiltros} />
                 )}
 
-                {tipoActivo === 'guia' && (
+                {tipoActivo === 'guia' && vista === 'grid' && (
                   <FeaturedGrid recursos={guias} onLimpiar={limpiarFiltros} />
                 )}
 
-                {tipoActivo === 'cuestionario' && (
-                  <QuizzesList recursos={cuestionarios} onLimpiar={limpiarFiltros} />
+                {tipoActivo === 'guia' && vista === 'list' && (
+                  <ArticlesList recursos={guias} onLimpiar={limpiarFiltros} />
+                )}
+
+                {tipoActivo === 'cuestionario' && vista === 'grid' && (
+                  <FeaturedGrid
+                    recursos={cuestionarios}
+                    onLimpiar={limpiarFiltros}
+                  />
+                )}
+
+                {tipoActivo === 'cuestionario' && vista === 'list' && (
+                  <QuizzesList
+                    recursos={cuestionarios}
+                    onLimpiar={limpiarFiltros}
+                  />
                 )}
               </>
             )}
           </div>
 
+          {/* Footer principal */}
           <Footer />
         </main>
       </div>
