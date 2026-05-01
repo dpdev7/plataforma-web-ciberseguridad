@@ -6,7 +6,7 @@ import CuestionarioDeleteModal    from './CuestionarioDeleteModal';
 import CuestionarioPreguntasModal from './CuestionarioPreguntasModal';
 import { Plus, Search, Trash2, ListChecks, Pencil } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
 
 export default function CuestionariosPage() {
   const [cuestionarios, setCuestionarios] = useState<Cuestionario[]>([]);
@@ -87,6 +87,27 @@ export default function CuestionariosPage() {
 
   const total = (c: Cuestionario) => c.totalPreguntas ?? 0;
 
+  // Agrega este handler junto a handleCreate y handleDelete:
+const handleEdit = async (data: Omit<Cuestionario, 'id'>) => {
+  if (!toEdit) return;
+  try {
+    const res = await fetch(`${API_BASE}/cuestionario/editar/${toEdit.id}/`, {
+      method:      'PATCH',
+      credentials: 'include',
+      headers:     { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        titulo:                data.titulo,
+        descripcion:           data.descripcion,
+        es_activo:             data.esActivo,
+        tiempo_limite_minutos: data.tiempoLimite,
+      }),
+    });
+    if (!res.ok) throw new Error(`Error ${res.status}`);
+    await fetchCuestionarios();
+    setToEdit(null);
+  } catch (e: any) { alert(e.message); }
+};
+
   return (
     <>
       <h1 className="admin-page__title">Cuestionarios</h1>
@@ -165,13 +186,13 @@ export default function CuestionariosPage() {
           onConfirm={handleCreate}
         />
       )}
-      {toEdit && (
-        <CuestionarioEditModal
-          cuestionario={toEdit}
-          onClose={() => setToEdit(null)}
-          onConfirm={async () => { setToEdit(null); await fetchCuestionarios(); }}
-        />
-      )}
+{toEdit && (
+  <CuestionarioEditModal
+    cuestionario={toEdit}
+    onClose={() => setToEdit(null)}
+    onConfirm={handleEdit}
+  />
+)}
       {toDelete && (
         <CuestionarioDeleteModal
           cuestionario={toDelete}

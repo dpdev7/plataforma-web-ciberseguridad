@@ -20,7 +20,7 @@ interface Props {
   onClose:           () => void;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = "https://backend-web-ciberseguridad.onrender.com";
 
 export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionarioTitulo, onClose }: Props) {
   const [preguntas,      setPreguntas]      = useState<Pregunta[]>([]);

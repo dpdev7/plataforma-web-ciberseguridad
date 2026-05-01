@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, UserPlus } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = "https://backend-web-ciberseguridad.onrender.com";
 
 interface Props {
   onClose:   () => void;
