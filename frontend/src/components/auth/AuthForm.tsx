@@ -1,4 +1,3 @@
-// Componente principal de autenticación: login, registro, recuperación y verificación.
 import React, { useState } from 'react';
 import { Shield, LogIn, UserPlus, KeyRound, Mail as MailIcon, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -8,23 +7,17 @@ import Footer from '../common/Footer';
 import { validatePassword } from '../../utils/passwordValidator';
 import styles from './AuthForm.module.css';
 
-
-// Tipos posibles del formulario — cada uno renderiza campos distintos
 type AuthFormType = 'login' | 'register' | 'reset-password' | 'verify-email' | 'reset-password-confirm';
-
 
 interface AuthFormProps {
   type: AuthFormType;
-  // onSubmit recibe un objeto con los valores del formulario — la página padre maneja la lógica de red
   onSubmit?: (data: Record<string, string>) => void;
+  onResend?: () => void;  // ← nuevo
 }
 
-
-const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
   const navigate = useNavigate();
 
-  // --- Estados de los campos ---
-  // Compartidos entre tipos, se usan según el tipo activo
   const [email, setEmail]                             = useState('');
   const [password, setPassword]                       = useState('');
   const [showPassword, setShowPassword]               = useState(false);
@@ -33,10 +26,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [verificationCode, setVerificationCode]       = useState('');
 
-
-  // --- Configuración por tipo ---
-  // Centraliza título, subtítulo, ícono, texto del botón y footer
-  // para no duplicar JSX en cada vista
   const config = {
     login: {
       title: 'Accede a tu cuenta',
@@ -78,8 +67,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       footerLink: '#',
       footerLinkText: 'Reenviar'
     },
-    // Vista final del flujo de recuperación:
-    // el usuario ya verificó su identidad y ahora establece su nueva contraseña
     'reset-password-confirm': {
       title: 'Nueva contraseña',
       subtitle: 'Crea una contraseña segura para proteger tu cuenta.',
@@ -92,18 +79,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
     }
   };
 
-
-  // Seleccionamos la config del tipo activo para renderizar dinámicamente
   const currentConfig = config[type];
   const Icon          = currentConfig.icon;
   const ButtonIcon    = currentConfig.buttonIcon;
 
-
-  // Validación y envío del formulario
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación: login requiere email/usuario y contraseña
     if (type === 'login') {
       if (!email || !password) {
         alert('Por favor completa todos los campos');
@@ -111,7 +93,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       }
     }
 
-    // Validación: registro requiere todos los campos, contraseñas iguales y fortaleza mínima media
     if (type === 'register') {
       if (!username || !email || !password || !confirmPassword) {
         alert('Por favor completa todos los campos');
@@ -128,7 +109,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       }
     }
 
-    // Validación: recuperación solo requiere el email
     if (type === 'reset-password') {
       if (!email) {
         alert('Por favor ingresa tu correo electrónico');
@@ -136,7 +116,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       }
     }
 
-    // Validación: verificación requiere el código de 6 dígitos
     if (type === 'verify-email') {
       if (!verificationCode) {
         alert('Por favor ingresa el código de verificación');
@@ -144,7 +123,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       }
     }
 
-    // Validación: nueva contraseña requiere ambos campos, que coincidan y fortaleza mínima — igual que en registro
     if (type === 'reset-password-confirm') {
       if (!password || !confirmPassword) {
         alert('Por favor completa todos los campos');
@@ -161,8 +139,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
       }
     }
 
-    // Construimos el objeto de datos con solo los campos que tienen valor
-    // La página padre (Login, Register, etc.) recibe este objeto y hace el fetch
     const data: Record<string, string> = {};
     if (email)            data.email            = email;
     if (password)         data.password         = password;
@@ -172,18 +148,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
     if (onSubmit) {
       onSubmit(data);
     } else {
-      // Fallback demo: útil para probar el componente sin página padre
       console.log('Datos del formulario:', data);
       alert('¡Operación exitosa! (modo demo)');
     }
   };
 
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
 
-        {/* Botón de regreso — navega al home en todas las vistas */}
         <button
           type="button"
           className={styles.backButton}
@@ -194,7 +167,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
           <span>Regresar</span>
         </button>
 
-        {/* Header dinámico — ícono, título y subtítulo según el tipo */}
         <div className={styles.header}>
           <div className={styles.iconWrapper}>
             <Icon className={styles.icon} />
@@ -205,7 +177,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
 
         <form className={styles.form} onSubmit={handleSubmit}>
 
-          {/* Campo: nombre de usuario — solo en registro */}
           {type === 'register' && (
             <Input
               label="Nombre de usuario"
@@ -217,7 +188,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Campo: email — en login, registro y solicitud de recuperación */}
           {(type === 'login' || type === 'register' || type === 'reset-password') && (
             <Input
               label={type === 'login' ? 'Correo electrónico o usuario' : 'Correo electrónico'}
@@ -229,7 +199,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Campo: contraseña — solo en login y registro */}
           {(type === 'login' || type === 'register') && (
             <div>
               <Input
@@ -242,7 +211,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
                 onTogglePassword={() => setShowPassword(!showPassword)}
                 iconType="lock"
               />
-              {/* Enlace "¿Olvidaste tu contraseña?" — solo visible en login */}
               {type === 'login' && (
                 <div className={styles.forgotContainer}>
                   <a href="/reset-password" className={styles.forgotLink}>
@@ -253,7 +221,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             </div>
           )}
 
-          {/* Campo: confirmar contraseña — solo en registro */}
           {type === 'register' && (
             <Input
               label="Confirmar contraseña"
@@ -267,10 +234,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Indicador de fortaleza de contraseña — solo en registro */}
           {type === 'register' && <PasswordStrength password={password} />}
 
-          {/* Campo: código de verificación — solo en verify-email */}
           {type === 'verify-email' && (
             <Input
               label="Código de verificación"
@@ -282,8 +247,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             />
           )}
 
-          {/* Campos exclusivos de la vista "nueva contraseña":
-              nueva contraseña + indicador de fortaleza + confirmación */}
           {type === 'reset-password-confirm' && (
             <>
               <Input
@@ -296,7 +259,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
                 onTogglePassword={() => setShowPassword(!showPassword)}
                 iconType="lock"
               />
-              {/* Mismo componente de fortaleza que en registro */}
               <PasswordStrength password={password} />
               <Input
                 label="Confirmar nueva contraseña"
@@ -311,7 +273,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
             </>
           )}
 
-          {/* Botón submit — texto e ícono dinámicos según el tipo */}
           <button type="submit" className={styles.button}>
             <span>{currentConfig.buttonText}</span>
             <ButtonIcon className={styles.buttonIcon} />
@@ -319,17 +280,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit }) => {
 
         </form>
 
-        {/* Footer del card — enlace dinámico según el tipo */}
+        {/* Footer del card — botón de reenvío para verify-email, enlace normal para el resto */}
         <p className={styles.footerCard}>
           {currentConfig.footerText}{' '}
-          <a href={currentConfig.footerLink} className={styles.link}>
-            {currentConfig.footerLinkText}
-          </a>
+          {type === 'verify-email' && onResend ? (
+            <button
+              type="button"
+              className={styles.link}
+              onClick={onResend}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              {currentConfig.footerLinkText}
+            </button>
+          ) : (
+            <a href={currentConfig.footerLink} className={styles.link}>
+              {currentConfig.footerLinkText}
+            </a>
+          )}
         </p>
 
       </div>
 
-      {/* Footer global — posicionado al fondo con position: fixed */}
       <Footer variant="auth" />
     </div>
   );
