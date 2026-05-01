@@ -19,7 +19,7 @@ import heroBiblioteca from '../assets/images/cyber-library.webp';
 import '../styles/biblioteca.css';
 
 /** URL base de la API. Se toma de la variable de entorno o usa localhost como fallback en desarrollo. */
-const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
 /** Datos mock para preview visual mientras el backend no está conectado.
  *  Cambiar USE_MOCK a false y BACKEND_READY a true cuando el backend esté listo. */

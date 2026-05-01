@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { X, ClipboardList } from 'lucide-react';
 import type { Cuestionario } from '../../../types/adminContent';
 
-const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
 interface Props {
   cuestionario: Cuestionario;
