@@ -1,6 +1,6 @@
 .navbar {
   display: flex;
-  justify-content: flex-start; /* Cambio clave: alinear al inicio */
+  justify-content: flex-start;
   align-items: center;
   padding: 0 32px;
   height: 57px;
@@ -30,17 +30,6 @@
   transition: margin 0.2s ease;
 }
 
-/* Cuando no hay hamburguesa en otras vistas, el logo no necesita margen extra */
-@media (max-width: 768px) {
-  .logo {
-    margin-left: 12px; /* Espacio cuando está la hamburguesa */
-  }
-  
-  .logoNoMenu {
-    margin-left: 0 !important; /* Se pega al borde si no hay hamburguesa */
-  }
-}
-
 .logo :global(.material-symbols-outlined) {
   font-size: 22px;
   color: #3b82f6;
@@ -49,12 +38,11 @@
   line-height: 1;
 }
 
-/* Empujamos los links y acciones a la derecha */
 .links {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-left: auto; /* Empuja todo a la derecha en desktop */
+  margin-left: auto;
 }
 
 .links a {
@@ -82,7 +70,7 @@
   display: none;
   align-items: center;
   gap: 10px;
-  margin-left: auto; /* Empuja a la derecha en mobile */
+  margin-left: auto;
 }
 
 .hamburger {
@@ -98,20 +86,6 @@
   width: 36px;
   height: 36px;
   flex-shrink: 0;
-}
-
-/* SVG Helpers */
-.hamburger :global(svg),
-.btnLogout :global(svg),
-.adminLink :global(svg),
-.adminIconMobile :global(svg),
-.userProfile :global(svg) {
-  width: 20px;
-  height: 20px;
-  display: block;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2.2;
 }
 
 .userProfile {
@@ -164,10 +138,19 @@
   font-weight: 600;
 }
 
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .navbar { padding: 0 16px; }
   .links { display: none; }
   .mobileActions { display: flex; }
   .hamburger { display: flex; }
   .userName { display: none; }
+  
+  .logo {
+    margin-left: 12px; /* Espacio por defecto cuando hay hamburguesa */
+  }
+  
+  .logoNoMenu {
+    margin-left: 0 !important; /* Si showHamburger es false, el logo se pega al inicio */
+  }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; // Importamos useLocation
 import { Menu, X, LogOut, ShieldCheck } from "lucide-react";
 import styles from "./Navbar.module.css";
 
@@ -29,11 +29,17 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
 
 export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook para detectar la ruta actual
   const [user, setUser] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  // 🔥 CLAVE: ahora depende SOLO de la prop
-  const showHamburger = !!onMenuToggle;
+  /**
+   * LÓGICA DE VISIBILIDAD:
+   * La hamburguesa solo se muestra si:
+   * 1. Existe la prop onMenuToggle.
+   * 2. La ruta es "/" o "/home".
+   */
+  const showHamburger = !!onMenuToggle && (location.pathname === "/" || location.pathname === "/home");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -73,7 +79,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 
   return (
     <nav className={styles.navbar}>
-      {/* ✅ SOLO depende de la prop */}
+      {/* El botón ahora desaparece automáticamente en /biblioteca */}
       {showHamburger && (
         <button
           className={styles.hamburger}
