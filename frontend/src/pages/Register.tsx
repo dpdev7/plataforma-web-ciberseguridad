@@ -42,10 +42,21 @@ const Register: React.FC = () => {
             replace: true,
           });
         }, 2000);
-      } else {
-        alert(`Error: ${result.detail || "Datos inválidos"}`);
-        setLoading(false);
-      }
+} else {
+  // Extrae el mensaje de error específico del backend
+  const message = result.message;
+
+  if (typeof message === 'object') {
+    // Busca el primer error específico (email, password, etc.)
+    const primerCampo = Object.keys(message)[0];
+    const primerError = message[primerCampo][0];
+    alert(`Error: ${primerError}`);
+  } else {
+    alert(`Error: ${message || 'Datos inválidos'}`);
+  }
+
+  setLoading(false);
+}
     } catch (error) {
       console.error("Error de red:", error);
       alert("Error de conexión con el servidor");
