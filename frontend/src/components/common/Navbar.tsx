@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ShieldCheck } from "lucide-react";
 import styles from "./Navbar.module.css";
 
@@ -29,19 +29,18 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
 
 export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   const navigate = useNavigate();
-  const location = useLocation();
   const [user, setUser] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  // Determinamos si el usuario está en el Home (raíz o /home)
-  const isHomePage = location.pathname === "/" || location.pathname === "/home";
+  // 🔥 CLAVE: ahora depende SOLO de la prop
+  const showHamburger = !!onMenuToggle;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/me/", {
           method: "GET",
-          credentials: "include", 
+          credentials: "include",
         });
 
         if (response.ok) {
@@ -74,8 +73,8 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 
   return (
     <nav className={styles.navbar}>
-      {/* El botón hamburguesa solo se renderiza si es el Home */}
-      {onMenuToggle && isHomePage && (
+      {/* ✅ SOLO depende de la prop */}
+      {showHamburger && (
         <button
           className={styles.hamburger}
           onClick={onMenuToggle}
@@ -85,10 +84,9 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
         </button>
       )}
 
-      {/* El logo tendrá un margen diferente si no hay hamburguesa */}
-      <Link 
-        to="/" 
-        className={`${styles.logo} ${!isHomePage ? styles.logoNoMenu : ""}`}
+      <Link
+        to="/"
+        className={`${styles.logo} ${!showHamburger ? styles.logoNoMenu : ""}`}
       >
         <span className="material-symbols-outlined">security</span>
         CyberGuard
@@ -114,9 +112,11 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
         {isAdmin && (
           <NavLink
             to="/admin/users"
-            className={({ isActive }) => (isActive ? `${styles.activeLink} ${styles.adminLink}` : styles.adminLink)}
+            className={({ isActive }) =>
+              isActive ? `${styles.activeLink} ${styles.adminLink}` : styles.adminLink
+            }
           >
-            <ShieldCheck size={16} style={{ marginRight: '4px' }} />
+            <ShieldCheck size={16} style={{ marginRight: "4px" }} />
             Admin
           </NavLink>
         )}
@@ -132,11 +132,11 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 
       <div className={styles.mobileActions}>
         {isAdmin && (
-           <Link to="/admin/users" className={styles.adminIconMobile}>
-             <ShieldCheck size={22} color="#3b82f6" />
-           </Link>
+          <Link to="/admin/users" className={styles.adminIconMobile}>
+            <ShieldCheck size={22} color="#3b82f6" />
+          </Link>
         )}
-        
+
         {user ? (
           <UserProfile user={user} onLogout={handleLogout} />
         ) : (
