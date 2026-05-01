@@ -89,14 +89,12 @@ export default function ContentEditModal({ recurso, onClose, onConfirm }: Props)
                 value={form.categoria}
                 onChange={e => set('categoria', e.target.value)}
               >
-                {categorias.length === 0 && (
-                  <option value="">Cargando categorías...</option>
-                )}
-                {categorias.map(c => (
-                  <option key={c.categoria_id} value={c.categoria_id}>
-                    {c.nombre}
-                  </option>
-                ))}
+<option value="">-- Selecciona una categoría --</option>
+{categorias.map(c => (
+  <option key={c.categoria_id} value={c.categoria_id}>
+    {c.nombre}
+  </option>
+))}
               </select>
             </div>
           </div>

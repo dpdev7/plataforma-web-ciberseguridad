@@ -43,7 +43,8 @@ export default function ContentPage() {
         descripcion: r.descripcion ?? '',
         urlRecurso:  r.url_recurso ?? '',
         tipo:        r.tipo_recurso as TipoRecurso,
-        categoria:   r.categoria?.nombre ?? '',
+        categoria:        r.categoria?.categoria_id ?? '',
+        categoriaNombre:  r.categoria?.nombre ?? '',
         esPublico:   r.es_publico,
       }));
       setRecursos(mapped);
@@ -192,7 +193,7 @@ export default function ContentPage() {
                     {r.tipo === 'guia' ? 'Guía' : 'Artículo'}
                   </span>
                 </td>
-                <td>{r.categoria}</td>
+                <td>{r.categoriaNombre}</td>
                 <td>
                   <span className={`badge ${r.esPublico ? 'badge--active' : 'badge--inactive'}`}>
                     {r.esPublico ? 'Público' : 'Privado'}

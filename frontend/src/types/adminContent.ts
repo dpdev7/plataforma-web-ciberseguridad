@@ -8,19 +8,19 @@ export type TipoRecurso = 'articulo' | 'guia';
 // Recurso educativo (artículo o guía) — mapeado desde la BD
 // El id es UUID string que viene del backend Django
 export interface Recurso {
-  id:             string;       // UUID del backend
+  id:             string;
   titulo:         string;
   descripcion:    string;
-  urlRecurso:     string;       // link externo del recurso (PDF, video, etc.)
+  urlRecurso:     string;
   tipo:           TipoRecurso;
-  categoria:      string;       // id de categoría (ej: 'redes', 'cripto')
-  esPublico:      boolean;      // visible para usuarios no autenticados
-  imagen?:        string;       // URL de imagen de portada (opcional)
-  contenido?:     string;       // texto largo del artículo/guía (opcional)
-  autor?:         string;       // nombre del autor (opcional)
-  tiempoLectura?: number;       // minutos estimados de lectura (opcional)
+  categoria:      string;       // ← ahora guarda el UUID (categoria_id)
+  categoriaNombre?: string;     // ← nuevo: nombre para mostrar en tabla
+  esPublico:      boolean;
+  imagen?:        string;
+  contenido?:     string;
+  autor?:         string;
+  tiempoLectura?: number;
 }
-
 // Cuestionario con sus preguntas y opciones — mapeado desde la BD
 export interface Cuestionario {
   id:              string;      // UUID del backend
