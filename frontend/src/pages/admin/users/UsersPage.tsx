@@ -3,7 +3,7 @@ import { Pencil, Trash2, UserPlus, ChevronLeft, ChevronRight } from 'lucide-reac
 import AdminTable      from '../../../components/admin/AdminTable';
 import UserEditModal   from './UsersEditModal';
 import UserDeleteModal from './UserDeleteModal';
-import UserCreateModal from './UserCreateModal'; 
+import UserCreateModal from './UserCreateModal';
 
 
 interface User {
@@ -14,18 +14,21 @@ interface User {
   activo: boolean;
 }
 
+
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
+
 export default function UsersPage() {
-  const [users,     setUsers]     = useState<User[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [search,    setSearch]    = useState('');
-  const [filter,    setFilter]    = useState('active');
-  const [toEdit,    setToEdit]    = useState<User | null>(null);
-  const [toDelete,  setToDelete]  = useState<User | null>(null);
-  const [showCreate, setShowCreate] = useState(false);  // 👈
-  const [page,      setPage]      = useState(1);
-  const [pageSize,  setPageSize]  = useState(5);
+  const [users,      setUsers]      = useState<User[]>([]);
+  const [loading,    setLoading]    = useState(true);
+  const [search,     setSearch]     = useState('');
+  const [filter,     setFilter]     = useState('active');
+  const [toEdit,     setToEdit]     = useState<User | null>(null);
+  const [toDelete,   setToDelete]   = useState<User | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [page,       setPage]       = useState(1);
+  const [pageSize,   setPageSize]   = useState(5);
+
 
   const fetchUsers = () => {
     setLoading(true);
@@ -35,7 +38,9 @@ export default function UsersPage() {
       .finally(() => setLoading(false));
   };
 
+
   useEffect(() => { fetchUsers(); }, []);
+
 
   const filtered = useMemo(() => users.filter(u => {
     const matchSearch = u.nombre.toLowerCase().includes(search.toLowerCase()) ||
@@ -44,14 +49,28 @@ export default function UsersPage() {
     return matchSearch && matchFilter;
   }), [users, search, filter]);
 
+
   const totalPages  = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated   = filtered.slice((page - 1) * pageSize, page * pageSize);
   const showingFrom = filtered.length === 0 ? 0 : (page - 1) * pageSize + 1;
   const showingTo   = Math.min(page * pageSize, filtered.length);
 
+
   const handleSearch   = (val: string) => { setSearch(val);   setPage(1); };
   const handleFilter   = (val: string) => { setFilter(val);   setPage(1); };
   const handlePageSize = (val: number) => { setPageSize(val); setPage(1); };
+
+
+  // Genera una lista corta de páginas para evitar demasiados botones en pantallas pequeñas.
+  // En mobile muestra máx. 5 páginas centradas en la página actual; en desktop hasta 7.
+  const visiblePages = useMemo(() => {
+    const maxVisible = typeof window !== 'undefined' && window.innerWidth < 768 ? 5 : 7;
+    let start = Math.max(1, page - Math.floor(maxVisible / 2));
+    let end   = start + maxVisible - 1;
+    if (end > totalPages) { end = totalPages; start = Math.max(1, end - maxVisible + 1); }
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }, [page, totalPages]);
+
 
   const columns = [
     { key: 'nombre', label: 'Usuario' },
@@ -92,11 +111,14 @@ export default function UsersPage() {
     },
   ];
 
+
   if (loading) return <p>Cargando usuarios...</p>;
+
 
   return (
     <div className="admin-page">
       <h1 className="admin-page__title">Usuarios</h1>
+
 
       <div className="admin-toolbar">
         <div className="search-box">
@@ -122,14 +144,16 @@ export default function UsersPage() {
 
         <button
           className="btn btn--primary btn--sm"
-          onClick={() => setShowCreate(true)}  // 👈
+          onClick={() => setShowCreate(true)}
         >
           <span className="icon-wrap icon-wrap--sm icon-wrap--white"><UserPlus size={14} /></span>
           Nuevo usuario
         </button>
       </div>
 
+
       <AdminTable data={paginated} columns={columns} />
+
 
       <div className="pagination">
         <span className="pagination__info">
@@ -158,7 +182,10 @@ export default function UsersPage() {
             >
               <ChevronLeft size={15} />
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+
+            {/* Usa visiblePages en vez de todos los números para evitar
+                desbordamiento en pantallas pequeñas con muchas páginas. */}
+            {visiblePages.map(n => (
               <button
                 key={n}
                 className={`page-btn ${page === n ? 'page-btn--active' : ''}`}
@@ -167,6 +194,7 @@ export default function UsersPage() {
                 {n}
               </button>
             ))}
+
             <button
               className="page-btn"
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
@@ -178,10 +206,11 @@ export default function UsersPage() {
         </div>
       </div>
 
+
       {showCreate && (
         <UserCreateModal
           onClose={() => setShowCreate(false)}
-          onConfirm={() => { fetchUsers(); setShowCreate(false); }}  
+          onConfirm={() => { fetchUsers(); setShowCreate(false); }}
         />
       )}
 

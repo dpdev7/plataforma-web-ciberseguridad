@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Shield, LogIn, UserPlus, KeyRound, Mail as MailIcon, ArrowLeft, ShieldCheck } from 'lucide-react';
+import {
+  Shield,
+  LogIn,
+  UserPlus,
+  KeyRound,
+  Mail as MailIcon,
+  ArrowLeft,
+  ShieldCheck,
+  LoaderCircle
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../common/Input';
 import PasswordStrength from './PasswordStrength';
@@ -7,24 +16,40 @@ import Footer from '../common/Footer';
 import { validatePassword } from '../../utils/passwordValidator';
 import styles from './AuthForm.module.css';
 
-type AuthFormType = 'login' | 'register' | 'reset-password' | 'verify-email' | 'reset-password-confirm';
+type AuthFormType =
+  | 'login'
+  | 'register'
+  | 'reset-password'
+  | 'verify-email'
+  | 'reset-password-confirm';
+
+type SubmitResult = {
+  keepLoading?: boolean;
+  loadingMessage?: string;
+  error?: string;
+} | void;
 
 interface AuthFormProps {
   type: AuthFormType;
-  onSubmit?: (data: Record<string, string>) => void;
-  onResend?: () => void;  // ← nuevo
+  onSubmit?: (data: Record<string, string>) => Promise<SubmitResult> | SubmitResult;
+  onResend?: () => Promise<void> | void;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
   const navigate = useNavigate();
 
-  const [email, setEmail]                             = useState('');
-  const [password, setPassword]                       = useState('');
-  const [showPassword, setShowPassword]               = useState(false);
-  const [username, setUsername]                       = useState('');
-  const [confirmPassword, setConfirmPassword]         = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [verificationCode, setVerificationCode]       = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const config = {
     login: {
@@ -32,6 +57,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
       subtitle: 'Portal de Acceso de Seguridad',
       icon: Shield,
       buttonText: 'Iniciar Sesión',
+      loadingText: 'Iniciando sesión...',
+      successLoadingText: 'Redirigiendo...',
       buttonIcon: LogIn,
       footerText: '¿No tienes una cuenta?',
       footerLink: '/register',
@@ -42,6 +69,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
       subtitle: 'Únete a nuestra comunidad y protege tu mundo digital.',
       icon: Shield,
       buttonText: 'Crear Cuenta',
+      loadingText: 'Creando cuenta...',
+      successLoadingText: 'Procesando registro...',
       buttonIcon: UserPlus,
       footerText: '¿Ya tienes una cuenta?',
       footerLink: '/login',
@@ -52,6 +81,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
       subtitle: 'Te enviaremos un enlace para restablecer tu contraseña.',
       icon: KeyRound,
       buttonText: 'Enviar enlace',
+      loadingText: 'Enviando enlace...',
+      successLoadingText: 'Procesando...',
       buttonIcon: MailIcon,
       footerText: '¿Recordaste tu contraseña?',
       footerLink: '/login',
@@ -62,6 +93,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
       subtitle: 'Ingresa el código que enviamos a tu correo electrónico.',
       icon: MailIcon,
       buttonText: 'Verificar',
+      loadingText: 'Verificando...',
+      successLoadingText: 'Confirmando verificación...',
       buttonIcon: MailIcon,
       footerText: '¿No recibiste el código?',
       footerLink: '#',
@@ -72,96 +105,188 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
       subtitle: 'Crea una contraseña segura para proteger tu cuenta.',
       icon: KeyRound,
       buttonText: 'Guardar contraseña',
+      loadingText: 'Guardando contraseña...',
+      successLoadingText: 'Procesando...',
       buttonIcon: ShieldCheck,
       footerText: '¿Recordaste tu contraseña?',
       footerLink: '/login',
       footerLinkText: 'Inicia sesión'
     }
-  };
+  } as const;
 
   const currentConfig = config[type];
-  const Icon          = currentConfig.icon;
-  const ButtonIcon    = currentConfig.buttonIcon;
+  const Icon = currentConfig.icon;
+  const ButtonIcon = currentConfig.buttonIcon;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const resetLoadingState = () => {
+    setIsLoading(false);
+    setLoadingMessage('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (isLoading) return;
+
+    setErrorMessage('');
 
     if (type === 'login') {
       if (!email || !password) {
-        alert('Por favor completa todos los campos');
+        setErrorMessage('Por favor completa todos los campos');
         return;
       }
     }
 
     if (type === 'register') {
       if (!username || !email || !password || !confirmPassword) {
-        alert('Por favor completa todos los campos');
+        setErrorMessage('Por favor completa todos los campos');
         return;
       }
+
       if (password !== confirmPassword) {
-        alert('Las contraseñas no coinciden');
+        setErrorMessage('Las contraseñas no coinciden');
         return;
       }
+
       const strength = validatePassword(password);
       if (strength.score < 2) {
-        alert('La contraseña debe tener al menos fortaleza media');
+        setErrorMessage('La contraseña debe tener al menos fortaleza media');
         return;
       }
     }
 
     if (type === 'reset-password') {
       if (!email) {
-        alert('Por favor ingresa tu correo electrónico');
+        setErrorMessage('Por favor ingresa tu correo electrónico');
         return;
       }
     }
 
     if (type === 'verify-email') {
       if (!verificationCode) {
-        alert('Por favor ingresa el código de verificación');
+        setErrorMessage('Por favor ingresa el código de verificación');
         return;
       }
     }
 
     if (type === 'reset-password-confirm') {
       if (!password || !confirmPassword) {
-        alert('Por favor completa todos los campos');
+        setErrorMessage('Por favor completa todos los campos');
         return;
       }
+
       if (password !== confirmPassword) {
-        alert('Las contraseñas no coinciden');
+        setErrorMessage('Las contraseñas no coinciden');
         return;
       }
+
       const strength = validatePassword(password);
       if (strength.score < 2) {
-        alert('La contraseña debe tener al menos fortaleza media');
+        setErrorMessage('La contraseña debe tener al menos fortaleza media');
         return;
       }
     }
 
     const data: Record<string, string> = {};
-    if (email)            data.email            = email;
-    if (password)         data.password         = password;
-    if (username)         data.username         = username;
+    if (email) data.email = email;
+    if (password) data.password = password;
+    if (username) data.username = username;
     if (verificationCode) data.verificationCode = verificationCode;
 
-    if (onSubmit) {
-      onSubmit(data);
-    } else {
+    try {
+      setLoadingMessage(currentConfig.loadingText);
+      setIsLoading(true);
+
+      if (onSubmit) {
+        const result = await Promise.resolve(onSubmit(data));
+
+        if (result?.error) {
+          setErrorMessage(result.error);
+          resetLoadingState();
+          return;
+        }
+
+        if (result?.loadingMessage) {
+          setLoadingMessage(result.loadingMessage);
+        } else {
+          setLoadingMessage(currentConfig.successLoadingText);
+        }
+
+        if (result?.keepLoading) {
+          return;
+        }
+
+        resetLoadingState();
+        return;
+      }
+
       console.log('Datos del formulario:', data);
+      await new Promise((resolve) => setTimeout(resolve, 1800));
+      resetLoadingState();
       alert('¡Operación exitosa! (modo demo)');
+    } catch (error: any) {
+      console.error('Error en autenticación:', error);
+
+      const backendMessage =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.message ||
+        'Ocurrió un error. Intenta nuevamente.';
+
+      setErrorMessage(backendMessage);
+      resetLoadingState();
+    }
+  };
+
+  const handleResend = async () => {
+    if (!onResend || isResending || isLoading) return;
+
+    setErrorMessage('');
+
+    try {
+      setIsResending(true);
+      await Promise.resolve(onResend());
+    } catch (error: any) {
+      console.error('Error al reenviar código:', error);
+
+      const backendMessage =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.message ||
+        'No se pudo reenviar el código. Intenta nuevamente.';
+
+      setErrorMessage(backendMessage);
+    } finally {
+      setIsResending(false);
     }
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      {isLoading && (
+        <div
+          className={styles.loadingOverlay}
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <div className={styles.loadingCard}>
+            <LoaderCircle className={styles.loadingSpinner} />
+            <h2 className={styles.loadingTitle}>
+              {loadingMessage || currentConfig.loadingText}
+            </h2>
+            <p className={styles.loadingText}>Por favor espera un momento...</p>
+          </div>
+        </div>
+      )}
 
+      <div className={styles.card}>
         <button
           type="button"
           className={styles.backButton}
           onClick={() => navigate('/')}
           aria-label="Volver al inicio"
+          disabled={isLoading}
         >
           <ArrowLeft className={styles.backIcon} />
           <span>Regresar</span>
@@ -175,8 +300,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
           <p className={styles.subtitle}>{currentConfig.subtitle}</p>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        {errorMessage && (
+          <div className={styles.errorBox} role="alert">
+            {errorMessage}
+          </div>
+        )}
 
+        <form className={styles.form} onSubmit={handleSubmit}>
           {type === 'register' && (
             <Input
               label="Nombre de usuario"
@@ -185,17 +315,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
               value={username}
               onChange={setUsername}
               iconType="user"
+              disabled={isLoading}
             />
           )}
 
           {(type === 'login' || type === 'register' || type === 'reset-password') && (
             <Input
-              label={type === 'login' ? 'Correo electrónico o usuario' : 'Correo electrónico'}
-              type={type === 'login' ? 'text' : 'email'}
+              label="Correo electrónico"
+              type="email"
               placeholder="tu.correo@ejemplo.com"
               value={email}
               onChange={setEmail}
-              iconType={type === 'login' ? 'user' : 'email'}
+              iconType="email"
+              disabled={isLoading}
             />
           )}
 
@@ -208,12 +340,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
                 value={password}
                 onChange={setPassword}
                 showPassword={showPassword}
-                onTogglePassword={() => setShowPassword(!showPassword)}
+                onTogglePassword={() => {
+                  if (!isLoading) setShowPassword((prev) => !prev);
+                }}
                 iconType="lock"
+                disabled={isLoading}
               />
+
               {type === 'login' && (
                 <div className={styles.forgotContainer}>
-                  <a href="/reset-password" className={styles.forgotLink}>
+                  <a
+                    href="/reset-password"
+                    className={styles.forgotLink}
+                    onClick={(e) => {
+                      if (isLoading) e.preventDefault();
+                    }}
+                  >
                     ¿Olvidaste tu contraseña?
                   </a>
                 </div>
@@ -229,8 +371,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
               value={confirmPassword}
               onChange={setConfirmPassword}
               showPassword={showConfirmPassword}
-              onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+              onTogglePassword={() => {
+                if (!isLoading) setShowConfirmPassword((prev) => !prev);
+              }}
               iconType="lock"
+              disabled={isLoading}
             />
           )}
 
@@ -244,6 +389,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
               value={verificationCode}
               onChange={setVerificationCode}
               iconType="email"
+              disabled={isLoading}
             />
           )}
 
@@ -256,10 +402,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
                 value={password}
                 onChange={setPassword}
                 showPassword={showPassword}
-                onTogglePassword={() => setShowPassword(!showPassword)}
+                onTogglePassword={() => {
+                  if (!isLoading) setShowPassword((prev) => !prev);
+                }}
                 iconType="lock"
+                disabled={isLoading}
               />
+
               <PasswordStrength password={password} />
+
               <Input
                 label="Confirmar nueva contraseña"
                 type="password"
@@ -267,38 +418,56 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
                 value={confirmPassword}
                 onChange={setConfirmPassword}
                 showPassword={showConfirmPassword}
-                onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+                onTogglePassword={() => {
+                  if (!isLoading) setShowConfirmPassword((prev) => !prev);
+                }}
                 iconType="lock"
+                disabled={isLoading}
               />
             </>
           )}
 
-          <button type="submit" className={styles.button}>
-            <span>{currentConfig.buttonText}</span>
-            <ButtonIcon className={styles.buttonIcon} />
+          <button
+            type="submit"
+            className={`${styles.button} ${isLoading ? styles.buttonLoading : ''}`}
+            disabled={isLoading}
+          >
+            <span>
+              {isLoading
+                ? loadingMessage || currentConfig.loadingText
+                : currentConfig.buttonText}
+            </span>
+            {isLoading ? (
+              <LoaderCircle className={styles.buttonSpinner} />
+            ) : (
+              <ButtonIcon className={styles.buttonIcon} />
+            )}
           </button>
-
         </form>
 
-        {/* Footer del card — botón de reenvío para verify-email, enlace normal para el resto */}
         <p className={styles.footerCard}>
           {currentConfig.footerText}{' '}
           {type === 'verify-email' && onResend ? (
             <button
               type="button"
-              className={styles.link}
-              onClick={onResend}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              className={styles.linkButton}
+              onClick={handleResend}
+              disabled={isLoading || isResending}
             >
-              {currentConfig.footerLinkText}
+              {isResending ? 'Reenviando...' : currentConfig.footerLinkText}
             </button>
           ) : (
-            <a href={currentConfig.footerLink} className={styles.link}>
+            <a
+              href={currentConfig.footerLink}
+              className={styles.link}
+              onClick={(e) => {
+                if (isLoading) e.preventDefault();
+              }}
+            >
               {currentConfig.footerLinkText}
             </a>
           )}
         </p>
-
       </div>
 
       <Footer variant="auth" />

@@ -1,11 +1,11 @@
 /* =============================================
    Estilos del panel de administración.
    Organizado en secciones:
-   Layout → Sidebar → Nav → Contenido →
-   Toolbar → Tabla → Badges → Botones →
-   Modal → Formulario → Icon Wraps → Paginación
+   Layout → Header móvil → Sidebar → Nav →
+   Contenido → Toolbar → Tabla → Badges →
+   Botones → Modal → Formulario →
+   Icon Wraps → Paginación → Responsive
 ============================================= */
-
 
 /* ── Layout principal ──────────────────────── */
 /* Contenedor raíz del panel — ocupa toda la pantalla */
@@ -17,10 +17,149 @@
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 15px;
 }
+/* ── Header móvil ──────────────────────────── */
+/* Barra superior visible solo en mobile (<768px).
+   Distribución:
+   [hamburguesa + logo] -------- [perfil/logout] */
+.admin-mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  padding: 10px 14px;
+  background-color: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-subtle);
+}
 
+.admin-mobile-header__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-mobile-header__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+        
+/* Botón hamburguesa del header móvil */
+.admin-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+  color: #e2e8f0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+
+.admin-hamburger:hover {
+  background-color: #1e2e3e;
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+/* Fix visual para íconos Lucide del header y perfil */
+.admin-hamburger svg,
+.admin-sidebar__close svg,
+.admin-btn-logout svg,
+.admin-user-profile svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
+  stroke: currentColor;
+  color: inherit;
+  fill: none;
+  stroke-width: 2.2;
+}
+
+/* Variante inline del logo para el header móvil */
+.admin-logo--inline {
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+  font-size: 15px;
+  margin-left: 0;
+  justify-content: flex-start;
+  text-align: left;
+  flex-shrink: 1;
+  min-width: 0;
+}
+/* ── Perfil admin en header ────────────────── */
+/* Reutiliza el patrón visual del navbar principal:
+   avatar + nombre + botón logout */
+.admin-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #1e2e3e;
+  padding: 4px 10px;
+  border-radius: 50px;
+  border: 1px solid #2b333e;
+  max-width: 180px;
+}
+
+.admin-avatar {
+  width: 28px;
+  height: 28px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.admin-user-name {
+  color: #fdfdfd;
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-btn-logout {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s;
+  border-left: 1px solid #2b333e;
+  margin-left: 2px;
+  padding: 4px 0 4px 8px;
+  flex-shrink: 0;
+}
+
+.admin-btn-logout:hover {
+  color: #f87171;
+}
 
 /* ── Sidebar ───────────────────────────────── */
-/* Barra lateral fija — contiene logo y navegación */
 .admin-sidebar {
   position: fixed;
   top: 0;
@@ -29,24 +168,106 @@
   height: 100vh;
   background-color: var(--bg-surface);
   border-right: 1px solid var(--border-subtle);
-  padding: 28px 16px;
+  padding: 28px 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
-  z-index: 50;
+  z-index: 90;
+  transition: transform 0.25s ease;
 }
 
-/* Scrollbar personalizado para navegadores webkit */
+
 .admin-sidebar::-webkit-scrollbar       { width: 4px; }
 .admin-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
 
+.admin-sidebar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+
+.admin-sidebar__title {
+  margin-left: auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+
+.admin-sidebar__title-texts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 0;
+}
+
+
+.admin-sidebar__title-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+
+.admin-sidebar__title-main {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.admin-sidebar__close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  color: #e2e8f0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+
+.admin-sidebar__close:hover {
+  background-color: #1e2e3e;
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+
+.admin-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  background: rgba(2, 6, 23, 0.60);
+  border: none;
+  cursor: pointer;
+}
+
+
+
 /* ── Logo ──────────────────────────────────── */
-/* Ícono en azul (#3b82f6) + texto en blanco (#fdfdfd)
-   igual al logo del Navbar principal */
 .admin-logo {
   display: flex;
   align-items: center;
@@ -56,12 +277,13 @@
   color: #fdfdfd;
   text-decoration: none;
   letter-spacing: 0.02em;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-subtle);
   transition: color 0.15s;
+  min-width: 0;
 }
 
+
 .admin-logo:hover { color: #e2e8f0; }
+
 
 .admin-logo .material-symbols-outlined {
   font-size: 22px;
@@ -69,18 +291,32 @@
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   user-select: none;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 
+.admin-logo--drawer {
+  display: none;
+}
+
+
+.admin-logo__text,
+.admin-logo__text--inline {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
 /* ── Nav ───────────────────────────────────── */
-/* Items de navegación del sidebar.
-   NavLink aplica admin-nav__item--active automáticamente
-   cuando la ruta coincide con el to= del item. */
 .admin-nav {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
 }
+
 
 .admin-nav__item {
   display: flex;
@@ -95,21 +331,30 @@
   border: none;
   background: transparent;
   cursor: pointer;
+  min-height: 42px;
 }
+
 
 .admin-nav__item:hover   { background-color: #1e2e3e; color: var(--text-primary); }
 .admin-nav__item--active { background-color: #1a3150; color: var(--accent); font-weight: 600; }
 
 
+.admin-nav__label {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+
 /* ── Contenido ─────────────────────────────── */
-/* Área principal — desplazada 220px para no solapar el sidebar */
 .admin-content {
   margin-left: 220px;
   padding: 2rem 2.5rem;
   min-height: 100vh;
+  min-width: 0;
 }
 
-/* Título de cada página del panel */
+
 .admin-page__title {
   font-size: 26px;
   font-weight: 700;
@@ -119,9 +364,8 @@
 }
 
 
+
 /* ── Toolbar ───────────────────────────────── */
-/* Barra de herramientas encima de la tabla:
-   [búsqueda] [filtro] → → → [Nuevo usuario] */
 .admin-toolbar {
   display: flex;
   align-items: center;
@@ -130,14 +374,14 @@
   flex-wrap: wrap;
 }
 
-/* Empuja el botón de acción principal al extremo derecho */
+
 .admin-toolbar .btn {
   margin-left: auto;
 }
 
 
+
 /* ── Search box ────────────────────────────── */
-/* Input de búsqueda con ícono — se expande con flex */
 .search-box {
   display: flex;
   align-items: center;
@@ -146,13 +390,14 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 14px;
-  flex: 1;
+  flex: 1 1 220px;
   max-width: 340px;
   transition: border-color 0.15s;
 }
 
-/* Resalta el borde al enfocar cualquier elemento dentro */
+
 .search-box:focus-within { border-color: var(--accent); }
+
 
 .search-box__icon {
   font-size: 18px;
@@ -160,6 +405,7 @@
   user-select: none;
   line-height: 1;
 }
+
 
 .search-box__input {
   background: transparent;
@@ -170,12 +416,12 @@
   width: 100%;
 }
 
+
 .search-box__input::placeholder { color: var(--text-dim); }
 
 
+
 /* ── Filter select ─────────────────────────── */
-/* Select de filtro por estado (Todos / Activos / Inactivos)
-   También reutilizado en el selector de filas por página */
 .filter-select {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -186,28 +432,33 @@
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
   outline: none;
+  min-height: 40px;
 }
+
 
 .filter-select:focus,
 .filter-select:hover { border-color: var(--accent); color: var(--text-primary); }
 
 
+
 /* ── Tabla ─────────────────────────────────── */
-/* Wrapper con scroll horizontal para pantallas pequeñas */
 .admin-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: 10px;
   border: 1px solid var(--border);
   background-color: var(--bg-card);
 }
 
+
 .admin-table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
   font-size: 13.5px;
 }
 
-/* Encabezados — estilo compacto en mayúsculas */
+
 .admin-table th {
   text-align: left;
   padding: 0.75rem 1rem;
@@ -218,46 +469,51 @@
   letter-spacing: 0.08em;
   border-bottom: 1px solid var(--border);
   background-color: var(--bg-surface);
+  white-space: nowrap;
 }
 
-/* La columna Acciones se centra para alinear con los botones */
+
 .admin-table th:last-child { text-align: center; }
+
 
 .admin-table td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-primary);
+  vertical-align: middle;
 }
+
 
 .admin-table td:last-child { text-align: center; }
 
-/* Sin borde en la última fila para evitar doble línea con el wrapper */
+
 .admin-table tr:last-child td  { border-bottom: none; }
 .admin-table tbody tr:hover td { background-color: #1e2e3e; }
 
 
+
 /* ── Badges ────────────────────────────────── */
-/* Etiquetas de estado — verde para activo, rojo para inactivo */
 .badge {
   padding: 0.2rem 0.65rem;
   border-radius: 20px;
   font-size: 11.5px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
-.badge--active   { background: rgba(34, 197, 94, 0.12); color: #4ade80; }
-.badge--inactive { background: rgba(239, 68, 68, 0.12);  color: #f87171; }
+
+.badge--active   { background: rgba(34, 197, 94, 0.12);   color: #4ade80; }
+.badge--inactive { background: rgba(239, 68, 68, 0.12);   color: #f87171; }
+.badge--admin    { background: rgba(59, 130, 246, 0.12);  color: #60a5fa; }
+.badge--user     { background: rgba(148, 163, 184, 0.10); color: #94a3b8; }
+
 
 
 /* ── Botones ───────────────────────────────── */
-/* Sistema de botones con variantes:
-   --primary  → azul (acción principal)
-   --ghost    → transparente con borde (acción secundaria)
-   --danger   → rojo semitransparente (acción destructiva)
-   --sm       → tamaño reducido para usar dentro de tablas */
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   padding: 10px 22px;
   border-radius: 6px;
@@ -267,7 +523,10 @@
   border: none;
   transition: background-color 0.15s;
   text-decoration: none;
+  min-height: 42px;
+  white-space: nowrap;
 }
+
 
 .btn--primary       { background-color: var(--accent); color: #fff; }
 .btn--primary:hover { background-color: var(--accent-dark); }
@@ -275,21 +534,22 @@
 .btn--ghost:hover   { border-color: var(--accent); color: var(--accent); }
 .btn--danger        { background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; }
 .btn--danger:hover  { background-color: rgba(239, 68, 68, 0.2); border-color: #f87171; }
-.btn--sm            { padding: 6px 14px; font-size: 12.5px; }
+.btn--sm            { padding: 6px 14px; font-size: 12.5px; min-height: 34px; }
+
 
 
 /* ── Acciones de tabla ─────────────────────── */
-/* Contenedor de los botones Editar/Eliminar por fila */
 .table-actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 
+
 /* ── Modal ─────────────────────────────────── */
-/* Overlay oscuro con blur — cubre toda la pantalla */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -300,20 +560,24 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 16px;
 }
 
-/* Contenedor del modal — centrado y con ancho máximo */
+
 .modal {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
   width: 100%;
   max-width: 420px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
+
 
 .modal__header {
   display: flex;
@@ -323,17 +587,21 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+
 .modal__header-left {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
+
 
 .modal__title {
   font-size: 16px;
   font-weight: 700;
   color: #f1f5f9;
 }
+
 
 .modal__close {
   background: none;
@@ -343,9 +611,12 @@
   display: flex;
   padding: 0.2rem;
   transition: color 0.15s;
+  flex-shrink: 0;
 }
 
+
 .modal__close:hover { color: var(--text-primary); }
+
 
 .modal__body {
   display: flex;
@@ -353,32 +624,33 @@
   gap: 1rem;
 }
 
-/* Footer del modal — botones alineados a la derecha */
+
 .modal__footer {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 8px;
   border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
 }
 
 
+
 /* ── Formulario ────────────────────────────── */
-/* Grupos de campos del modal de edición */
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-/* Variante horizontal — usada para el toggle de cuenta activa */
+
 .form-group--row {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Labels en mayúsculas compactas — estilo panel admin */
+
 .form-group label {
   font-size: 11px;
   font-weight: 700;
@@ -387,7 +659,9 @@
   color: var(--text-dim);
 }
 
-.form-group select {
+
+.form-group select,
+.form-group input {
   background-color: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -395,19 +669,24 @@
   color: var(--text-primary);
   font-size: 13.5px;
   transition: border-color 0.15s;
+  width: 100%;
 }
 
-.form-group select:focus {
+
+.form-group select:focus,
+.form-group input:focus {
   outline: none;
   border-color: var(--accent);
 }
 
-/* Texto estático de solo lectura (username, email en modal editar) */
+
 .form-static {
   font-size: 13.5px;
   color: var(--text-muted);
   margin: 0;
+  overflow-wrap: anywhere;
 }
+
 
 
 /* ── Confirmación eliminar ──────────────────── */
@@ -417,19 +696,15 @@
   line-height: 1.6;
 }
 
-/* Resalta el nombre del usuario a eliminar */
+
 .delete-confirm__text strong {
   color: var(--text-primary);
   font-weight: 600;
 }
 
 
+
 /* ── Icon wraps ────────────────────────────── */
-/* Contenedores circulares para íconos con fondo de color.
-   Variantes:
-   (default)  → azul  — acciones generales
-   --danger   → rojo  — acciones destructivas
-   --white    → blanco translúcido — sobre fondo azul (btn--primary) */
 .icon-wrap {
   display: flex;
   align-items: center;
@@ -440,12 +715,13 @@
   flex-shrink: 0;
 }
 
+
 .icon-wrap--sm     { width: 24px; height: 24px; min-width: 24px; }
 .icon-wrap--md     { width: 34px; height: 34px; min-width: 34px; }
 .icon-wrap--danger { background-color: rgba(239, 68, 68, 0.12); color: #f87171; }
 .icon-wrap--white  { background-color: rgba(255, 255, 255, 0.15); color: #fff; }
 
-/* Ícono del nav — cuadrado en vez de circular */
+
 .admin-nav__icon.icon-wrap {
   border-radius: 6px;
   width: 28px;
@@ -457,9 +733,8 @@
 }
 
 
+
 /* ── Paginación ────────────────────────────── */
-/* Barra inferior de la tabla:
-   [Mostrando X-Y de Z]        [Filas: select] [< 1 2 3 >] */
 .pagination {
   display: flex;
   align-items: center;
@@ -478,9 +753,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
-/* Selector de filas por página */
 .page-size {
   display: flex;
   align-items: center;
@@ -493,11 +768,11 @@
   white-space: nowrap;
 }
 
-/* Botones numerados de página */
 .page-buttons {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .page-btn {
@@ -523,7 +798,7 @@
   border-color: var(--accent);
 }
 
-/* Página actualmente seleccionada */
+
 .page-btn--active {
   background-color: #1a3150;
   color: var(--accent);
@@ -531,13 +806,13 @@
   font-weight: 600;
 }
 
-/* Botones anterior/siguiente deshabilitados en los extremos */
+
 .page-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
+
 /* ── Inputs de formulario ──────────────────── */
-/* Usados en los modales de crear/editar contenido */
 .form-input {
   background-color: var(--bg-surface);
   border: 1px solid var(--border);
@@ -552,22 +827,268 @@
   box-sizing: border-box;
 }
 
+
 .form-input:focus { border-color: var(--accent); }
+
 
 .form-textarea {
   resize: vertical;
   min-height: 80px;
 }
 
-/* Dos columnas lado a lado dentro de un modal */
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-/* Modal más ancho para formularios con más campos */
+
 .modal--lg { max-width: 540px; }
 
-/* Badge de tipo de recurso */
+
 .badge--tipo { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
+
+/* ── Header desktop ───────────────────────── */
+.admin-desktop-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 24px;
+  background-color: rgba(15, 23, 42, 0.94);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 70;
+  margin-left: 220px;
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .admin-desktop-header {
+    margin-left: 72px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .admin-desktop-header {
+    display: none;
+  }
+}
+
+/* ── Responsive: tablet solamente (768px – 1023px) ───── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .admin-sidebar {
+    width: 72px;
+    padding: 20px 10px 16px;
+    gap: 1rem;
+  }
+
+  .admin-sidebar__head {
+    justify-content: center;
+    padding-bottom: 14px;
+  }
+
+  .admin-sidebar__title {
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .admin-sidebar__title-texts {
+    display: none;
+  }
+
+  .admin-sidebar__close {
+    display: none !important;
+  }
+
+  .admin-nav__item {
+    justify-content: center;
+    padding: 10px;
+    gap: 0;
+  }
+
+  .admin-nav__label {
+    display: none;
+  }
+
+  .admin-content {
+    margin-left: 72px;
+    padding: 1.5rem;
+  }
+
+  .search-box {
+    max-width: none;
+    flex: 1 1 180px;
+  }
+}
+
+/* ── Responsive: mobile (<768px) ───────────── */
+@media (max-width: 767px) {
+  .admin-mobile-header {
+    display: flex;
+  }
+
+  .admin-sidebar {
+    width: min(82vw, 280px);
+    padding: 20px 14px 16px;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 40px rgba(0, 0, 0, 0.4);
+    gap: 1rem;
+  }
+
+  .admin-sidebar--open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar__close {
+    display: inline-flex;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 1rem;
+    min-height: calc(100dvh - 60px);
+  }
+
+  .admin-page__title {
+    font-size: 22px;
+    margin-bottom: 1rem;
+  }
+
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-toolbar .btn {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-box {
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .pagination__controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .page-size {
+    justify-content: space-between;
+  }
+
+  .page-buttons {
+    justify-content: center;
+  }
+
+  .modal {
+    max-width: none;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .modal__footer {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .modal__footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* En mobile pequeño ocultamos el nombre del usuario
+     y dejamos solo avatar + botón logout, igual a tu otra vista. */
+  .admin-user-name {
+    display: none;
+  }
+
+  .admin-user-profile {
+    padding: 3px 8px;
+    gap: 8px;
+  }
+}
+
+/* ── Responsive: mobile pequeño (<480px) ───── */
+@media (max-width: 479px) {
+  .admin-mobile-header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .admin-content {
+    padding: 0.875rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .btn {
+    padding: 10px 16px;
+  }
+
+  .btn--sm {
+    padding: 6px 10px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal {
+    padding: 1rem;
+  }
+
+  .admin-page__title {
+    font-size: 20px;
+  }
+}
+/* ── Desktop: mostrar logo en sidebar y ocultar "Panel Administración" ───── */
+@media (min-width: 1024px) {
+
+  /* Mostrar logo */
+  .admin-logo--drawer {
+    display: flex;
+  }
+
+  /* Ocultar texto */
+  .admin-sidebar__title {
+    display: none;
+  }
+
+  /* Centrar contenido del header del sidebar */
+  .admin-sidebar__head {
+    justify-content: center;
+  }
+
+  /* Opcional: hacer el logo un poco más protagonista */
+  .admin-logo {
+    font-size: 18px;
+  }
+
+  .admin-logo .material-symbols-outlined {
+    font-size: 24px;
+  }
+}

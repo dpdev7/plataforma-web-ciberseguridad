@@ -1,61 +1,196 @@
-// Layout principal del panel de administración.
-// Contiene el sidebar de navegación y el área de contenido.
-// Todas las páginas del admin se renderizan dentro del <Outlet />.
-
-import { Outlet, NavLink, Link } from 'react-router-dom';
-import { Users, Home, BookOpen, HelpCircle } from 'lucide-react';
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import {
+  Users,
+  Home,
+  BookOpen,
+  HelpCircle,
+  Menu,
+  X,
+  LogOut,
+} from 'lucide-react';
 import './admin.css';
 
-// Lista de módulos del panel admin.
-// Para agregar un nuevo módulo (Biblioteca, Foro, etc.), añade un nuevo objeto aquí con su ruta, ícono y label.
+interface UserProfileProps {
+  user: string;
+  onLogout: () => void;
+}
+
+const AdminUserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
+  <div className="admin-user-profile">
+    <div className="admin-avatar">{user.charAt(0).toUpperCase()}</div>
+    <span className="admin-user-name">{user}</span>
+    <button
+      type="button"
+      className="admin-btn-logout"
+      onClick={onLogout}
+      title="Cerrar sesión"
+      aria-label="Cerrar sesión"
+    >
+      <LogOut size={18} />
+    </button>
+  </div>
+);
+
 const navItems = [
-  { to: '/admin/users',         icon: <Users      size={17} />, label: 'Usuarios'      },
-  { to: '/admin/content',       icon: <BookOpen   size={17} />, label: 'Biblioteca'    },
+  { to: '/admin/users',         icon: <Users size={17} />,      label: 'Usuarios'      },
+  { to: '/admin/content',       icon: <BookOpen size={17} />,   label: 'Biblioteca'    },
   { to: '/admin/cuestionarios', icon: <HelpCircle size={17} />, label: 'Cuestionarios' },
 ];
 
 export default function AdminLayout() {
+  const navigate = useNavigate();
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setSidebarOpen(false);
+    };
+
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          'https://backend-web-ciberseguridad.onrender.com/usuario/me/',
+          {
+            method: 'GET',
+            credentials: 'include',
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.usuario.nombre);
+        } else {
+          setUser(null);
+        }
+      } catch {
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const closeSidebar = () => setSidebarOpen(false);
+
+  const handleLogout = async () => {
+    await fetch(
+      'https://backend-web-ciberseguridad.onrender.com/usuario/logout/',
+      {
+        method: 'POST',
+        credentials: 'include',
+      }
+    );
+
+    setUser(null);
+    closeSidebar();
+    navigate('/login');
+  };
+
   return (
     <div className="admin-layout">
-      <aside className="admin-sidebar">
 
-        {/* Logo — redirige al home del sitio principal */}
-        <Link to="/home" className="admin-logo">
-          <span className="material-symbols-outlined">security</span>
-          CyberGuard
-        </Link>
+      {/* HEADER MOBILE */}
+      <header className="admin-mobile-header">
+        <div className="admin-mobile-header__left">
+          <button
+            type="button"
+            className="admin-hamburger"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu size={22} />
+          </button>
 
-        <nav className="admin-nav">
+          <Link to="/home" className="admin-logo admin-logo--inline">
+            <span className="material-symbols-outlined">security</span>
+            <span className="admin-logo__text">CyberGuard</span>
+          </Link>
+        </div>
 
-          {/* Botón fijo de regreso al sitio principal */}
-          <Link to="/home" className="admin-nav__item">
-            <span className="admin-nav__icon icon-wrap"><Home size={17} /></span>
-            <span>Inicio</span>
+        <div className="admin-mobile-header__right">
+          {user && <AdminUserProfile user={user} onLogout={handleLogout} />}
+        </div>
+      </header>
+
+      {/* HEADER DESKTOP (NUEVO) */}
+      <header className="admin-desktop-header">
+        <div className="admin-desktop-header__right">
+          {user && <AdminUserProfile user={user} onLogout={handleLogout} />}
+        </div>
+      </header>
+
+      {/* OVERLAY MOBILE */}
+      {sidebarOpen && (
+        <button
+          className="admin-sidebar-overlay"
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <aside className={`admin-sidebar${sidebarOpen ? ' admin-sidebar--open' : ''}`}>
+        <div className="admin-sidebar__head">
+          <button
+            className="admin-sidebar__close"
+            onClick={closeSidebar}
+          >
+            <X size={22} />
+          </button>
+
+          <Link to="/home" className="admin-logo admin-logo--drawer">
+            <span className="material-symbols-outlined">security</span>
+            <span className="admin-logo__text">CyberGuard</span>
           </Link>
 
-          {/* Módulos del panel — se generan dinámicamente desde navItems.
-              NavLink aplica la clase admin-nav__item--active
-              automáticamente cuando la ruta coincide. */}
+          <div className="admin-sidebar__title">
+            <div className="admin-sidebar__title-texts">
+              <span className="admin-sidebar__title-label">Panel</span>
+              <span className="admin-sidebar__title-main">Administración</span>
+            </div>
+          </div>
+        </div>
+
+        <nav className="admin-nav">
+          <Link to="/home" className="admin-nav__item" onClick={closeSidebar}>
+            <span className="admin-nav__icon icon-wrap"><Home size={17} /></span>
+            <span className="admin-nav__label">Inicio</span>
+          </Link>
+
           {navItems.map(({ to, icon, label }) => (
             <NavLink
               key={to}
               to={to}
+              onClick={closeSidebar}
               className={({ isActive }) =>
                 `admin-nav__item ${isActive ? 'admin-nav__item--active' : ''}`
               }
             >
               <span className="admin-nav__icon icon-wrap">{icon}</span>
-              <span>{label}</span>
+              <span className="admin-nav__label">{label}</span>
             </NavLink>
           ))}
         </nav>
-
       </aside>
 
-      {/* Área de contenido — aquí se renderizan las páginas del admin */}
+      {/* CONTENIDO */}
       <main className="admin-content">
         <Outlet />
       </main>
+
     </div>
   );
 }

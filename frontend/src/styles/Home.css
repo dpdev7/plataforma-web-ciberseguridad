@@ -1,25 +1,36 @@
 /* ============================================
    VARIABLES GLOBALES
-   Paleta de colores, tamaños y espaciados
-   reutilizables en todo el componente.
 ============================================= */
 :root {
-  --bg-base:       #0f161d; /* fondo principal de la página */
-  --bg-surface:    #131c26; /* fondo del sidebar TOC */
-  --bg-card:       #192633; /* fondo de cards y cajas */
-  --border:        #1e3a5f; /* borde estándar */
-  --border-subtle: #2b333e; /* borde más sutil para divisores */
-  --text-primary:  #e2e8f0; /* texto principal */
-  --text-muted:    #94a3b8; /* texto secundario / descripciones */
-  --text-dim:      #475569; /* texto muy atenuado (labels, meta) */
-  --accent:        #3b82f6; /* azul principal de acento */
-  --accent-dark:   #1173D4; /* azul más oscuro para hover */
-  --navbar-height: 57px;    /* altura del navbar fijo superior */
-  --toc-width:     260px;   /* ancho del sidebar TOC en desktop */
-  --max-denuncia:  680px;   /* ancho máximo de la sección denuncia */
+  --bg-base:       #0f161d;
+  --bg-surface:    #131c26;
+  --bg-card:       #192633;
+  --border:        #1e3a5f;
+  --border-subtle: #2b333e;
+  --text-primary:  #e2e8f0;
+  --text-muted:    #94a3b8;
+  --text-dim:      #475569;
+  --accent:        #3b82f6;
+  --accent-dark:   #1173D4;
+  --navbar-height: 57px;
+  --toc-width:     260px;
+  --max-denuncia:  680px;
+
+  /* Escala tipográfica — un solo lugar para cambiar */
+  --fs-xs:   11px;
+  --fs-sm:   12px;
+  --fs-base: 15px;
+  --fs-md:   14px;
+  --fs-lg:   16px;
+  --fs-xl:   20px;
+  --fs-2xl:  26px;
+  --fs-3xl:  36px;
+
+  /* Hero */
+  --fs-hero-h1: 38px;
+  --fs-hero-p:  16px;
 }
 
-/* Reset universal — evita inconsistencias entre navegadores */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ============================================
@@ -31,53 +42,44 @@
   width: 100%;
   color: var(--text-primary);
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.7;
 }
 
-/* Ajuste global para los íconos de Material Symbols */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  user-select: none; /* evita que se seleccionen como texto */
+  user-select: none;
   line-height: 1;
 }
 
 /* ============================================
    LAYOUT PRINCIPAL
-   Flexbox horizontal: sidebar TOC + contenido
 ============================================= */
 .doc-layout {
   display: flex;
-  padding-top: var(--navbar-height); /* empuja el contenido debajo del navbar fijo */
+  padding-top: var(--navbar-height);
   min-height: 100vh;
 }
 
 /* ============================================
    SIDEBAR TOC
-   Panel izquierdo fijo con tabla de contenidos
 ============================================= */
 .toc-sidebar {
-  position: fixed;        /* fijo en pantalla durante el scroll */
+  position: fixed;
   top: var(--navbar-height);
   left: 0;
   width: var(--toc-width);
   height: calc(100vh - var(--navbar-height));
   background-color: var(--bg-surface);
   border-right: 1px solid var(--border-subtle);
-  overflow-y: auto;       /* scroll interno si el contenido es largo */
+  overflow-y: auto;
   padding: 32px 20px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
-  /* Transición para el drawer en mobile (entra desde la izquierda) */
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 90;
 }
 
-/* ============================================
-   SIDEBAR MEJORADO
-============================================= */
-
-/* Encabezado con label y porcentaje */
 .toc-top {
   display: flex;
   justify-content: space-between;
@@ -85,13 +87,12 @@
   margin-bottom: 8px;
 }
 .toc-progreso-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--accent);
   letter-spacing: 0.05em;
 }
 
-/* Barra de progreso */
 .toc-barra-fondo {
   width: 100%;
   height: 3px;
@@ -106,7 +107,6 @@
   transition: width 0.4s ease;
 }
 
-/* Número de sección */
 .toc-item-numero {
   font-size: 10px;
   font-weight: 700;
@@ -119,7 +119,6 @@
   color: var(--accent);
 }
 
-/* Footer del sidebar */
 .toc-footer {
   display: flex;
   align-items: center;
@@ -128,23 +127,21 @@
   padding-top: 16px;
   border-top: 1px solid var(--border-subtle);
   color: var(--text-dim);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   letter-spacing: 0.05em;
 }
 .toc-footer-icon {
-  font-size: 16px;
+  font-size: var(--fs-lg);
   color: var(--accent);
   opacity: 0.7;
 }
 
-/* Scrollbar personalizada en WebKit */
 .toc-sidebar::-webkit-scrollbar       { width: 4px; }
 .toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* Encabezado "EN ESTA PÁGINA" del TOC */
 .toc-header {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -154,10 +151,8 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Contenedor de los ítems del TOC */
 .toc-nav { display: flex; flex-direction: column; gap: 2px; }
 
-/* Ítem individual del TOC — botón que hace scroll a la sección */
 .toc-item {
   display: flex;
   align-items: center;
@@ -176,14 +171,11 @@
 }
 
 .toc-item:hover  { background-color: #1e2e3e; color: var(--text-primary); }
-/* Estado activo: la sección visible actualmente en el viewport */
 .toc-item.active { background-color: #1a3150; color: var(--accent); font-weight: 600; }
 .toc-item-icon   { font-size: 17px; flex-shrink: 0; opacity: 0.8; }
 
-/* Línea divisora entre grupos del TOC */
-.toc-divider     { height: 1px; background: var(--border-subtle); margin: 14px 0; }
+.toc-divider { height: 1px; background: var(--border-subtle); margin: 14px 0; }
 
-/* Tarjeta de artículo reciente en el TOC */
 .toc-articulo {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -198,44 +190,36 @@
 .toc-articulo-titulo { font-size: 12.5px; color: var(--text-primary); line-height: 1.4; margin: 0 0 4px; }
 .toc-articulo-tiempo { font-size: 11.5px; color: rgba(59,131,246,.75); margin: 0; }
 
-/*
-  Overlay semitransparente detrás del drawer en mobile.
-  Oculto por defecto (display: none), se activa con JS al abrir el TOC.
-*/
 .toc-overlay {
   display: none;
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.6);
-  z-index: 89; /* justo debajo del sidebar (z-index: 90) */
+  z-index: 89;
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
 
 /* ============================================
    CONTENIDO PRINCIPAL
-   Ocupa el espacio restante junto al sidebar
 ============================================= */
 .doc-content {
-  margin-left: var(--toc-width); /* deja espacio para el sidebar fijo */
+  margin-left: var(--toc-width);
   flex: 1;
-  min-width: 0; /* evita overflow en flex items con contenido largo */
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* Contenedor base de cada sección de la página */
 .doc-section {
   margin-bottom: 72px;
-  /* offset para que el scroll al anclar con #id no quede tapado por el navbar */
   scroll-margin-top: calc(var(--navbar-height) + 24px);
   padding: 0 64px;
   width: 100%;
 }
 
-/* Etiqueta de categoría sobre el título (ej: "Seguridad", "Recursos") */
 .doc-section-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -244,25 +228,22 @@
 }
 
 .doc-section h2 {
-  font-size: 26px;
+  font-size: var(--fs-2xl);
   font-weight: 700;
   color: #f1f5f9;
   margin-bottom: 8px;
   letter-spacing: -0.01em;
 }
 
-/* Párrafo introductorio debajo del título de cada sección */
 .doc-section-intro {
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: var(--fs-base);
   margin-bottom: 24px;
   max-width: 640px;
 }
 
 /* ============================================
    HERO
-   Banner principal con imagen de fondo,
-   overlay de blur y degradados en los bordes
 ============================================= */
 .hero {
   position: relative;
@@ -279,7 +260,6 @@
   overflow: hidden;
 }
 
-/* Capa de blur sobre la imagen de fondo */
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -288,10 +268,6 @@
   background-color: rgba(10, 18, 28, 0.55);
 }
 
-/*
-  Pseudo-elemento que crea degradados en los 4 bordes del hero,
-  integrándolo suavemente con el fondo de la página.
-*/
 .hero::after {
   content: '';
   position: absolute;
@@ -305,7 +281,6 @@
   z-index: 1;
 }
 
-/* Contenido del hero — por encima del overlay y los degradados */
 .hero-content {
   position: relative;
   z-index: 2;
@@ -314,7 +289,7 @@
 }
 
 .hero h1 {
-  font-size: 38px;
+  font-size: var(--fs-hero-h1);
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 16px;
@@ -323,12 +298,11 @@
   text-shadow: 0 2px 16px rgba(0,0,0,0.6);
 }
 
-/* Palabra resaltada en el título del hero */
 .hero h1 span { color: var(--accent); }
 
 .hero p {
   color: #cbd5e1;
-  font-size: 16px;
+  font-size: var(--fs-hero-p);
   max-width: 520px;
   margin: 0 auto;
   line-height: 1.75;
@@ -337,7 +311,6 @@
 
 /* ============================================
    FUNDAMENTOS
-   Sección de 2 columnas: texto izq + timeline der
 ============================================= */
 .fundamentos-section { padding-top: 0; padding-bottom: 0; }
 
@@ -357,11 +330,10 @@
   line-height: 1.25;
 }
 
-.fundamentos-desc                     { color: var(--text-muted); font-size: 15px; line-height: 1.75; }
+.fundamentos-desc                     { color: var(--text-muted); font-size: var(--fs-base); line-height: 1.75; }
 .fundamentos-desc + .fundamentos-desc { margin-top: 12px; }
 .fundamentos-cta                      { margin-top: 28px; }
 
-/* Timeline vertical de pasos */
 .fundamentos-timeline {
   list-style: none;
   display: flex;
@@ -375,7 +347,6 @@
   gap: 16px;
 }
 
-/* Columna izquierda del step: ícono + línea vertical conectora */
 .fundamentos-step-left {
   display: flex;
   flex-direction: column;
@@ -384,7 +355,6 @@
   width: 38px;
 }
 
-/* Círculo con ícono del paso */
 .fundamentos-step-icon-wrap {
   display: flex;
   align-items: center;
@@ -400,22 +370,20 @@
 
 .fundamentos-step-icon { font-size: 18px; color: var(--accent); opacity: 0.85; }
 
-/* Línea vertical que conecta un paso con el siguiente */
 .fundamentos-step-line {
   width: 2px;
-  flex: 1;               /* crece para llenar el espacio entre ícono y siguiente paso */
+  flex: 1;
   background-color: var(--accent);
   opacity: 0.35;
   margin: 4px 0;
 }
 
 .fundamentos-step-body   { padding: 6px 0 24px; }
-.fundamentos-step-titulo { font-weight: 700; font-size: 14px; color: var(--text-primary); margin: 0 0 4px; }
+.fundamentos-step-titulo { font-weight: 700; font-size: var(--fs-md); color: var(--text-primary); margin: 0 0 4px; }
 .fundamentos-step-desc   { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin: 0; }
 
 /* ============================================
    ESTADÍSTICAS
-   Caja con 4 métricas en grid horizontal
 ============================================= */
 .estadisticas-caja {
   background-color: var(--bg-card);
@@ -430,30 +398,25 @@
   gap: 32px;
 }
 
-/* Separador izquierdo entre estadísticas (excepto la primera) */
 .estadistica-item             { border-left: 2px solid var(--border); padding-left: 20px; }
 .estadistica-item:first-child { border-left: none; padding-left: 0; }
-.estadistica-numero           { color: var(--accent); font-size: 36px; font-weight: 800; letter-spacing: -0.02em; }
-.estadistica-label            { color: white; font-weight: 600; font-size: 14px; margin: 4px 0 2px; }
+.estadistica-numero           { color: var(--accent); font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -0.02em; }
+.estadistica-label            { color: white; font-weight: 600; font-size: var(--fs-md); margin: 4px 0 2px; }
 .estadistica-desc             { color: var(--text-muted); font-size: 12.5px; line-height: 1.5; }
 
 /* ============================================
-   CLASES COMPARTIDAS — Cards
-   Usadas tanto en amenazas como en consejos
+   CARDS — clases compartidas
 ============================================= */
-
-/* Wrapper circular para íconos dentro de las cards */
 .icon-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: rgba(59, 130, 246, 0.12); /* azul translúcido */
+  background-color: rgba(59, 130, 246, 0.12);
   color: var(--accent);
-  flex-shrink: 0; /* no se encoge si el texto es largo */
+  flex-shrink: 0;
 }
 
-/* Card genérica con ícono + título + descripción */
 .card-item {
   display: flex;
   gap: 14px;
@@ -462,25 +425,15 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 14px 16px;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, transform 0.2s;
 }
 
-.card-item:hover { border-color: var(--accent); } /* borde azul al pasar el cursor */
-.card-titulo     { font-weight: 600; font-size: 14px; margin: 0 0 3px; color: var(--text-primary); }
+.card-item:hover { border-color: var(--accent); transform: translateY(-3px); }
+.card-titulo     { font-weight: 600; font-size: var(--fs-md); margin: 0 0 3px; color: var(--text-primary); }
 .card-desc       { color: var(--text-muted); font-size: 13px; margin: 0; line-height: 1.5; }
 
 /* ============================================
    AMENAZAS
-   Layout de dos columnas con CSS Subgrid.
-   
-   Funcionamiento:
-   - .amenazas-grid define 2 columnas y 6 filas explícitas
-   - .amenazas-col hereda esas filas con grid-template-rows: subgrid
-   - Resultado: banner[izq] ↔ banner[der] y card[i][izq] ↔ card[i][der]
-     quedan en la misma fila y con la misma altura automáticamente.
-   
-   ⚠️ Si cambias el número de amenazas/consejos, actualiza
-      repeat(6, auto) → repeat(N+1, auto) donde N = cantidad de items.
 ============================================= */
 .amenazas-wrapper {
   max-width: min(920px, 100%);
@@ -488,19 +441,17 @@
   margin: 0 auto;
 }
 
-/* Grid padre: define las filas que las columnas hijas heredarán */
 .amenazas-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(6, auto); /* 1 banner + 5 cards */
+  grid-template-rows: repeat(6, auto);
   gap: 10px 20px;
 }
 
-/* Columna hija: hereda las filas del padre con subgrid */
 .amenazas-col {
   display: grid;
-  grid-row: 1 / -1;            /* ocupa todas las filas definidas en el padre */
-  grid-template-rows: subgrid; /* hereda las 6 filas → alineación automática */
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
   gap: 0;
   row-gap: 10px;
   min-width: 0;
@@ -509,19 +460,14 @@
 .amenazas-col--izq { grid-column: 1; }
 .amenazas-col--der { grid-column: 2; }
 
-/*
-  Banner de sección con imagen de fondo posicionada absolutamente.
-  El texto se superpone en la parte inferior con un gradiente oscuro.
-*/
 .amenaza-card-header {
   position: relative;
   border-radius: 10px;
-  overflow: hidden; /* recorta la imagen al borde redondeado */
+  overflow: hidden;
   border: 1px solid var(--border);
-  height: 180px;   /* altura fija para ambos banners */
+  height: 180px;
 }
 
-/* Imagen de fondo — posicionada absolutamente para llenar el banner */
 .amenaza-card-img {
   position: absolute;
   inset: 0;
@@ -530,38 +476,32 @@
   background-repeat: no-repeat;
 }
 
-/* Área de texto sobre la imagen con gradiente de abajo hacia arriba */
 .amenaza-card-body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   padding: 16px 20px 20px;
   background: linear-gradient(
     to top,
-    rgba(9,18,28,1)   45%,  /* opaco en la base */
-    rgba(9,18,28,0.6) 75%,  /* semitransparente en el medio */
-    transparent       100%  /* transparente en la parte superior */
+    rgba(9,18,28,1)   45%,
+    rgba(9,18,28,0.6) 75%,
+    transparent       100%
   );
-  z-index: 1; /* por encima de .amenaza-card-img */
+  z-index: 1;
 }
 
-.amenaza-card-titulo { font-size: 16px; font-weight: 700; color: #f8fafc; margin: 0 0 3px; }
-.amenaza-card-desc   { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+.amenaza-card-titulo { font-size: var(--fs-lg); font-weight: 700; color: #f8fafc; margin: 0 0 3px; }
+.amenaza-card-desc   { font-size: var(--fs-sm); color: var(--text-muted); margin: 0; line-height: 1.4; }
 
-/* Ícono cuadrado de amenaza (más grande que el check de consejo) */
 .amenaza-icono-wrap  { width: 44px; height: 44px; min-width: 44px; border-radius: 8px; }
-/* Ícono circular pequeño de check para consejos */
 .consejo-check-wrap  { width: 28px; height: 28px; min-width: 28px; margin-top: 2px; }
 
-/* Padding específico para las cards de esta sección */
 .amenaza-item,
 .consejo-item        { padding: 14px 16px; gap: 14px; }
 
-/* Botón CTA centrado debajo del grid */
 .amenazas-cta-wrap   { display: flex; justify-content: center; margin-top: 24px; }
 
 /* ============================================
    RECURSOS
-   Grid de 3 tarjetas con ícono, título y enlace
 ============================================= */
 .recursos-grid {
   display: grid;
@@ -575,15 +515,14 @@
   border-radius: 8px;
   padding: 24px;
   text-align: center;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, transform 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.recurso-tarjeta:hover { border-color: var(--accent); }
+.recurso-tarjeta:hover { border-color: var(--accent); transform: translateY(-3px); }
 
-/* Círculo con ícono centrado */
 .tarjeta-icono {
   color: var(--accent);
   margin: 0 auto 16px;
@@ -603,7 +542,7 @@
   text-align: center;
 }
 
-.tarjeta-titulo { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.tarjeta-titulo { color: #fff; font-size: var(--fs-base); font-weight: 700; margin-bottom: 6px; }
 .tarjeta-texto  { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-top: 6px; }
 
 .tarjeta-link {
@@ -625,87 +564,110 @@
 
 /* ============================================
    DENUNCIA
-   Caja CTA centrada para reportar incidentes
 ============================================= */
 .denuncia-caja {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px 48px;
+  border-radius: 14px;
+  padding: 36px 52px;
   max-width: var(--max-denuncia);
   margin: 0 auto;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
-.denuncia-caja h2 { font-size: 20px; font-weight: 700; color: #f1f5f9; }
-.denuncia-caja p  { color: var(--text-muted); max-width: 480px; line-height: 1.6; font-size: 14px; }
+/* Ícono decorativo opcional encima del título */
+.denuncia-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: rgba(59, 130, 246, 0.12);
+  color: var(--accent);
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.denuncia-caja h2 { font-size: var(--fs-xl); font-weight: 700; color: #f1f5f9; line-height: 1.3; }
+.denuncia-caja p  { color: var(--text-muted); max-width: 440px; line-height: 1.7; font-size: var(--fs-md); }
 
 .denuncia-botones {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
   margin-top: 4px;
 }
 
 /* ============================================
    BOTONES GLOBALES
 ============================================= */
-
-/* Botón primario — fondo azul sólido */
 .btn-primario {
   background-color: var(--accent);
   color: white;
   font-weight: 600;
   border: none;
-  padding: 10px 22px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-size: var(--fs-md);
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  letter-spacing: 0.01em;
+  transition: background-color 0.15s, transform 0.1s;
 }
 
-.btn-primario:hover { background-color: var(--accent-dark); }
+.btn-primario:hover  { background-color: var(--accent-dark); transform: translateY(-1px); }
+.btn-primario:active { transform: translateY(0); }
 
-/* Botón secundario — borde sutil, fondo transparente */
 .btn-secundario {
   background-color: transparent;
   border: 1px solid var(--border);
   color: var(--text-muted);
   font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 11px 22px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  transition: border-color 0.15s, color 0.15s;
+  font-size: var(--fs-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: border-color 0.15s, color 0.15s, transform 0.1s;
 }
 
-.btn-secundario:hover { border-color: var(--accent); color: var(--accent); }
+.btn-secundario:hover  { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.btn-secundario:active { transform: translateY(0); }
 
-/* Botón alternativo para denuncia — fondo azul translúcido */
 .btn-denuncia-secundario {
-  background-color: rgba(59,130,246,.12);
+  background-color: rgba(59,130,246,.10);
   font-weight: 600;
-  border: 1px solid rgba(59,130,246,.3);
+  border: 1px solid rgba(59,130,246,.28);
   color: var(--accent);
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-size: var(--fs-md);
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.15s, transform 0.1s;
 }
 
-.btn-denuncia-secundario:hover { background-color: rgba(59,130,246,.2); }
+.btn-denuncia-secundario:hover  { background-color: rgba(59,130,246,.2); transform: translateY(-1px); }
+.btn-denuncia-secundario:active { transform: translateY(0); }
 
-/* Footer — empuja el margen izquierdo para no quedar detrás del sidebar */
 .home-footer-wrapper { margin-left: var(--toc-width); }
 
 /* ============================================
@@ -716,119 +678,186 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Hero */
-.hero-content {
-  animation: fadeUp 0.7s ease both;
-}
+.hero-content         { animation: fadeUp 0.7s ease both; }
+#conceptos            { animation: fadeUp 0.6s ease 0.10s both; }
+#estadisticas         { animation: fadeUp 0.6s ease 0.15s both; }
+#amenazas             { animation: fadeUp 0.6s ease 0.20s both; }
+#recursos             { animation: fadeUp 0.6s ease 0.25s both; }
+#denuncia             { animation: fadeUp 0.6s ease 0.30s both; }
 
-/* Secciones — cada una aparece con un retraso escalonado */
-#conceptos    { animation: fadeUp 0.6s ease 0.1s both; }
-#estadisticas { animation: fadeUp 0.6s ease 0.15s both; }
-#amenazas     { animation: fadeUp 0.6s ease 0.2s both; }
-#recursos     { animation: fadeUp 0.6s ease 0.25s both; }
-#denuncia     { animation: fadeUp 0.6s ease 0.3s both; }
-
-/* Cards — hover suave */
-.card-item {
-  transition: border-color 0.2s, transform 0.2s;
-}
-.card-item:hover {
-  transform: translateY(-3px);
-}
-
-/* Estadísticas — hover suave */
 .estadistica-item {
   transition: transform 0.2s;
 }
-.estadistica-item:hover {
-  transform: translateY(-3px);
-}
-
-/* Recursos — hover suave */
-.recurso-tarjeta {
-  transition: border-color 0.2s, transform 0.2s;
-}
-.recurso-tarjeta:hover {
-  transform: translateY(-3px);
-}
-
-@media (max-width: 768px) {
-  /* Espacio para la bottom nav */
-  body { padding-bottom: 80px; }
-}
+.estadistica-item:hover { transform: translateY(-3px); }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE — Tablet grande (≤1100px)
+   Sidebar más estrecho, grid 4→2 columnas
 ============================================= */
-
-/* Tablet grande — sidebar más estrecho, menos padding */
 @media (max-width: 1100px) {
-  :root { --toc-width: 220px; }
+  :root {
+    --toc-width: 220px;
+    --fs-hero-h1: 32px;
+    --fs-hero-p:  15px;
+  }
+
   .doc-section       { padding: 0 40px; }
-  .estadisticas-grid { grid-template-columns: repeat(2, 1fr); } /* 4 → 2 columnas */
+  .estadisticas-grid { grid-template-columns: repeat(2, 1fr); }
   .fundamentos-inner { gap: 40px; }
 }
 
-/* Tablet — fundamentos colapsa a 1 columna */
+/* ============================================
+   RESPONSIVE — Tablet (≤860px)
+   Fundamentos colapsa a 1 columna
+============================================= */
 @media (max-width: 860px) {
-  .fundamentos-inner    { grid-template-columns: 1fr; gap: 36px; }
+  :root {
+    --fs-hero-h1: 28px;
+    --fs-hero-p:  14px;
+    --fs-2xl: 22px;
+  }
+
+  .fundamentos-inner    { grid-template-columns: 1fr; gap: 32px; }
   .fundamentos-timeline { padding-top: 0; }
+  .fundamentos-texto h2 { font-size: 22px; }
 }
 
-/* Mobile — sidebar se convierte en drawer lateral */
+/* ============================================
+   RESPONSIVE — Mobile (≤768px)
+   Drawer lateral, tipografía base 13px
+============================================= */
 @media (max-width: 768px) {
-  /* El contenido ocupa toda la pantalla */
+  /* --- Escala tipográfica mobile --- */
+  :root {
+    --fs-base:    13px;
+    --fs-md:      13px;
+    --fs-lg:      14px;
+    --fs-xl:      17px;
+    --fs-2xl:     19px;
+    --fs-3xl:     26px;
+    --fs-hero-h1: 22px;
+    --fs-hero-p:  13px;
+  }
+
+  body { padding-bottom: 0; } /* no sirve de nada en este layout */
+
+  /* El contenido debe terminar por encima del bottom-nav fijo (~60px) */
+  .doc-content {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+
+  /* --- Layout: sidebar → drawer --- */
   .doc-content         { margin-left: 0; }
-  .doc-section         { padding: 0 18px; }
   .home-footer-wrapper { margin-left: 0; }
+  .toc-sidebar         { transform: translateX(-100%); width: 280px; }
+  .toc-sidebar.open    { transform: translateX(0); }
+  .toc-overlay         { display: block; }
 
-  /* Sidebar oculto por defecto, se desliza con la clase .open (añadida por JS) */
-  .toc-sidebar      { transform: translateX(-100%); width: 280px; }
-  .toc-sidebar.open { transform: translateX(0); }
-  /* El overlay se muestra cuando el drawer está abierto */
-  .toc-overlay      { display: block; }
+  /* --- Secciones --- */
+  .doc-section { padding: 0 18px; margin-bottom: 48px; }
 
-  .hero h1      { font-size: 22px; }
-  .hero p       { font-size: 14px; }
-  .hero-content { padding: 40px 20px 36px; }
+  /* --- Hero --- */
+  .hero         { min-height: 260px; }
+  .hero-content { padding: 36px 20px 32px; }
 
-  .doc-section h2    { font-size: 20px; }
-  .doc-section-intro { font-size: 14px; }
+  /* --- Fundamentos --- */
+  .fundamentos-texto h2 { font-size: 19px; }
+  .fundamentos-inner    { gap: 28px; }
 
-  .recursos-grid     { grid-template-columns: 1fr; }       /* 3 → 1 columna */
-  .estadisticas-grid { grid-template-columns: 1fr 1fr; }   /* 4 → 2 columnas */
+  /* --- Estadísticas --- */
+  .estadisticas-caja  { padding: 24px 20px; }
+  .estadisticas-grid  { grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
+  /* --- Recursos --- */
+  .recursos-grid   { grid-template-columns: 1fr; gap: 12px; }
+  .recurso-tarjeta { padding: 24px 20px 20px; }
+  .tarjeta-icono   { width: 48px; height: 48px; margin: 0 auto 14px; }
+
+  /* --- Amenazas: reset subgrid → flex columna --- */
   .amenazas-wrapper { margin: 0; width: 100%; }
-
-  /*
-    Reset del subgrid en mobile:
-    - grid-template-columns: 1fr → 1 sola columna
-    - grid-template-rows: auto   → filas de altura natural (sin subgrid)
-    El DOM ya tiene el orden correcto para mobile:
-    col izq (banner amenazas + cards) → col der (banner prevención + cards)
-  */
   .amenazas-grid {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     gap: 10px;
   }
-
   .amenazas-col {
     grid-column: 1;
     grid-row: auto;
-    grid-template-rows: auto; /* anula el subgrid */
-    display: flex;            /* vuelve a flex para flujo vertical natural */
+    grid-template-rows: auto;
+    display: flex;
     flex-direction: column;
     gap: 10px;
   }
+
+  /* --- Denuncia: más espacio lateral, caja no tan ancha --- */
+  #denuncia.doc-section { padding: 0 20px; }
+
+  .denuncia-caja {
+    padding: 28px 22px 32px;
+    border-radius: 12px;
+    gap: 0;              /* controlamos los espacios con margin en cada hijo */
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .denuncia-caja h2 {
+    font-size: 15px;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+
+  .denuncia-caja p {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--text-muted);
+    margin-bottom: 20px;   /* separa texto de botones */
+  }
+
+  /* --- Botones apilados, ancho completo dentro de la caja --- */
+  .denuncia-botones {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 0;
+  }
+  .denuncia-botones .btn-primario,
+  .denuncia-botones .btn-denuncia-secundario {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+  }
 }
 
-/* Mobile */
+/* ============================================
+   RESPONSIVE — Mobile pequeño (≤480px)
+   Ajustes finos sin romper lo de arriba
+============================================= */
 @media (max-width: 480px) {
-  .hero h1            { font-size: 19px; }
-  .hero p             { font-size: 13px; }
-  .estadistica-numero { font-size: 28px; }
-  .estadisticas-grid { grid-template-columns: 1fr; }
-  .estadistica-item { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 20px; }
-  .estadistica-item:first-child { border-top: none; padding-top: 0; }
+  :root {
+    --fs-hero-h1: 19px;
+    --fs-hero-p:  13px;
+    --fs-3xl:     24px;
+  }
+
+  .doc-section { padding: 0 14px; }
+
+  .hero         { min-height: 220px; }
+  .hero-content { padding: 28px 16px 24px; }
+
+  .estadisticas-grid { grid-template-columns: 1fr; gap: 0; }
+  .estadistica-item {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    margin-top: 4px;
+  }
+  .estadistica-item:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+  .amenaza-card-header { height: 150px; }
+
+  #denuncia.doc-section { padding: 0 16px; }
+  .denuncia-caja        { padding: 28px 20px; }
 }

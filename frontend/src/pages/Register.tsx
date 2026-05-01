@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 
+type SubmitResult = {
+  keepLoading?: boolean;
+  loadingMessage?: string;
+  error?: string;
+};
 
 const Register: React.FC = () => {
-  const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async (data: Record<string, string>) => {
-    setLoading(true);
-
+  const handleRegister = async (data: Record<string, string>): Promise<SubmitResult> => {
     const payload = {
       nombre: data.username,
       email: data.email,
@@ -28,39 +30,48 @@ const Register: React.FC = () => {
 
       const result = await response.json();
 
-      if (response.ok) {
-        setShowToast(true);
+      if (!response.ok) {
+        const message = result.message;
 
-        setTimeout(() => {
-          setShowToast(false);
-          // Redirigimos a la verificación pasando el email y el tipo nuevo
-          navigate("/verify-email", {
-            state: {
-              email: data.email,
-              tipo: "VERIFICACION",
-            },
-            replace: true,
-          });
-        }, 2000);
-} else {
-  // Extrae el mensaje de error específico del backend
-  const message = result.message;
+        if (typeof message === "object" && message !== null) {
+          const primerCampo = Object.keys(message)[0];
+          const primerError = message[primerCampo]?.[0] || "Datos inválidos";
 
-  if (typeof message === 'object') {
-    // Busca el primer error específico (email, password, etc.)
-    const primerCampo = Object.keys(message)[0];
-    const primerError = message[primerCampo][0];
-    alert(`Error: ${primerError}`);
-  } else {
-    alert(`Error: ${message || 'Datos inválidos'}`);
-  }
+          return {
+            keepLoading: false,
+            error: primerError,
+          };
+        }
 
-  setLoading(false);
-}
+        return {
+          keepLoading: false,
+          error: message || "Datos inválidos",
+        };
+      }
+
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowToast(false);
+        navigate("/verify-email", {
+          state: {
+            email: data.email,
+            tipo: "VERIFICACION",
+          },
+          replace: true,
+        });
+      }, 2000);
+
+      return {
+        keepLoading: true,
+        loadingMessage: "Registro exitoso. Redirigiendo a verificación...",
+      };
     } catch (error) {
       console.error("Error de red:", error);
-      alert("Error de conexión con el servidor");
-      setLoading(false);
+      return {
+        keepLoading: false,
+        error: "Error de conexión con el servidor",
+      };
     }
   };
 
@@ -95,23 +106,7 @@ const Register: React.FC = () => {
         </div>
       )}
 
-      <div
-        className={
-          loading
-            ? "opacity-40 pointer-events-none transition-opacity"
-            : "transition-opacity"
-        }
-      >
-        <AuthForm type="register" onSubmit={handleRegister} />
-        {loading && !showToast && (
-          <div className="flex flex-col items-center mt-6 gap-2">
-            <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-blue-600 text-sm font-semibold tracking-wide">
-              PROCESANDO REGISTRO...
-            </p>
-          </div>
-        )}
-      </div>
+      <AuthForm type="register" onSubmit={handleRegister} />
     </div>
   );
 };

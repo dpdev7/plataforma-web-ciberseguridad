@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, ShieldCheck } from "lucide-react"; // Añadí ShieldCheck para el ícono de admin
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, ShieldCheck } from "lucide-react";
 import styles from "./Navbar.module.css";
-
 
 interface NavbarProps {
   onMenuToggle?: () => void;
@@ -30,8 +29,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
 
 export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false); // Nuevo estado para el admin
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  // Determinamos si el usuario está en el Home (raíz o /home)
+  const isHomePage = location.pathname === "/" || location.pathname === "/home";
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -71,7 +74,8 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 
   return (
     <nav className={styles.navbar}>
-      {onMenuToggle && (
+      {/* El botón hamburguesa solo se renderiza si es el Home */}
+      {onMenuToggle && isHomePage && (
         <button
           className={styles.hamburger}
           onClick={onMenuToggle}
@@ -81,7 +85,11 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
         </button>
       )}
 
-      <Link to="/" className={styles.logo}>
+      {/* El logo tendrá un margen diferente si no hay hamburguesa */}
+      <Link 
+        to="/" 
+        className={`${styles.logo} ${!isHomePage ? styles.logoNoMenu : ""}`}
+      >
         <span className="material-symbols-outlined">security</span>
         CyberGuard
       </Link>
@@ -103,7 +111,6 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
           Foro
         </NavLink>
 
-        {/* LINK EXCLUSIVO PARA ADMINISTRADORES */}
         {isAdmin && (
           <NavLink
             to="/admin/users"
@@ -124,7 +131,6 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
       </div>
 
       <div className={styles.mobileActions}>
-        {/* También lo añadimos en mobile si es necesario */}
         {isAdmin && (
            <Link to="/admin/users" className={styles.adminIconMobile}>
              <ShieldCheck size={22} color="#3b82f6" />

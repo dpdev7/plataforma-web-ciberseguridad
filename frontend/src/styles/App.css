@@ -1,39 +1,122 @@
+/* =============================================
+   Estilos globales base de la aplicación.
+   Limpia los estilos demo de Vite que estaban
+   afectando componentes reales como el panel admin.
+============================================= */
+
+
+/* Root principal de React */
 #root {
   width: 100%;
+  min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+/* Variables base globales */
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+/* Reset base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-.card {
-  padding: 2em;
+
+body {
+  background-color: #0f172a;
+  color: #f8fafc;
 }
 
-.read-the-docs {
-  color: #888;
+
+/* Links globales neutrales.
+   Cada componente (Navbar, Admin, etc.) debe definir su color propio. */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* Títulos sin tamaños agresivos globales.
+   Cada página define sus propios h1, h2, etc. */
+h1, h2, h3, h4, h5, h6,
+p {
+  margin: 0;
+}
+
+
+/* Botones neutrales.
+   Se eliminan los estilos demo que forzaban background, border y outline
+   sobre todos los botones de la aplicación. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+
+/* Accesibilidad base */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+
+/* Utilidades de enlaces tipo botón */
+.btn-login:hover {
+  color: white;
+}
+
+
+a.btn-login {
+  background-color: #3b82f6;
+  color: white !important;
+  text-decoration: none !important;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+a.btn-primario {
+  background-color: #3b82f6;
+  color: white !important;
+  text-decoration: none !important;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
 }

@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 
+type SubmitResult = {
+  keepLoading?: boolean;
+  loadingMessage?: string;
+  error?: string;
+};
 
 const Login: React.FC = () => {
-  const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (data: Record<string, string>) => {
-    setLoading(true);
-
+  const handleLogin = async (data: Record<string, string>): Promise<SubmitResult> => {
     try {
       const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/login/", {
         method: "POST",
@@ -21,25 +23,32 @@ const Login: React.FC = () => {
 
       const result = await response.json();
 
-      if (response.ok) {
-        // El backend lo envía como cookie HttpOnly automáticamente
-
-        // Opcional: guardar datos NO sensibles
-        localStorage.setItem("user_name", result.usuario.nombre);
-
-        setShowToast(true);
-        setTimeout(() => {
-          setShowToast(false);
-          navigate("/home", { replace: true });
-        }, 2000);
-      } else {
-        alert(`Error: ${result.detail || "Credenciales incorrectas"}`);
-        setLoading(false);
+      if (!response.ok) {
+        return {
+          keepLoading: false,
+          error: result.detail || "Credenciales incorrectas",
+        };
       }
+
+      localStorage.setItem("user_name", result.usuario.nombre);
+
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowToast(false);
+        navigate("/home", { replace: true });
+      }, 2000);
+
+      return {
+        keepLoading: true,
+        loadingMessage: "Iniciando sesión... Redirigiendo...",
+      };
     } catch (error) {
       console.error("Error:", error);
-      alert("Error de conexión");
-      setLoading(false);
+      return {
+        keepLoading: false,
+        error: "Error de conexión",
+      };
     }
   };
 
@@ -53,9 +62,7 @@ const Login: React.FC = () => {
         </div>
       )}
 
-      <div className={loading ? "opacity-40 pointer-events-none" : ""}>
-        <AuthForm type="login" onSubmit={handleLogin} />
-      </div>
+      <AuthForm type="login" onSubmit={handleLogin} />
     </div>
   );
 };
