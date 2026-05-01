@@ -21,6 +21,7 @@ export interface Recurso {
   autor?:         string;
   tiempoLectura?: number;
 }
+
 // Cuestionario con sus preguntas y opciones — mapeado desde la BD
 export interface Cuestionario {
   id:              string;      // UUID del backend

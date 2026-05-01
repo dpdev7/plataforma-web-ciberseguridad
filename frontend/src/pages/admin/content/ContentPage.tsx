@@ -186,7 +186,17 @@ export default function ContentPage() {
               <tr key={r.id}>
                 <td>
                   <div style={{ fontWeight: 600, color: '#f1f5f9' }}>{r.titulo}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: 2 }}>{r.descripcion}</div>
+                  <div style={{
+  fontSize: '12px',
+  color: 'var(--text-dim)',
+  marginTop: 2,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  maxWidth: '300px',
+}}>
+  {r.descripcion}
+</div>
                 </td>
                 <td>
                   <span className={`badge ${r.tipo === 'guia' ? 'badge--active' : 'badge--tipo'}`}>
