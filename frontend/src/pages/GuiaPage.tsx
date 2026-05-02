@@ -1,68 +1,129 @@
-// Vista pública de una guía.
-// Sidebar con pasos de progreso + contenido por paso.
-// Conectar: reemplazar MOCK por fetch a /api/recursos/:id
-
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Circle, Clock } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import '../styles/guia.css';
 
-const MOCK_GUIAS: Record<number, {
-  titulo: string; categoria: string;
-  tiempoLectura: number; descripcion: string;
-  pasos: { titulo: string; contenido: string; imagen?: string }[];
-}> = {
-  1: {
-    titulo: 'Guía Completa para Principiantes',
-    categoria: 'Seguridad en Redes',
-    tiempoLectura: 12,
-    descripcion: 'Aprende los fundamentos de la ciberseguridad paso a paso.',
-    pasos: [
-      {
-        titulo: 'Introducción',
-        contenido: `La ciberseguridad es el conjunto de prácticas, tecnologías y procesos diseñados para proteger sistemas, redes y datos de ataques digitales.\n\nEn esta guía aprenderás los conceptos esenciales que todo usuario digital debe conocer para mantenerse seguro en línea. No necesitas conocimientos previos — empezamos desde cero.`,
-      },
-      {
-        titulo: 'Amenazas más comunes',
-        contenido: `Antes de protegerte, necesitas conocer a qué te enfrentas:\n\n**Phishing** — correos falsos que imitan empresas reales para robarte credenciales.\n\n**Malware** — software malicioso que se instala sin tu permiso (virus, troyanos, ransomware).\n\n**Ingeniería social** — manipulación psicológica para que reveles información confidencial.\n\n**Ataques de fuerza bruta** — intentos automatizados de adivinar tu contraseña.`,
-        imagen: 'https://picsum.photos/seed/amenazas/800/300',
-      },
-      {
-        titulo: 'Contraseñas seguras',
-        contenido: `Tu contraseña es la primera línea de defensa. Una contraseña débil puede ser crackeada en segundos.\n\n**Reglas básicas:**\n- Mínimo 12 caracteres.\n- Combina mayúsculas, minúsculas, números y símbolos.\n- Nunca uses datos personales (nombre, fecha de nacimiento).\n- Usa una contraseña diferente para cada cuenta.\n\nUsa un gestor de contraseñas como Bitwarden o 1Password para recordarlas todas.`,
-      },
-      {
-        titulo: 'Autenticación en dos pasos',
-        contenido: `La autenticación de dos factores (2FA) agrega una capa extra de seguridad. Aunque alguien robe tu contraseña, necesitará también tu segundo factor.\n\n**Tipos de 2FA:**\n- **App autenticadora** (Google Authenticator, Authy) — el más seguro.\n- **SMS** — práctico pero vulnerable a SIM swapping.\n- **Llave física** (YubiKey) — el nivel más alto de seguridad.\n\nActiva 2FA en tu correo, banco y redes sociales como mínimo.`,
-        imagen: 'https://picsum.photos/seed/2fa/800/300',
-      },
-      {
-        titulo: 'Navegación segura',
-        contenido: `Muchos ataques ocurren simplemente navegando la web. Sigue estas prácticas:\n\n- Verifica siempre que la URL comience con **https://**.\n- No hagas clic en enlaces de correos inesperados.\n- Descarga software solo de fuentes oficiales.\n- Usa un bloqueador de anuncios (uBlock Origin).\n- Evita redes Wi-Fi públicas para transacciones sensibles.`,
-      },
-      {
-        titulo: 'Conclusión',
-        contenido: `Has completado los fundamentos de ciberseguridad. Con estos conocimientos puedes proteger el 90% de las amenazas comunes que enfrenta un usuario normal.\n\nEl siguiente paso es poner en práctica lo aprendido: activa 2FA hoy mismo, revisa tus contraseñas y mantén tu software actualizado.\n\n¡Bienvenido al mundo de la ciberseguridad!`,
-      },
-    ],
-  },
+const API_BASE =
+  import.meta.env.VITE_API_URL ?? 'https://backend-web-ciberseguridad.onrender.com';
+
+type PasoGuia = {
+  titulo: string;
+  contenido: string;
+  imagen?: string;
+};
+
+type Guia = {
+  id: number;
+  titulo: string;
+  categoria: string;
+  tiempoLectura: number;
+  descripcion: string;
+  pasos: PasoGuia[];
 };
 
 export default function GuiaPage() {
   const { id } = useParams<{ id: string }>();
-  const guia = MOCK_GUIAS[Number(id)];
+  const guiaId = useMemo(() => Number(id), [id]);
+
+  const [guia, setGuia] = useState<Guia | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [pasoActivo, setPasoActivo] = useState(0);
   const [completados, setCompletados] = useState<number[]>([]);
 
-  if (!guia) {
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchGuia = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (!Number.isFinite(guiaId)) {
+          throw new Error('ID inválido');
+        }
+
+        const res = await fetch(`${API_BASE}/guia/obtener/${guiaId}/`);
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+
+        const data = await res.json();
+        const raw = data?.result ?? data;
+
+        const mapped: Guia = {
+          id: Number(raw.id ?? raw.guia_id ?? guiaId),
+          titulo: String(raw.titulo ?? 'Guía sin título'),
+          categoria: String(raw.categoria?.nombre ?? raw.categoria ?? 'General'),
+          tiempoLectura: Number(raw.tiempo_lectura ?? raw.tiempoLectura ?? 0),
+          descripcion: String(raw.descripcion ?? ''),
+          pasos: Array.isArray(raw.pasos)
+            ? raw.pasos.map((p: any) => ({
+                titulo: String(p.titulo ?? 'Paso'),
+                contenido: String(p.contenido ?? ''),
+                imagen: p.imagen ?? p.imagen_url ?? undefined,
+              }))
+            : [],
+        };
+
+        if (!cancelled) {
+          setGuia(mapped);
+          setPasoActivo(0);
+          setCompletados([]);
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          setError(err?.message ?? 'No se pudo cargar la guía');
+          setGuia(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchGuia();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [guiaId]);
+
+  const avanzar = () => {
+    if (!guia) return;
+    if (!completados.includes(pasoActivo)) {
+      setCompletados((prev) => [...prev, pasoActivo]);
+    }
+    if (pasoActivo < guia.pasos.length - 1) {
+      setPasoActivo((prev) => prev + 1);
+    }
+  };
+
+  const retroceder = () => {
+    if (pasoActivo > 0) setPasoActivo((prev) => prev - 1);
+  };
+
+  if (loading) {
+    return (
+      <div className="guia-page">
+        <Navbar />
+        <div className="guia-notfound__body">
+          <p>Cargando guía…</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !guia || guia.pasos.length === 0) {
     return (
       <div className="guia-notfound">
         <Navbar />
         <div className="guia-notfound__body">
           <p>Guía no encontrada.</p>
-          <Link to="/biblioteca" className="btn-back">← Volver a la Biblioteca</Link>
+          {error && <small>{error}</small>}
+          <Link to="/biblioteca" className="btn-back">
+            ← Volver a la Biblioteca
+          </Link>
         </div>
         <Footer />
       </div>
@@ -72,23 +133,11 @@ export default function GuiaPage() {
   const paso = guia.pasos[pasoActivo];
   const esUltimo = pasoActivo === guia.pasos.length - 1;
 
-  const avanzar = () => {
-    if (!completados.includes(pasoActivo))
-      setCompletados(prev => [...prev, pasoActivo]);
-    if (!esUltimo) setPasoActivo(prev => prev + 1);
-  };
-
-  const retroceder = () => {
-    if (pasoActivo > 0) setPasoActivo(prev => prev - 1);
-  };
-
   return (
     <div className="guia-page">
       <Navbar />
 
       <div className="guia__layout">
-
-        {/* Sidebar de pasos */}
         <aside className="guia__sidebar">
           <Link to="/biblioteca" className="guia__back">
             <ArrowLeft size={13} /> Biblioteca
@@ -102,6 +151,7 @@ export default function GuiaPage() {
               style={{ width: `${(completados.length / guia.pasos.length) * 100}%` }}
             />
           </div>
+
           <p className="guia__progreso-label">
             {completados.length} de {guia.pasos.length} pasos completados
           </p>
@@ -109,11 +159,15 @@ export default function GuiaPage() {
           <nav className="guia__steps">
             {guia.pasos.map((p, i) => {
               const completado = completados.includes(i);
-              const activo     = pasoActivo === i;
+              const activo = pasoActivo === i;
+
               return (
                 <button
                   key={i}
-                  className={`guia__step ${activo ? 'guia__step--active' : ''} ${completado ? 'guia__step--done' : ''}`}
+                  type="button"
+                  className={`guia__step ${activo ? 'guia__step--active' : ''} ${
+                    completado ? 'guia__step--done' : ''
+                  }`}
                   onClick={() => setPasoActivo(i)}
                 >
                   <span className="guia__step-icon">
@@ -121,14 +175,15 @@ export default function GuiaPage() {
                   </span>
                   <span className="guia__step-label">{p.titulo}</span>
                   {activo && <span className="guia__step-badge">Actual</span>}
-                  {!activo && !completado && <span className="guia__step-pending">Pendiente</span>}
+                  {!activo && !completado && (
+                    <span className="guia__step-pending">Pendiente</span>
+                  )}
                 </button>
               );
             })}
           </nav>
         </aside>
 
-        {/* Contenido del paso */}
         <main className="guia__content">
           <div className="guia__header">
             <div className="guia__meta">
@@ -137,13 +192,12 @@ export default function GuiaPage() {
               <span className="guia__meta-sep">·</span>
               <span>{guia.categoria}</span>
             </div>
+
             <h1 className="guia__titulo">{guia.titulo}</h1>
           </div>
 
           <article className="guia__paso">
-            <h2 className="guia__paso-titulo">
-              {paso.titulo}
-            </h2>
+            <h2 className="guia__paso-titulo">{paso.titulo}</h2>
 
             {paso.imagen && (
               <div className="guia__paso-img">
@@ -153,25 +207,42 @@ export default function GuiaPage() {
 
             <div className="guia__paso-body">
               {paso.contenido.split('\n').map((linea, i) => {
-                if (!linea.trim()) return null;
-                if (linea.startsWith('- ')) return <li key={i}>{linea.slice(2)}</li>;
-                if (linea.startsWith('**') && linea.endsWith('**'))
-                  return <h3 key={i} className="guia__paso-subtitulo">{linea.replace(/\*\*/g, '')}</h3>;
-                return <p key={i}>{linea.replace(/\*\*(.*?)\*\*/g, '$1')}</p>;
+                const text = linea.trim();
+                if (!text) return null;
+
+                if (text.startsWith('- ')) {
+                  return <li key={i}>{text.slice(2)}</li>;
+                }
+
+                if (text.startsWith('**') && text.endsWith('**')) {
+                  return (
+                    <h3 key={i} className="guia__paso-subtitulo">
+                      {text.replace(/\*\*/g, '')}
+                    </h3>
+                  );
+                }
+
+                return (
+                  <p key={i}>
+                    {text.replace(/\*\*(.*?)\*\*/g, '$1')}
+                  </p>
+                );
               })}
             </div>
           </article>
 
-          {/* Navegación */}
           <div className="guia__nav">
             <button
+              type="button"
               className="btn-guia btn-guia--ghost"
               onClick={retroceder}
               disabled={pasoActivo === 0}
             >
               ← Anterior
             </button>
+
             <button
+              type="button"
               className={`btn-guia ${esUltimo ? 'btn-guia--success' : 'btn-guia--primary'}`}
               onClick={avanzar}
             >
@@ -179,7 +250,6 @@ export default function GuiaPage() {
             </button>
           </div>
         </main>
-
       </div>
 
       <Footer />

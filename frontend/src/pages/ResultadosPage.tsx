@@ -56,10 +56,10 @@ export default function ResultadosPage() {
   const porcentaje = Math.round((correctas / total) * 100);
 
   const getMensaje = () => {
-    if (porcentaje === 100) return { texto: '¡Perfecto! Eres un experto 🏆',         color: '#4ade80' };
-    if (porcentaje >= 80)  return { texto: '¡Muy bien! Sigue así 💪',               color: '#4ade80' };
-    if (porcentaje >= 60)  return { texto: '¡Buen intento! Sigue practicando 📖',    color: '#facc15' };
-    return                        { texto: 'Necesitas repasar este tema 📚',          color: '#f87171' };
+    if (porcentaje === 100) return { texto: '¡Perfecto! Eres un experto',         color: '#4ade80' };
+    if (porcentaje >= 80)  return { texto: '¡Muy bien! Sigue así',               color: '#4ade80' };
+    if (porcentaje >= 60)  return { texto: '¡Buen intento! Sigue practicando',    color: '#facc15' };
+    return                        { texto: 'Necesitas repasar este tema',          color: '#f87171' };
   };
 
   const mensaje = getMensaje();

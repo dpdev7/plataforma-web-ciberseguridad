@@ -22,6 +22,23 @@ type TemaSidebar = {
   label: string;
 };
 
+const normalizarTexto = (valor: string) =>
+  valor
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+
+const normalizarTipo = (tipo: string): TipoContenido => {
+  const t = normalizarTexto(String(tipo ?? ''));
+
+  if (t === 'articulo' || t === 'articulos') return 'articulo';
+  if (t === 'guia' || t === 'guias') return 'guia';
+  if (t === 'cuestionario' || t === 'cuestionarios') return 'cuestionario';
+
+  return 'articulo';
+};
+
 export default function Biblioteca() {
   const [tipoActivo, setTipoActivo] = useState<TipoContenido | 'all'>('all');
   const [temaActivo, setTemaActivo] = useState<string>('all');
@@ -91,13 +108,15 @@ export default function Biblioteca() {
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
             (c: any): Recurso => ({
-              id: c.cuestionario_id,
+              id: String(c.cuestionario_id),
               tipo: 'cuestionario',
-              tema: c.categoria?.nombre ?? c.tema?.nombre ?? c.tema ?? 'general',
-              titulo: c.titulo,
-              descripcion: c.descripcion ?? '',
-              esPublico: c.es_activo,
-              preguntas: c.preguntas?.length ?? 0,
+              tema: String(
+                c.categoria?.nombre ?? c.tema?.nombre ?? c.tema ?? 'general'
+              ),
+              titulo: String(c.titulo ?? ''),
+              descripcion: String(c.descripcion ?? ''),
+              esPublico: Boolean(c.es_activo),
+              preguntas: Array.isArray(c.preguntas) ? c.preguntas.length : 0,
             })
           )
         );
@@ -105,7 +124,7 @@ export default function Biblioteca() {
     const fetchRecursos = (tipo?: string) =>
       fetch(
         `${API_BASE}/categoria/recurso-edu/obtener/all/${
-          tipo ? `?tipo_recurso=${tipo}` : ''
+          tipo ? `?tipo_recurso=${encodeURIComponent(tipo)}` : ''
         }`
       )
         .then((r) => {
@@ -115,16 +134,23 @@ export default function Biblioteca() {
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
             (r: any): Recurso => ({
-              id: r.recurso_id,
-              tipo: r.tipo_recurso as TipoContenido,
-              tema: r.categoria?.nombre ?? 'general',
-              titulo: r.titulo,
-              descripcion: r.descripcion ?? '',
-              urlRecurso: r.url_recurso,
-              imagen: r.imagen ?? r.imagen_url ?? null,
-              esPublico: r.es_publico,
-              fechaPublicacion: r.fecha_publicacion,
-              tiempoLectura: r.tiempo_lectura ?? r.tiempoLectura ?? undefined,
+              id: String(r.recurso_id),
+              tipo: normalizarTipo(String(r.tipo_recurso ?? 'articulo')),
+              tema: String(r.categoria?.nombre ?? 'general'),
+              titulo: String(r.titulo ?? ''),
+              descripcion: String(r.descripcion ?? ''),
+              urlRecurso: r.url_recurso ? String(r.url_recurso) : undefined,
+              imagen: r.imagen ?? r.imagen_url ?? undefined,
+              esPublico: Boolean(r.es_publico),
+              fechaPublicacion: r.fecha_publicacion
+                ? String(r.fecha_publicacion)
+                : undefined,
+              tiempoLectura:
+                r.tiempo_lectura != null
+                  ? Number(r.tiempo_lectura)
+                  : r.tiempoLectura != null
+                  ? Number(r.tiempoLectura)
+                  : undefined,
             })
           )
         );
@@ -148,6 +174,7 @@ export default function Biblioteca() {
       .catch((err) => {
         if (!cancelled) {
           setError(err.message ?? 'Error al cargar recursos');
+          setRecursos([]);
         }
       })
       .finally(() => {
@@ -198,6 +225,7 @@ export default function Biblioteca() {
 
   const filtrados = useMemo(() => {
     return recursos.filter((r) => {
+      if (tipoActivo !== 'all' && r.tipo !== tipoActivo) return false;
       if (temaActivo !== 'all' && r.tema !== temaActivo) return false;
 
       if (busqueda.trim()) {
@@ -210,7 +238,7 @@ export default function Biblioteca() {
 
       return true;
     });
-  }, [recursos, temaActivo, busqueda]);
+  }, [recursos, tipoActivo, temaActivo, busqueda]);
 
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / porPagina));
 
@@ -251,11 +279,11 @@ export default function Biblioteca() {
   };
 
   const renderContenido = () => {
-    if (tipoActivo === 'cuestionario') {
-      return <QuizzesList recursos={paginados} onLimpiar={limpiarFiltros} />;
-    }
-
     if (vista === 'list') {
+      if (tipoActivo === 'cuestionario') {
+        return <QuizzesList recursos={paginados} onLimpiar={limpiarFiltros} />;
+      }
+
       return <ArticlesList recursos={paginados} onLimpiar={limpiarFiltros} />;
     }
 
@@ -413,29 +441,27 @@ export default function Biblioteca() {
                 </div>
 
                 <div className="biblioteca__toolbar-right">
-                  {tipoActivo !== 'cuestionario' && (
-                    <div className="biblioteca__view-switch">
-                      <button
-                        type="button"
-                        className={`biblioteca__view-btn ${
-                          vista === 'grid' ? 'biblioteca__view-btn--active' : ''
-                        }`}
-                        onClick={() => setVista('grid')}
-                      >
-                        <span>Cuadrícula</span>
-                      </button>
+                  <div className="biblioteca__view-switch">
+                    <button
+                      type="button"
+                      className={`biblioteca__view-btn ${
+                        vista === 'grid' ? 'biblioteca__view-btn--active' : ''
+                      }`}
+                      onClick={() => setVista('grid')}
+                    >
+                      <span>Cuadrícula</span>
+                    </button>
 
-                      <button
-                        type="button"
-                        className={`biblioteca__view-btn ${
-                          vista === 'list' ? 'biblioteca__view-btn--active' : ''
-                        }`}
-                        onClick={() => setVista('list')}
-                      >
-                        <span>Lista</span>
-                      </button>
-                    </div>
-                  )}
+                    <button
+                      type="button"
+                      className={`biblioteca__view-btn ${
+                        vista === 'list' ? 'biblioteca__view-btn--active' : ''
+                      }`}
+                      onClick={() => setVista('list')}
+                    >
+                      <span>Lista</span>
+                    </button>
+                  </div>
 
                   <div className="biblioteca__desktop-pagination">
                     <span className="biblioteca__page-summary">

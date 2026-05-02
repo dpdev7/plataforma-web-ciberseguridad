@@ -33,8 +33,8 @@ const AdminUserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
 );
 
 const navItems = [
-  { to: '/admin/users',         icon: <Users size={17} />,      label: 'Usuarios'      },
-  { to: '/admin/content',       icon: <BookOpen size={17} />,   label: 'Biblioteca'    },
+  { to: '/admin/users', icon: <Users size={17} />, label: 'Usuarios' },
+  { to: '/admin/content', icon: <BookOpen size={17} />, label: 'Biblioteca' },
   { to: '/admin/cuestionarios', icon: <HelpCircle size={17} />, label: 'Cuestionarios' },
 ];
 
@@ -103,7 +103,6 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-layout">
-
       {/* HEADER MOBILE */}
       <header className="admin-mobile-header">
         <div className="admin-mobile-header__left">
@@ -111,6 +110,7 @@ export default function AdminLayout() {
             type="button"
             className="admin-hamburger"
             onClick={() => setSidebarOpen(true)}
+            aria-label="Abrir menú"
           >
             <Menu size={22} />
           </button>
@@ -126,18 +126,13 @@ export default function AdminLayout() {
         </div>
       </header>
 
-      {/* HEADER DESKTOP (NUEVO) */}
-      <header className="admin-desktop-header">
-        <div className="admin-desktop-header__right">
-          {user && <AdminUserProfile user={user} onLogout={handleLogout} />}
-        </div>
-      </header>
-
       {/* OVERLAY MOBILE */}
       {sidebarOpen && (
         <button
+          type="button"
           className="admin-sidebar-overlay"
           onClick={closeSidebar}
+          aria-label="Cerrar menú lateral"
         />
       )}
 
@@ -145,8 +140,10 @@ export default function AdminLayout() {
       <aside className={`admin-sidebar${sidebarOpen ? ' admin-sidebar--open' : ''}`}>
         <div className="admin-sidebar__head">
           <button
+            type="button"
             className="admin-sidebar__close"
             onClick={closeSidebar}
+            aria-label="Cerrar menú"
           >
             <X size={22} />
           </button>
@@ -186,11 +183,20 @@ export default function AdminLayout() {
         </nav>
       </aside>
 
-      {/* CONTENIDO */}
-      <main className="admin-content">
-        <Outlet />
-      </main>
+      {/* COLUMNA DERECHA */}
+      <div className="admin-main-shell">
+        {/* HEADER DESKTOP */}
+        <header className="admin-desktop-header">
+          <div className="admin-desktop-header__right">
+            {user && <AdminUserProfile user={user} onLogout={handleLogout} />}
+          </div>
+        </header>
 
+        {/* CONTENIDO */}
+        <main className="admin-content">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

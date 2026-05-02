@@ -44,6 +44,8 @@ export default function FeaturedGrid({ recursos, onLimpiar }: Props) {
     <div className="bib-featured">
       {recursos.map((r, i) => {
         const esCuestionario = r.tipo === 'cuestionario';
+        const esGuia = r.tipo === 'guia';
+        const esArticulo = r.tipo === 'articulo';
 
         const cardContent = (
           <div className={`bib-card ${i === 0 ? 'bib-card--wide' : ''}`}>
@@ -55,14 +57,18 @@ export default function FeaturedGrid({ recursos, onLimpiar }: Props) {
                 {r.tiempoLectura && !esCuestionario && (
                   <>
                     <span className="bib-card__dot" />
-                    <span className="bib-card__time">{r.tiempoLectura} min lectura</span>
+                    <span className="bib-card__time">
+                      {r.tiempoLectura} min lectura
+                    </span>
                   </>
                 )}
 
                 {esCuestionario && r.preguntas ? (
                   <>
                     <span className="bib-card__dot" />
-                    <span className="bib-card__time">{r.preguntas} preguntas</span>
+                    <span className="bib-card__time">
+                      {r.preguntas} preguntas
+                    </span>
                   </>
                 ) : null}
               </div>
@@ -71,7 +77,12 @@ export default function FeaturedGrid({ recursos, onLimpiar }: Props) {
               <p className="bib-card__desc">{r.descripcion}</p>
 
               <span className="bib-card__cta">
-                {esCuestionario ? 'Resolver' : 'Leer'} <ArrowRight size={12} />
+                {esCuestionario
+                  ? 'Resolver'
+                  : esGuia
+                  ? 'Abrir guía'
+                  : 'Leer'}
+                <ArrowRight size={12} />
               </span>
             </div>
           </div>
@@ -89,16 +100,36 @@ export default function FeaturedGrid({ recursos, onLimpiar }: Props) {
           );
         }
 
+        if (esGuia) {
+          return (
+            <Link
+              key={r.id}
+              to={`/biblioteca/guia/${r.id}`}
+              style={{ textDecoration: 'none' }}
+            >
+              {cardContent}
+            </Link>
+          );
+        }
+
+        if (esArticulo && r.urlRecurso) {
+          return (
+            <a
+              key={r.id}
+              href={r.urlRecurso}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              {cardContent}
+            </a>
+          );
+        }
+
         return (
-          <a
-            key={r.id}
-            href={r.urlRecurso ?? '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
+          <div key={r.id} style={{ textDecoration: 'none' }}>
             {cardContent}
-          </a>
+          </div>
         );
       })}
     </div>
