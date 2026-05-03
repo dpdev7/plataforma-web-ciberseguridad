@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, BookOpen } from 'lucide-react';
-import { API_URL } from '../../../utils/api';  // 👈 ajusta el path según tu estructura
+import { API_BACKEND } from '../../../utils/api';  // 👈 ajusta el path según tu estructura
 
 interface Props {
   onClose: () => void;
@@ -25,7 +25,7 @@ export default function CategoryCreateModal({ onClose, onConfirm, initialData }:
     setError(null);
 
     try {
-      const res = await fetch(`${API_URL}/categoria/crear/`, {  // 👈 corregido
+      const res = await fetch(`${API_BACKEND}/categoria/crear/`, {  // 👈 corregido
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
