@@ -10,6 +10,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import './admin.css';
+import { API_BACKEND } from '../../utils/api';
 
 interface UserProfileProps {
   user: string;
@@ -64,7 +65,7 @@ export default function AdminLayout() {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          'https://backend-web-ciberseguridad.onrender.com/usuario/me/',
+          `${API_BACKEND}/usuario/me/`,
           {
             method: 'GET',
             credentials: 'include',
@@ -89,7 +90,7 @@ export default function AdminLayout() {
 
   const handleLogout = async () => {
     await fetch(
-      'https://backend-web-ciberseguridad.onrender.com/usuario/logout/',
+      `${API_BACKEND}/usuario/logout/`,
       {
         method: 'POST',
         credentials: 'include',

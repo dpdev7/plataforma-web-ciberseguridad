@@ -13,9 +13,8 @@ import ArticlesList from '../components/biblioteca/ArticlesList';
 import QuizzesList from '../components/biblioteca/QuizzesList';
 import heroBiblioteca from '../assets/images/cyber-library.webp';
 import '../styles/biblioteca.css';
+import { API_BACKEND } from '../utils/api';
 
-const API_BASE =
-  import.meta.env.VITE_API_URL ?? 'https://backend-web-ciberseguridad.onrender.com';
 
 type TemaSidebar = {
   id: string;
@@ -59,7 +58,7 @@ export default function Biblioteca() {
 
     const fetchCategorias = async () => {
       try {
-        const response = await fetch(`${API_BASE}/categoria/obtener/all/`);
+        const response = await fetch(`${API_BACKEND}/categoria/obtener/all/`);
         if (!response.ok) throw new Error(`Error ${response.status}`);
 
         const data = await response.json();
@@ -100,7 +99,7 @@ export default function Biblioteca() {
     setError(null);
 
     const fetchCuestionarios = () =>
-      fetch(`${API_BASE}/cuestionario/obtener/all/`)
+      fetch(`${API_BACKEND}/cuestionario/obtener/all/`)
         .then((r) => {
           if (!r.ok) throw new Error(`Error ${r.status}`);
           return r.json();
@@ -123,7 +122,7 @@ export default function Biblioteca() {
 
     const fetchRecursos = (tipo?: string) =>
       fetch(
-        `${API_BASE}/categoria/recurso-edu/obtener/all/${
+        `${API_BACKEND}/categoria/recurso-edu/obtener/all/${
           tipo ? `?tipo_recurso=${encodeURIComponent(tipo)}` : ''
         }`
       )

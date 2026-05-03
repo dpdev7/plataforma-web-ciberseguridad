@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { X, UserPlus } from 'lucide-react';
-
-const API_BASE = "https://backend-web-ciberseguridad.onrender.com";
+import { API_BACKEND} from '../../../utils/api';
 
 interface Props {
   onClose:   () => void;
@@ -30,7 +29,7 @@ export default function UserCreateModal({ onClose, onConfirm }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BASE}/usuario/admin/crear/`, {
+      const res = await fetch(`${API_BACKEND}/usuario/admin/crear/`, {
         method:      'POST',
         credentials: 'include',
         headers:     { 'Content-Type': 'application/json' },

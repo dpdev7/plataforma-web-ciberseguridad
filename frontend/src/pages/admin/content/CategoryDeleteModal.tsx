@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Trash2 } from 'lucide-react';
+import { API_BACKEND } from '../../../utils/api';
 
 
 interface Props {
@@ -18,7 +19,7 @@ export default function CategoryDeleteModal({ onClose, onConfirm, categoryName, 
     setError(null);
 
     try {
-      const res = await fetch(`https://backend-web-ciberseguridad.onrender.com/categoria/eliminar/${categoryId}/`, {
+      const res = await fetch(`${API_BACKEND}/categoria/eliminar/${categoryId}/`, {
         method: 'DELETE',
         credentials: 'include',
       });

@@ -7,8 +7,8 @@ import CategoryEditModal   from './CategoryEditModal';
 import ContentCreateModal  from './ContentCreateModal';
 import ContentEditModal    from './ContentEditModal';
 import ContentDeleteModal  from './ContentDeleteModal';
+import { API_BACKEND } from '../../../utils/api';
 
-const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
 
 interface Categoria {
   categoria_id: string;
@@ -34,7 +34,7 @@ export default function ContentPage() {
     setLoading(true);
     setError(null);
     try {
-      const res  = await fetch(`${API_BASE}/categoria/recurso-edu/obtener/all/`);
+      const res  = await fetch(`${API_BACKEND}/categoria/recurso-edu/obtener/all/`, { credentials: 'include' });
       if (!res.ok) throw new Error(`Error ${res.status}`);
       const data = await res.json();
       const mapped: Recurso[] = data.result.map((r: any) => ({
@@ -57,7 +57,7 @@ export default function ContentPage() {
 
   const fetchCategorias = async () => {
     try {
-      const res  = await fetch(`${API_BASE}/categoria/obtener/all/`, { credentials: 'include' });
+      const res  = await fetch(`${API_BACKEND}/categoria/obtener/all/`, { credentials: 'include' });
       const data = await res.json();
       if (data.success) setCategorias(data.result);
     } catch {}
@@ -79,7 +79,7 @@ export default function ContentPage() {
 
   const handleCreate = async (data: Omit<Recurso, 'id'>) => {
     try {
-      const res = await fetch(`${API_BASE}/categoria/recurso-edu/crear/`, {
+      const res = await fetch(`${API_BACKEND}/categoria/recurso-edu/crear/`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -99,7 +99,7 @@ export default function ContentPage() {
 
   const handleEdit = async (data: Recurso) => {
     try {
-      const res = await fetch(`${API_BASE}/categoria/recurso-edu/editar/${data.id}/`, {
+      const res = await fetch(`${API_BACKEND}/categoria/recurso-edu/editar/${data.id}/`, {
         method:  'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -120,7 +120,7 @@ export default function ContentPage() {
   const handleDelete = async () => {
     if (!toDelete) return;
     try {
-      const res = await fetch(`${API_BASE}/categoria/recurso-edu/eliminar/${toDelete.id}/`, {
+      const res = await fetch(`${API_BACKEND}/categoria/recurso-edu/eliminar/${toDelete.id}/`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);

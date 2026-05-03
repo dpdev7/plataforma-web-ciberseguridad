@@ -22,7 +22,7 @@ const ResetPasswordConfirm: React.FC = () => {
     try {
       // Enviamos el email recuperado del state y la nueva contraseña al backend
       const response = await fetch(
-        "https://backend-web-ciberseguridad.onrender.com/usuario/cambiar-password/",
+        "/usuario/cambiar-password/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

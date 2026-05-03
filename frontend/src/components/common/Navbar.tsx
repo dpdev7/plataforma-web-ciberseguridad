@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; // Importamos useLocation
 import { Menu, X, LogOut, ShieldCheck } from "lucide-react";
 import styles from "./Navbar.module.css";
+import { API_BACKEND } from "../../utils/api";
 
 interface NavbarProps {
   onMenuToggle?: () => void;
@@ -44,7 +45,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/me/", {
+        const response = await fetch(`${API_BACKEND}/usuario/me/`, {
           method: "GET",
           credentials: "include",
         });
@@ -67,7 +68,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   }, []);
 
   const handleLogout = async () => {
-    await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/logout/", {
+    await fetch(`${API_BACKEND}/usuario/logout/`, {
       method: "POST",
       credentials: "include",
     });

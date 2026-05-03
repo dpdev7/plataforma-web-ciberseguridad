@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Importante para la redirección
 import AuthForm from "../components/auth/AuthForm";
+import { API_BACKEND } from "../utils/api";
 
 
 const ResetPassword: React.FC = () => {
@@ -11,7 +12,7 @@ const ResetPassword: React.FC = () => {
     setLoading(false);
     try {
       const response = await fetch(
-        "https://backend-web-ciberseguridad.onrender.com/usuario/solicitar-codigo/",
+        `${API_BACKEND}/usuario/solicitar-codigo/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -4,9 +4,7 @@ import { ArrowLeft, CheckCircle, Circle, Clock } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import '../styles/guia.css';
-
-const API_BASE =
-  import.meta.env.VITE_API_URL ?? 'https://backend-web-ciberseguridad.onrender.com';
+import { API_BACKEND } from '../utils/api';
 
 type PasoGuia = {
   titulo: string;
@@ -45,7 +43,7 @@ export default function GuiaPage() {
           throw new Error('ID inválido');
         }
 
-        const res = await fetch(`${API_BASE}/guia/obtener/${guiaId}/`);
+        const res = await fetch(`${API_BACKEND}/guia/obtener/${guiaId}/`);
         if (!res.ok) throw new Error(`Error ${res.status}`);
 
         const data = await res.json();

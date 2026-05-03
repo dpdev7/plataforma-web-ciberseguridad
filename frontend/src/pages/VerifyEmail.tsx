@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
+import { API_BACKEND } from "../utils/api";
 
 const VerifyEmail: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -13,7 +14,7 @@ const VerifyEmail: React.FC = () => {
   const handleVerifyEmail = async (data: Record<string, string>) => {
     setLoading(true);
     try {
-      const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/verificar/", {
+      const response = await fetch(`${API_BACKEND}/usuario/verificar/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -46,7 +47,7 @@ const VerifyEmail: React.FC = () => {
 
   const handleResend = async () => {
     try {
-      const res = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/solicitar-codigo/", {
+      const res = await fetch(`${API_BACKEND}/usuario/solicitar-codigo/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

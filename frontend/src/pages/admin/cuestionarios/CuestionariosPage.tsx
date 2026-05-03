@@ -5,8 +5,8 @@ import CuestionarioEditModal      from './CuestionarioEditModal';
 import CuestionarioDeleteModal    from './CuestionarioDeleteModal';
 import CuestionarioPreguntasModal from './CuestionarioPreguntasModal';
 import { Plus, Search, Trash2, ListChecks, Pencil } from 'lucide-react';
+import { API_BACKEND } from '../../../utils/api';
 
-const API_BASE = 'https://backend-web-ciberseguridad.onrender.com';
 
 export default function CuestionariosPage() {
   const [cuestionarios, setCuestionarios] = useState<Cuestionario[]>([]);
@@ -24,7 +24,7 @@ export default function CuestionariosPage() {
     setLoading(true);
     setError(null);
     try {
-      const res  = await fetch(`${API_BASE}/cuestionario/obtener/all/`);
+      const res  = await fetch(`${API_BACKEND}/cuestionario/obtener/all/`);
       if (!res.ok) throw new Error(`Error ${res.status}`);
       const data = await res.json();
       const mapped: Cuestionario[] = data.result.map((c: any) => ({
@@ -57,7 +57,7 @@ export default function CuestionariosPage() {
 
   const handleCreate = async (data: Omit<Cuestionario, 'id'>) => {
     try {
-      const res = await fetch(`${API_BASE}/cuestionario/crear/`, {
+      const res = await fetch(`${API_BACKEND}/cuestionario/crear/`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -76,7 +76,7 @@ export default function CuestionariosPage() {
   const handleDelete = async () => {
     if (!toDelete) return;
     try {
-      const res = await fetch(`${API_BASE}/cuestionario/eliminar/${toDelete.id}/`, {
+      const res = await fetch(`${API_BACKEND}/cuestionario/eliminar/${toDelete.id}/`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -91,7 +91,7 @@ export default function CuestionariosPage() {
 const handleEdit = async (data: Omit<Cuestionario, 'id'>) => {
   if (!toEdit) return;
   try {
-    const res = await fetch(`${API_BASE}/cuestionario/editar/${toEdit.id}/`, {
+    const res = await fetch(`${API_BACKEND}/cuestionario/editar/${toEdit.id}/`, {
       method:      'PATCH',
       credentials: 'include',
       headers:     { 'Content-Type': 'application/json' },

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Plus, Trash2, CheckCircle, Circle } from 'lucide-react';
+import { API_BACKEND } from '../../../utils/api';
 
 interface Opcion {
   opcion_id: string;
@@ -20,7 +21,7 @@ interface Props {
   onClose:           () => void;
 }
 
-const API_BASE = "https://backend-web-ciberseguridad.onrender.com";
+
 
 export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionarioTitulo, onClose }: Props) {
   const [preguntas,      setPreguntas]      = useState<Pregunta[]>([]);
@@ -40,7 +41,7 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
   const fetchPreguntas = async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API_BASE}/cuestionario/obtener/all/`);
+      const res  = await fetch(`${API_BACKEND}/cuestionario/obtener/all/`);
       const data = await res.json();
       const cuest = data.result.find((c: any) => c.cuestionario_id === cuestionarioId);
       setPreguntas(cuest?.preguntas ?? []);
@@ -56,7 +57,7 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
     if (!nuevoEnunciado.trim()) return;
     setAgregandoP(true);
     try {
-      const res = await fetch(`${API_BASE}/cuestionario/pregunta/crear/`, {
+      const res = await fetch(`${API_BACKEND}/cuestionario/pregunta/crear/`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -79,7 +80,7 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
   // ── Eliminar pregunta ──
   const handleEliminarPregunta = async (preguntaId: string) => {
     if (!confirm('¿Eliminar esta pregunta y todas sus opciones?')) return;
-    await fetch(`${API_BASE}/cuestionario/pregunta/eliminar/${preguntaId}/`, { method: 'DELETE' });
+    await fetch(`${API_BACKEND}/cuestionario/pregunta/eliminar/${preguntaId}/`, { method: 'DELETE' });
     await fetchPreguntas();
   };
 
@@ -89,7 +90,7 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
     if (!texto) return;
     setAgregandoO(prev => ({ ...prev, [preguntaId]: true }));
     try {
-      const res = await fetch(`${API_BASE}/cuestionario/pregunta/opcion/crear/`, {
+      const res = await fetch(`${API_BACKEND}/cuestionario/pregunta/opcion/crear/`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -112,13 +113,13 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
 
   // ── Eliminar opción ──
   const handleEliminarOpcion = async (opcionId: string) => {
-    await fetch(`${API_BASE}/cuestionario/pregunta/opcion/eliminar/${opcionId}/`, { method: 'DELETE' });
+    await fetch(`${API_BACKEND}/cuestionario/pregunta/opcion/eliminar/${opcionId}/`, { method: 'DELETE' });
     await fetchPreguntas();
   };
 
   // ── Marcar opción como correcta ──
   const handleMarcarCorrecta = async (opcionId: string) => {
-    await fetch(`${API_BASE}/cuestionario/pregunta/opcion/editar/${opcionId}/`, {
+    await fetch(`${API_BACKEND}/cuestionario/pregunta/opcion/editar/${opcionId}/`, {
       method:  'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ es_correcta: true }),
