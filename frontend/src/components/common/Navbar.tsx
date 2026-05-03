@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; 
 import { Menu, X, LogOut, ShieldCheck, User, Settings, Trash2, ChevronDown} from "lucide-react";
 import styles from "./Navbar.module.css";
@@ -21,9 +21,33 @@ const UserProfile: React.FC<UserProfileProps> = ({
   onOpenProfile
 }) => {
   const [openMenu, setOpenMenu] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOpenMenu(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  };
+}, []);
 
   return (
-    <div className={styles.userDropdownWrapper}>
+    <div
+      className={styles.userDropdownWrapper}
+      ref={dropdownRef}
+    >
       <div
         className={styles.userProfile}
         onClick={() => setOpenMenu(!openMenu)}
@@ -98,29 +122,28 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   const showHamburger = !!onMenuToggle && (location.pathname === "/" || location.pathname === "/home");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`${API_BACKEND}/usuario/me/`, {
-          method: "GET",
-          credentials: "include",
-        });
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(`${API_BACKEND}/usuario/me/`, {
+        method: "GET",
+        credentials: "include",
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.usuario.nombre);
-          setIsAdmin(data.usuario.es_administrador);
-        } else {
-          setUser(null);
-          setIsAdmin(false);
-        }
-      } catch {
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.usuario.nombre);
+        setIsAdmin(data.usuario.es_administrador);
+      } else {
         setUser(null);
         setIsAdmin(false);
       }
-    };
+    } catch (error) {
+      console.error("Error obteniendo usuario:", error);
+    }
+  };
 
-    fetchUser();
-  }, []);
+  fetchUser();
+}, [location.pathname]);
 
   const handleLogout = async () => {
     await fetch(`${API_BACKEND}/usuario/logout/`, {
