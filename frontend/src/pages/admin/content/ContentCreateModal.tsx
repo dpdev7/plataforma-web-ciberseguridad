@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';  // 👈 agregar useEffect
 import { X, BookOpen } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
-import { API_URL } from '../../../utils/api';
+import { API_BACKEND } from '../../../utils/api';
 
 
 interface Categoria {
@@ -28,7 +28,7 @@ export default function ContentCreateModal({ onClose, onConfirm }: Props) {
 
   // 👇 Fetch de categorías reales
 useEffect(() => {
-  fetch(`${API_URL}/categoria/obtener/all/`, {
+  fetch(`${API_BACKEND}/categoria/obtener/all/`, {
     credentials: 'include',
   })
     .then(res => res.json())

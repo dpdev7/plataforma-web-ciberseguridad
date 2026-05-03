@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Pencil } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
-import { API_URL } from '../../../utils/api';
+import { API_BACKEND } from '../../../utils/api';
 
 interface Categoria {
   categoria_id: string;
@@ -19,7 +19,7 @@ export default function ContentEditModal({ recurso, onClose, onConfirm }: Props)
   const [form, setForm] = useState({ ...recurso });
 
   useEffect(() => {
-    fetch(`${API_URL}/categoria/obtener/all/`, {
+    fetch(`${API_BACKEND}/categoria/obtener/all/`, {
       credentials: 'include',
     })
       .then(res => res.json())

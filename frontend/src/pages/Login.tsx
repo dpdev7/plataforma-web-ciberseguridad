@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
+import { API_BACKEND } from "../utils/api";
 
 type SubmitResult = {
   keepLoading?: boolean;
@@ -14,8 +15,9 @@ const Login: React.FC = () => {
 
   const handleLogin = async (data: Record<string, string>): Promise<SubmitResult> => {
     try {
-      const response = await fetch("https://backend-web-ciberseguridad.onrender.com/usuario/login/", {
-        method: "POST",
+      const response = await fetch(`${API_BACKEND}/usuario/login/`, {
+    
+      method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
