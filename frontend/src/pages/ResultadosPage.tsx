@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { CheckCircle, XCircle, ShieldCheck, RotateCcw, BookOpen } from 'lucide-react';
+import { CheckCircle, XCircle, ShieldCheck, RotateCcw } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import '../styles/cuestionario.css';
@@ -70,6 +70,9 @@ export default function ResultadosPage() {
       <div className="quiz__wrapper quiz__wrapper--results">
 
         <div className="quiz__card results__card">
+          <h1 className="results__score-wrap">
+            <ShieldCheck size={80} className="results__shield" style={{ color: mensaje.color }} />
+          </h1>
           <h2 className="results__titulo" style={{ color: mensaje.color }}>{mensaje.texto}</h2>
           <p className="results__subtitulo">Has completado el cuestionario de <strong>{titulo}</strong>.</p>
 
@@ -78,8 +81,7 @@ export default function ResultadosPage() {
             <span className="results__badge results__badge--wrong"><XCircle size={14} /> Fallos: {fallos}</span>
           </div>
 
-          <div className="results__score-wrap">
-            <ShieldCheck size={80} className="results__shield" style={{ color: mensaje.color }} />
+          <div className="results__score-container">
             <p className="results__score-label">Tu Puntuación Final</p>
             <p className="results__score" style={{ color: mensaje.color }}>{porcentaje}%</p>
           </div>
@@ -88,12 +90,7 @@ export default function ResultadosPage() {
             <button className="results__btn results__btn--retry" onClick={() => navigate(-1)}>
               <RotateCcw size={14} /> Volver a Intentar
             </button>
-            <button
-              className="results__btn results__btn--detail"
-              onClick={() => document.getElementById('detalle')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <BookOpen size={14} /> Ver Detalle
-            </button>
+            
           </div>
 
           <Link to="/biblioteca" className="results__link-biblioteca">← Explorar más cuestionarios</Link>

@@ -33,9 +33,8 @@ export default function TocSidebar({ activeSection, onScrollTo, isOpen, onClose 
         {/* Encabezado con progreso */}
         <div className="toc-top">
           <p className="toc-header">En esta página</p>
-          <span className="toc-progreso-label">{progreso}%</span>
         </div>
-
+      
         {/* Barra de progreso */}
         <div className="toc-barra-fondo">
           <div
@@ -73,11 +72,7 @@ export default function TocSidebar({ activeSection, onScrollTo, isOpen, onClose 
 
         </nav>
 
-        {/* Footer del sidebar */}
-        <div className="toc-footer">
-          <span className="material-symbols-outlined toc-footer-icon">shield</span>
-          <span>CyberGuard</span>
-        </div>
+        
 
       </aside>
     </>

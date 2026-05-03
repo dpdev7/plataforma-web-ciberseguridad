@@ -1098,6 +1098,164 @@
   }
 }
 
+/* ============================================
+   ANIMACIONES BIBLIOTECA
+============================================= */
+
+/* Fade general al cargar contenido principal */
+.biblioteca__content {
+  animation: fadeContent 0.7s ease;
+}
+
+@keyframes fadeContent {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero aparece suavemente */
+.biblioteca__hero {
+  animation: heroReveal 1s ease;
+}
+
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Título del hero */
+.biblioteca__hero-body h1 {
+  animation: slideDownFade 0.8s ease;
+}
+
+.biblioteca__hero-body p,
+.biblioteca__search {
+  animation: fadeUpSoft 1s ease;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sidebar buttons */
+.bib-sidebar__btn {
+  transition: background 0.2s ease,
+              color 0.2s ease,
+              transform 0.2s ease;
+}
+
+.bib-sidebar__btn:hover {
+  transform: translateX(4px);
+}
+
+/* Toolbar */
+.biblioteca__toolbar {
+  animation: fadeUpSoft 0.8s ease;
+}
+
+/* Cards animation on load */
+.bib-card,
+.bib-row {
+  animation: cardFadeUp 0.6s ease;
+  animation-fill-mode: both;
+}
+
+.bib-card:nth-child(1),
+.bib-row:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.bib-card:nth-child(2),
+.bib-row:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.bib-card:nth-child(3),
+.bib-row:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.bib-card:nth-child(4),
+.bib-row:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.bib-card:nth-child(5),
+.bib-row:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+@keyframes cardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover más bonito en cards */
+.bib-card:hover,
+.bib-row:hover {
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.12);
+}
+
+/* Input focus más dinámico */
+.biblioteca__search-input {
+  transition: all 0.25s ease;
+}
+
+.biblioteca__search-input:focus {
+  transform: scale(1.02);
+}
+
+/* Botones de paginación */
+.biblioteca__page-btn,
+.biblioteca__mobile-page-btn {
+  transition: all 0.2s ease;
+}
+
+.biblioteca__page-btn:hover:not(:disabled),
+.biblioteca__mobile-page-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+/* Empty state */
+.bib-empty {
+  animation: fadeUpSoft 0.7s ease;
+}
+
 /* ── Small mobile ────────────────────────── */
 @media (max-width: 480px) {
   .biblioteca__section {

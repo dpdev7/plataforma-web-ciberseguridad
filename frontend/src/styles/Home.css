@@ -1,6 +1,4 @@
-/* ============================================
-   VARIABLES GLOBALES
-============================================= */
+/* VARIABLES GLOBALES */
 :root {
   --bg-base:       #0f161d;
   --bg-surface:    #131c26;
@@ -33,9 +31,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ============================================
-   BASE
-============================================= */
+/* BASE */
 .home {
   background-color: var(--bg-base);
   min-height: 100vh;
@@ -52,18 +48,14 @@
   line-height: 1;
 }
 
-/* ============================================
-   LAYOUT PRINCIPAL
-============================================= */
+/* LAYOUT PRINCIPAL */
 .doc-layout {
   display: flex;
   padding-top: var(--navbar-height);
   min-height: 100vh;
 }
 
-/* ============================================
-   SIDEBAR TOC
-============================================= */
+/* SIDEBAR TOC */
 .toc-sidebar {
   position: fixed;
   top: var(--navbar-height);
@@ -85,38 +77,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-}
-.toc-progreso-label {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 0.05em;
-}
-
-.toc-barra-fondo {
-  width: 100%;
-  height: 3px;
-  background-color: var(--border);
-  border-radius: 99px;
-  overflow: hidden;
-}
-.toc-barra-relleno {
-  height: 100%;
-  background-color: var(--accent);
-  border-radius: 99px;
-  transition: width 0.4s ease;
-}
-
-.toc-item-numero {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-dim);
-  min-width: 20px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
-}
-.toc-item.active .toc-item-numero {
-  color: var(--accent);
 }
 
 .toc-footer {
@@ -832,7 +792,6 @@
 
 /* ============================================
    RESPONSIVE — Mobile pequeño (≤480px)
-   Ajustes finos sin romper lo de arriba
 ============================================= */
 @media (max-width: 480px) {
   :root {
