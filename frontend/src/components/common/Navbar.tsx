@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; // Importamos useLocation
-import { Menu, X, LogOut, ShieldCheck } from "lucide-react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; 
+import { Menu, X, LogOut, ShieldCheck, User, Settings, Trash2, ChevronDown} from "lucide-react";
 import styles from "./Navbar.module.css";
 import { API_BACKEND } from "../../utils/api";
 
@@ -12,27 +12,82 @@ interface NavbarProps {
 interface UserProfileProps {
   user: string;
   onLogout: () => void;
+  onOpenProfile: (type: "view" | "edit" | "delete") => void;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
-  <div className={styles.userProfile}>
-    <div className={styles.avatar}>{user.charAt(0).toUpperCase()}</div>
-    <span className={styles.userName}>{user}</span>
-    <button
-      className={styles.btnLogout}
-      onClick={onLogout}
-      title="Cerrar sesión"
-    >
-      <LogOut size={18} />
-    </button>
-  </div>
-);
+const UserProfile: React.FC<UserProfileProps> = ({
+  user,
+  onLogout,
+  onOpenProfile
+}) => {
+  const [openMenu, setOpenMenu] = useState(false);
+
+  return (
+    <div className={styles.userDropdownWrapper}>
+      <div
+        className={styles.userProfile}
+        onClick={() => setOpenMenu(!openMenu)}
+      >
+        <div className={styles.avatar}>
+          {user.charAt(0).toUpperCase()}
+        </div>
+
+        <span className={styles.userName}>{user}</span>
+
+        <ChevronDown size={16} className={styles.dropdownIcon} />
+      </div>
+
+      {openMenu && (
+        <div className={styles.userDropdown}>
+          <button
+            onClick={() => {
+              onOpenProfile("view");
+              setOpenMenu(false);
+            }}
+            >
+            <User size={16} />
+            Ver perfil
+          </button>
+
+          <button
+            onClick={() => {
+              onOpenProfile("edit");
+              setOpenMenu(false);
+              }}
+            >
+            <Settings size={16} />
+            Editar perfil
+          </button>
+
+          <button
+            onClick={() => {
+              onOpenProfile("delete");
+              setOpenMenu(false);
+          }}
+        >
+            <Trash2 size={16} />
+            Eliminar cuenta
+          </button>
+
+          <button onClick={onLogout}>
+            <LogOut size={16} />
+            Cerrar sesión
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   const navigate = useNavigate();
   const location = useLocation(); // Hook para detectar la ruta actual
   const [user, setUser] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [modalType, setModalType] = useState<
+  "view" | "edit" | "delete" | null
+  >(null);
 
   /**
    * LÓGICA DE VISIBILIDAD:
@@ -75,7 +130,7 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 
     setUser(null);
     setIsAdmin(false);
-    navigate("/login");
+    navigate("/home");
   };
 
   return (
@@ -129,7 +184,14 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
         )}
 
         {user ? (
-          <UserProfile user={user} onLogout={handleLogout} />
+          <UserProfile
+            user={user}
+            onLogout={handleLogout}
+            onOpenProfile={(type) => {
+              setModalType(type);
+              setShowProfileModal(true);
+          }}
+          />
         ) : (
           <Link to="/login" className={styles.btnLogin}>
             Ingresar
@@ -145,13 +207,107 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
         )}
 
         {user ? (
-          <UserProfile user={user} onLogout={handleLogout} />
+          <UserProfile
+            user={user}
+            onLogout={handleLogout}
+            onOpenProfile={(type) => {
+              setModalType(type);
+              setShowProfileModal(true);
+            }}
+          />
         ) : (
           <Link to="/login" className={styles.btnLogin}>
             Ingresar
           </Link>
         )}
       </div>
+
+      {showProfileModal && (
+  <div className={styles.profileModalOverlay}>
+    <div className={styles.profileModal}>
+      <button
+        className={styles.closeModal}
+        onClick={() => {
+          setShowProfileModal(false);
+          setModalType(null);
+        }}
+      >
+        ✕
+      </button>
+
+      {/* VER PERFIL */}
+      {modalType === "view" && (
+        <>
+          <h2>Mi perfil</h2>
+          <p className={styles.profileSubtitle}>
+            Consulta tu información registrada.
+          </p>
+
+          <div className={styles.profileCard}>
+            <label>Nombre</label>
+            <input type="text" value={user || ""} readOnly />
+
+            <label>Correo</label>
+            <input
+              type="email"
+              value="usuario@email.com"
+              readOnly
+            />
+          </div>
+        </>
+      )}
+
+      {/* EDITAR PERFIL */}
+      {modalType === "edit" && (
+        <>
+          <h2>Editar perfil</h2>
+          <p className={styles.profileSubtitle}>
+            Actualiza tu información personal.
+          </p>
+
+          <div className={styles.profileCard}>
+            <label>Nombre</label>
+            <input type="text" defaultValue={user || ""} />
+
+            <button className={styles.saveBtn}>
+              Guardar cambios
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* ELIMINAR */}
+      {modalType === "delete" && (
+        <div className={styles.deleteSection}>
+          <h3>Solicitar eliminación de cuenta</h3>
+
+          <p>
+            Revisamos cada solicitud manualmente para evitar
+            eliminaciones accidentales o no autorizadas y para entender cómo mejorar la plataforma.
+          </p>
+
+          <select>
+            <option>Selecciona un motivo</option>
+            <option>Ya no uso la plataforma</option>
+            <option>Problemas técnicos</option>
+            <option>Privacidad</option>
+            <option>Otro</option>
+          </select>
+
+          <textarea placeholder="Explícanos tu motivo..." />
+
+          <div className={styles.deleteWarning}>
+            Esta solicitud será revisada por administradores.
+          </div>
+
+          <button className={styles.deleteBtn}>
+            Enviar solicitud
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+)}
     </nav>
   );
 }
