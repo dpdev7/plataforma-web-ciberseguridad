@@ -297,6 +297,23 @@
   height: 16px;
 }
 
+/* ── Contadores de caracteres ── */
+.campo-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.campo-contador {
+  font-size: 0.75rem;
+  color: #8b949e;
+  font-weight: 400;
+  margin-left: auto;
+}
+.campo-contador--alerta {
+  color: #f85149;
+  font-weight: 600;
+}
+
 /* ── Hilo detalle ── */
 .hilo-detalle {
   max-width: 800px;
