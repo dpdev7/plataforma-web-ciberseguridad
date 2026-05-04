@@ -1,14 +1,18 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/:path*",
-      "destination": "https://backend-web-ciberseguridad.onrender.com/:path*"
+      "src": "/api/(.*)",
+      "dest": "https://backend-web-ciberseguridad.onrender.com/$1",
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      "headers": {
+        "X-Forwarded-Host": "backend-web-ciberseguridad.onrender.com"
+      }
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
