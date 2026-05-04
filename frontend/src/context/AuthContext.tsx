@@ -26,36 +26,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // Al cargar la app intenta renovar el token con la cookie httpOnly
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const res = await fetch('/api/token/refresh/', {
-          method:      'POST',
+useEffect(() => {
+  const init = async () => {
+    try {
+      const res = await fetch('/api/token/refresh/', {
+        method:      'POST',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        
+        // Primero setea el token
+        setAuthToken(data.token);
+        
+        // Luego llama /me/ con el token directamente en el header
+        const me = await fetch('/api/usuario/me/', {
           credentials: 'include',
+          headers: { 'Authorization': `Bearer ${data.token}` },  // ← token directo
         });
-        if (res.ok) {
-          const data = await res.json();
-          const me = await fetch('/api/usuario/me/', {
-            headers: { Authorization: `Bearer ${data.token}` },
-            credentials: 'include',
-          });
-          if (me.ok) {
-            const meData = await me.json();
+
+        if (me.ok) {
+          const meData = await me.json();
+          if (meData.authenticated) {
             setToken(data.token);
             setUsuario(meData.usuario);
-            setAuthToken(data.token);
           }
         }
-      } catch {
-        // Sin sesión activa
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch {
+      // Sin sesión activa
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    init();
-  }, []);
-
+  init();
+}, []);
   const login = useCallback((token: string, usuario: Usuario) => {
     setToken(token);
     setUsuario(usuario);
