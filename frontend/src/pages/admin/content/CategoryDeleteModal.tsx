@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Trash2 } from 'lucide-react';
-import { API_BACKEND } from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 
 interface Props {
@@ -19,12 +19,10 @@ export default function CategoryDeleteModal({ onClose, onConfirm, categoryName, 
     setError(null);
 
     try {
-      const res = await fetch(`${API_BACKEND}/categoria/eliminar/${categoryId}/`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!res.ok) throw new Error('Error al eliminar la categoría');
+const data = await apiFetch(`/categoria/eliminar/${categoryId}/`, {
+  method: 'DELETE',
+});
+if (!data.success) throw new Error('Error al eliminar la categoría');
 
       onConfirm();
     } catch {

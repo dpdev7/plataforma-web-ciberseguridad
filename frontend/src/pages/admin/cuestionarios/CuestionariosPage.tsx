@@ -5,7 +5,7 @@ import CuestionarioEditModal      from './CuestionarioEditModal';
 import CuestionarioDeleteModal    from './CuestionarioDeleteModal';
 import CuestionarioPreguntasModal from './CuestionarioPreguntasModal';
 import { Plus, Search, Trash2, ListChecks, Pencil } from 'lucide-react';
-import { API_BACKEND } from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 
 export default function CuestionariosPage() {
@@ -24,9 +24,7 @@ export default function CuestionariosPage() {
     setLoading(true);
     setError(null);
     try {
-      const res  = await fetch(`${API_BACKEND}/cuestionario/obtener/all/`);
-      if (!res.ok) throw new Error(`Error ${res.status}`);
-      const data = await res.json();
+      const data = await apiFetch('/cuestionario/obtener/all/');
       const mapped: Cuestionario[] = data.result.map((c: any) => ({
         id:             c.cuestionario_id,
         titulo:         c.titulo,
@@ -57,9 +55,8 @@ export default function CuestionariosPage() {
 
   const handleCreate = async (data: Omit<Cuestionario, 'id'>) => {
     try {
-      const res = await fetch(`${API_BACKEND}/cuestionario/crear/`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        await apiFetch('/cuestionario/crear/', {
+        method: 'POST',
         body: JSON.stringify({
           titulo:                data.titulo,
           descripcion:           data.descripcion,
@@ -67,7 +64,7 @@ export default function CuestionariosPage() {
           es_activo:             data.esActivo,
         }),
       });
-      if (!res.ok) throw new Error(`Error ${res.status}`);
+      
       await fetchCuestionarios();
       setShowCreate(false);
     } catch (e: any) { alert(e.message); }
@@ -76,10 +73,9 @@ export default function CuestionariosPage() {
   const handleDelete = async () => {
     if (!toDelete) return;
     try {
-      const res = await fetch(`${API_BACKEND}/cuestionario/eliminar/${toDelete.id}/`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error(`Error ${res.status}`);
+    await apiFetch(`/cuestionario/eliminar/${toDelete.id}/`, {
+      method: 'DELETE',
+    });
       await fetchCuestionarios();
       setToDelete(null);
     } catch (e: any) { alert(e.message); }
@@ -91,10 +87,8 @@ export default function CuestionariosPage() {
 const handleEdit = async (data: Omit<Cuestionario, 'id'>) => {
   if (!toEdit) return;
   try {
-    const res = await fetch(`${API_BACKEND}/cuestionario/editar/${toEdit.id}/`, {
-      method:      'PATCH',
-      credentials: 'include',
-      headers:     { 'Content-Type': 'application/json' },
+      await apiFetch(`/cuestionario/editar/${toEdit.id}/`, {
+      method: 'PATCH',
       body: JSON.stringify({
         titulo:                data.titulo,
         descripcion:           data.descripcion,
@@ -102,7 +96,6 @@ const handleEdit = async (data: Omit<Cuestionario, 'id'>) => {
         tiempo_limite_minutos: data.tiempoLimite,
       }),
     });
-    if (!res.ok) throw new Error(`Error ${res.status}`);
     await fetchCuestionarios();
     setToEdit(null);
   } catch (e: any) { alert(e.message); }

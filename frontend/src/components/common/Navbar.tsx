@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"; 
-import { Menu, X, LogOut, ShieldCheck, User, Settings, Trash2, ChevronDown} from "lucide-react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, ShieldCheck, User, Settings, Trash2, ChevronDown } from "lucide-react";
 import styles from "./Navbar.module.css";
-import { API_BACKEND } from "../../utils/api";
+import { apiFetch, setAuthToken } from "../../utils/api";
+import { useAuth } from "../../context/AuthContext";
 
 interface NavbarProps {
   onMenuToggle?: () => void;
@@ -15,87 +16,41 @@ interface UserProfileProps {
   onOpenProfile: (type: "view" | "edit" | "delete") => void;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({
-  user,
-  onLogout,
-  onOpenProfile
-}) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout, onOpenProfile }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setOpenMenu(false);
-    }
-  };
-
-  document.addEventListener("mousedown", handleClickOutside);
-
-  return () => {
-    document.removeEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-  };
-}, []);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div
-      className={styles.userDropdownWrapper}
-      ref={dropdownRef}
-    >
-      <div
-        className={styles.userProfile}
-        onClick={() => setOpenMenu(!openMenu)}
-      >
-        <div className={styles.avatar}>
-          {user.charAt(0).toUpperCase()}
-        </div>
-
+    <div className={styles.userDropdownWrapper} ref={dropdownRef}>
+      <div className={styles.userProfile} onClick={() => setOpenMenu(!openMenu)}>
+        <div className={styles.avatar}>{user.charAt(0).toUpperCase()}</div>
         <span className={styles.userName}>{user}</span>
-
         <ChevronDown size={16} className={styles.dropdownIcon} />
       </div>
 
       {openMenu && (
         <div className={styles.userDropdown}>
-          <button
-            onClick={() => {
-              onOpenProfile("view");
-              setOpenMenu(false);
-            }}
-            >
-            <User size={16} />
-            Ver perfil
+          <button onClick={() => { onOpenProfile("view"); setOpenMenu(false); }}>
+            <User size={16} /> Ver perfil
           </button>
-
-          <button
-            onClick={() => {
-              onOpenProfile("edit");
-              setOpenMenu(false);
-              }}
-            >
-            <Settings size={16} />
-            Editar perfil
+          <button onClick={() => { onOpenProfile("edit"); setOpenMenu(false); }}>
+            <Settings size={16} /> Editar perfil
           </button>
-
-          <button
-            onClick={() => {
-              onOpenProfile("delete");
-              setOpenMenu(false);
-          }}
-        >
-            <Trash2 size={16} />
-            Eliminar cuenta
+          <button onClick={() => { onOpenProfile("delete"); setOpenMenu(false); }}>
+            <Trash2 size={16} /> Eliminar cuenta
           </button>
-
           <button onClick={onLogout}>
-            <LogOut size={16} />
-            Cerrar sesión
+            <LogOut size={16} /> Cerrar sesión
           </button>
         </div>
       )}
@@ -104,53 +59,49 @@ const UserProfile: React.FC<UserProfileProps> = ({
 };
 
 export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
-  const navigate = useNavigate();
-  const location = useLocation(); // Hook para detectar la ruta actual
-  const [user, setUser] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [showProfileModal, setShowProfileModal] = useState(false);
-  const [modalType, setModalType] = useState<
-  "view" | "edit" | "delete" | null
-  >(null);
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { usuario, logout: authLogout } = useAuth();
 
-  /**
-   * LÓGICA DE VISIBILIDAD:
-   * La hamburguesa solo se muestra si:
-   * 1. Existe la prop onMenuToggle.
-   * 2. La ruta es "/" o "/home".
-   */
+  const [user,             setUser]             = useState<string | null>(null);
+  const [isAdmin,          setIsAdmin]          = useState<boolean>(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [modalType,        setModalType]        = useState<"view" | "edit" | "delete" | null>(null);
+
   const showHamburger = !!onMenuToggle && (location.pathname === "/" || location.pathname === "/home");
 
+  // Si hay usuario en el contexto, úsalo directamente
   useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const response = await fetch(`${API_BACKEND}/usuario/me/`, {
-        method: "GET",
-        credentials: "include",
-      });
+    if (usuario) {
+      setUser(usuario.nombre);
+      setIsAdmin(usuario.es_administrador);
+      return;
+    }
 
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.usuario.nombre);
-        setIsAdmin(data.usuario.es_administrador);
-      } else {
+    // Si no hay contexto (recarga de página), intenta obtenerlo del backend
+    const fetchUser = async () => {
+      try {
+        const data = await apiFetch('/usuario/me/');
+        if (data.authenticated) {
+          setUser(data.usuario.nombre);
+          setIsAdmin(data.usuario.es_administrador);
+        } else {
+          setUser(null);
+          setIsAdmin(false);
+        }
+      } catch {
         setUser(null);
         setIsAdmin(false);
       }
-    } catch (error) {
-      console.error("Error obteniendo usuario:", error);
-    }
-  };
+    };
 
-  fetchUser();
-}, [location.pathname]);
+    fetchUser();
+  }, [usuario, location.pathname]);
 
   const handleLogout = async () => {
-    await fetch(`${API_BACKEND}/usuario/logout/`, {
-      method: "POST",
-      credentials: "include",
-    });
-
+    await apiFetch('/usuario/logout/', { method: "POST" });
+    authLogout();          // limpia el contexto
+    setAuthToken(null);    // limpia el token en apiFetch
     setUser(null);
     setIsAdmin(false);
     navigate("/home");
@@ -158,67 +109,37 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 
   return (
     <nav className={styles.navbar}>
-      {/* El botón ahora desaparece automáticamente en /biblioteca */}
       {showHamburger && (
-        <button
-          className={styles.hamburger}
-          onClick={onMenuToggle}
-          aria-label="Abrir menú"
-        >
+        <button className={styles.hamburger} onClick={onMenuToggle} aria-label="Abrir menú">
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       )}
 
-      <Link
-        to="/"
-        className={`${styles.logo} ${!showHamburger ? styles.logoNoMenu : ""}`}
-      >
+      <Link to="/" className={`${styles.logo} ${!showHamburger ? styles.logoNoMenu : ""}`}>
         <span className="material-symbols-outlined">security</span>
         CyberGuard
       </Link>
 
       <div className={styles.links}>
-        <NavLink to="/home" className={({ isActive }) => (isActive ? styles.activeLink : "")}>
-          Inicio
-        </NavLink>
-        <NavLink to="/amenazas" className={({ isActive }) => (isActive ? styles.activeLink : "")}>
-          Amenazas
-        </NavLink>
-        <NavLink to="/herramientas" className={({ isActive }) => (isActive ? styles.activeLink : "")}>
-          Herramientas
-        </NavLink>
-        <NavLink to="/biblioteca" className={({ isActive }) => (isActive ? styles.activeLink : "")}>
-          Biblioteca
-        </NavLink>
-        <NavLink to="/foro" className={({ isActive }) => (isActive ? styles.activeLink : "")}>
-          Foro
-        </NavLink>
+        <NavLink to="/home" className={({ isActive }) => isActive ? styles.activeLink : ""}>Inicio</NavLink>
+        <NavLink to="/amenazas" className={({ isActive }) => isActive ? styles.activeLink : ""}>Amenazas</NavLink>
+        <NavLink to="/herramientas" className={({ isActive }) => isActive ? styles.activeLink : ""}>Herramientas</NavLink>
+        <NavLink to="/biblioteca" className={({ isActive }) => isActive ? styles.activeLink : ""}>Biblioteca</NavLink>
+        <NavLink to="/foro" className={({ isActive }) => isActive ? styles.activeLink : ""}>Foro</NavLink>
 
         {isAdmin && (
-          <NavLink
-            to="/admin/users"
-            className={({ isActive }) =>
-              isActive ? `${styles.activeLink} ${styles.adminLink}` : styles.adminLink
-            }
-          >
+          <NavLink to="/admin/users"
+            className={({ isActive }) => isActive ? `${styles.activeLink} ${styles.adminLink}` : styles.adminLink}>
             <ShieldCheck size={16} style={{ marginRight: "4px" }} />
             Admin
           </NavLink>
         )}
 
         {user ? (
-          <UserProfile
-            user={user}
-            onLogout={handleLogout}
-            onOpenProfile={(type) => {
-              setModalType(type);
-              setShowProfileModal(true);
-          }}
-          />
+          <UserProfile user={user} onLogout={handleLogout}
+            onOpenProfile={(type) => { setModalType(type); setShowProfileModal(true); }} />
         ) : (
-          <Link to="/login" className={styles.btnLogin}>
-            Ingresar
-          </Link>
+          <Link to="/login" className={styles.btnLogin}>Ingresar</Link>
         )}
       </div>
 
@@ -228,109 +149,63 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
             <ShieldCheck size={22} color="#3b82f6" />
           </Link>
         )}
-
         {user ? (
-          <UserProfile
-            user={user}
-            onLogout={handleLogout}
-            onOpenProfile={(type) => {
-              setModalType(type);
-              setShowProfileModal(true);
-            }}
-          />
+          <UserProfile user={user} onLogout={handleLogout}
+            onOpenProfile={(type) => { setModalType(type); setShowProfileModal(true); }} />
         ) : (
-          <Link to="/login" className={styles.btnLogin}>
-            Ingresar
-          </Link>
+          <Link to="/login" className={styles.btnLogin}>Ingresar</Link>
         )}
       </div>
 
       {showProfileModal && (
-  <div className={styles.profileModalOverlay}>
-    <div className={styles.profileModal}>
-      <button
-        className={styles.closeModal}
-        onClick={() => {
-          setShowProfileModal(false);
-          setModalType(null);
-        }}
-      >
-        ✕
-      </button>
+        <div className={styles.profileModalOverlay}>
+          <div className={styles.profileModal}>
+            <button className={styles.closeModal} onClick={() => { setShowProfileModal(false); setModalType(null); }}>✕</button>
 
-      {/* VER PERFIL */}
-      {modalType === "view" && (
-        <>
-          <h2>Mi perfil</h2>
-          <p className={styles.profileSubtitle}>
-            Consulta tu información registrada.
-          </p>
+            {modalType === "view" && (
+              <>
+                <h2>Mi perfil</h2>
+                <p className={styles.profileSubtitle}>Consulta tu información registrada.</p>
+                <div className={styles.profileCard}>
+                  <label>Nombre</label>
+                  <input type="text" value={user || ""} readOnly />
+                  <label>Correo</label>
+                  <input type="email" value="usuario@email.com" readOnly />
+                </div>
+              </>
+            )}
 
-          <div className={styles.profileCard}>
-            <label>Nombre</label>
-            <input type="text" value={user || ""} readOnly />
+            {modalType === "edit" && (
+              <>
+                <h2>Editar perfil</h2>
+                <p className={styles.profileSubtitle}>Actualiza tu información personal.</p>
+                <div className={styles.profileCard}>
+                  <label>Nombre</label>
+                  <input type="text" defaultValue={user || ""} />
+                  <button className={styles.saveBtn}>Guardar cambios</button>
+                </div>
+              </>
+            )}
 
-            <label>Correo</label>
-            <input
-              type="email"
-              value="usuario@email.com"
-              readOnly
-            />
+            {modalType === "delete" && (
+              <div className={styles.deleteSection}>
+                <h3>Solicitar eliminación de cuenta</h3>
+                <p>Revisamos cada solicitud manualmente para evitar eliminaciones accidentales o no autorizadas.</p>
+                <select>
+                  <option>Selecciona un motivo</option>
+                  <option>Ya no uso la plataforma</option>
+                  <option>Problemas técnicos</option>
+                  <option>Privacidad</option>
+                  <option>Otro</option>
+                </select>
+                <textarea placeholder="Explícanos tu motivo..." />
+                <div className={styles.deleteWarning}>Esta solicitud será revisada por administradores.</div>
+                <button className={styles.deleteBtn}>Enviar solicitud</button>
+              </div>
+            )}
           </div>
-        </>
-      )}
-
-      {/* EDITAR PERFIL */}
-      {modalType === "edit" && (
-        <>
-          <h2>Editar perfil</h2>
-          <p className={styles.profileSubtitle}>
-            Actualiza tu información personal.
-          </p>
-
-          <div className={styles.profileCard}>
-            <label>Nombre</label>
-            <input type="text" defaultValue={user || ""} />
-
-            <button className={styles.saveBtn}>
-              Guardar cambios
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* ELIMINAR */}
-      {modalType === "delete" && (
-        <div className={styles.deleteSection}>
-          <h3>Solicitar eliminación de cuenta</h3>
-
-          <p>
-            Revisamos cada solicitud manualmente para evitar
-            eliminaciones accidentales o no autorizadas y para entender cómo mejorar la plataforma.
-          </p>
-
-          <select>
-            <option>Selecciona un motivo</option>
-            <option>Ya no uso la plataforma</option>
-            <option>Problemas técnicos</option>
-            <option>Privacidad</option>
-            <option>Otro</option>
-          </select>
-
-          <textarea placeholder="Explícanos tu motivo..." />
-
-          <div className={styles.deleteWarning}>
-            Esta solicitud será revisada por administradores.
-          </div>
-
-          <button className={styles.deleteBtn}>
-            Enviar solicitud
-          </button>
         </div>
       )}
-    </div>
-  </div>
-)}
     </nav>
   );
 }

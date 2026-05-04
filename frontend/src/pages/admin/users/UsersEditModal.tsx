@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { X, UserCog } from 'lucide-react';
-import { API_BACKEND } from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 interface User {
   id: string;
@@ -36,14 +36,10 @@ export default function UserEditModal({ user, onClose, onSave }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BACKEND}/usuario/update/${user.id}/`, {
+      await apiFetch(`/usuario/update/${user.id}/`, {
         method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-
-      if (!res.ok) throw new Error('Error al actualizar el usuario');
 
       onSave({ ...user, ...form });
     } catch (err) {

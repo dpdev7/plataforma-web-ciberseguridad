@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Plus, Trash2, CheckCircle, Circle } from 'lucide-react';
-import { API_BACKEND } from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 interface Opcion {
   opcion_id: string;
@@ -41,8 +41,7 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
   const fetchPreguntas = async () => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API_BACKEND}/cuestionario/obtener/all/`);
-      const data = await res.json();
+ const data = await apiFetch('/cuestionario/obtener/all/');
       const cuest = data.result.find((c: any) => c.cuestionario_id === cuestionarioId);
       setPreguntas(cuest?.preguntas ?? []);
     } finally {
@@ -57,16 +56,14 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
     if (!nuevoEnunciado.trim()) return;
     setAgregandoP(true);
     try {
-      const res = await fetch(`${API_BACKEND}/cuestionario/pregunta/crear/`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+await apiFetch('/cuestionario/pregunta/crear/', {
+  method: 'POST',
         body: JSON.stringify({
           enunciado:       nuevoEnunciado,
           puntos:          nuevoPuntos,
           cuestionario_id: cuestionarioId,
         }),
       });
-      if (!res.ok) throw new Error(`Error ${res.status}`);
       setNuevoEnunciado('');
       setNuevoPuntos(1);
       await fetchPreguntas();
@@ -80,7 +77,7 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
   // ── Eliminar pregunta ──
   const handleEliminarPregunta = async (preguntaId: string) => {
     if (!confirm('¿Eliminar esta pregunta y todas sus opciones?')) return;
-    await fetch(`${API_BACKEND}/cuestionario/pregunta/eliminar/${preguntaId}/`, { method: 'DELETE' });
+await apiFetch(`/cuestionario/pregunta/eliminar/${preguntaId}/`, { method: 'DELETE' });
     await fetchPreguntas();
   };
 
@@ -90,8 +87,8 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
     if (!texto) return;
     setAgregandoO(prev => ({ ...prev, [preguntaId]: true }));
     try {
-      const res = await fetch(`${API_BACKEND}/cuestionario/pregunta/opcion/crear/`, {
-        method:  'POST',
+await apiFetch('/cuestionario/pregunta/opcion/crear/', {
+  method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           texto,
@@ -100,7 +97,6 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
           retroalimentacion: opcionRetro[preguntaId] ?? '',
         }),
       });
-      if (!res.ok) throw new Error(`Error ${res.status}`);
       setOpcionTexto(prev => ({ ...prev, [preguntaId]: '' }));
       setOpcionRetro(prev => ({ ...prev, [preguntaId]: '' }));
       await fetchPreguntas();
@@ -113,15 +109,14 @@ export default function CuestionarioPreguntasModal({ cuestionarioId, cuestionari
 
   // ── Eliminar opción ──
   const handleEliminarOpcion = async (opcionId: string) => {
-    await fetch(`${API_BACKEND}/cuestionario/pregunta/opcion/eliminar/${opcionId}/`, { method: 'DELETE' });
+    await apiFetch(`/cuestionario/pregunta/opcion/eliminar/${opcionId}/`, { method: 'DELETE' });
     await fetchPreguntas();
   };
 
   // ── Marcar opción como correcta ──
   const handleMarcarCorrecta = async (opcionId: string) => {
-    await fetch(`${API_BACKEND}/cuestionario/pregunta/opcion/editar/${opcionId}/`, {
-      method:  'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      await apiFetch(`/cuestionario/pregunta/opcion/editar/${opcionId}/`, {
+      method: 'PATCH',
       body: JSON.stringify({ es_correcta: true }),
     });
     await fetchPreguntas();

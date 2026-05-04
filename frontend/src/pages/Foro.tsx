@@ -110,9 +110,9 @@ export default function Foro() {
     if (!usuario) return;
     apiFetch('/publicacion/all/')
       .then(data => {
-        if (data.success) {
+        if (data.success) { 
           const resultado = Array.isArray(data.result)
-            ? data.result.map((p: Publicacion) => ({
+            ? data.result.map((p: Publicacion) => ({ 
                 ...p,
                 comentarios: p.comentarios ?? [],
               }))

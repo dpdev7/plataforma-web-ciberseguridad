@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, UserPlus } from 'lucide-react';
-import { API_BACKEND} from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 interface Props {
   onClose:   () => void;
@@ -29,10 +29,8 @@ export default function UserCreateModal({ onClose, onConfirm }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BACKEND}/usuario/admin/crear/`, {
-        method:      'POST',
-        credentials: 'include',
-        headers:     { 'Content-Type': 'application/json' },
+        const data = await apiFetch('/usuario/admin/crear/', {
+        method: 'POST',
         body: JSON.stringify({
           nombre:           form.nombre,
           email:            form.email,
@@ -41,12 +39,11 @@ export default function UserCreateModal({ onClose, onConfirm }: Props) {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(
+      if (!data.success) throw new Error(
         typeof data.message === 'object'
           ? JSON.stringify(data.message)
           : data.message ?? 'Error al crear el usuario'
-      );
+        );
 
       onConfirm();
     } catch (err: unknown) {

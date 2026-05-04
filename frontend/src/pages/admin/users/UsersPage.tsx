@@ -4,7 +4,7 @@ import AdminTable      from '../../../components/admin/AdminTable';
 import UserEditModal   from './UsersEditModal';
 import UserDeleteModal from './UserDeleteModal';
 import UserCreateModal from './UserCreateModal';
-import { API_BACKEND } from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 
 interface User {
@@ -33,11 +33,10 @@ export default function UsersPage() {
 
   const fetchUsers = () => {
     setLoading(true);
-    fetch(`${API_BACKEND}/usuario/get/all/`, { credentials: "include" })
-      .then(res => res.json())
+    apiFetch('/usuario/get/all/')
       .then(data => { if (data.success) setUsers(data.result); })
       .finally(() => setLoading(false));
-  };
+    };
 
 
   useEffect(() => { fetchUsers(); }, []);

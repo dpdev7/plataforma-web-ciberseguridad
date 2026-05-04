@@ -4,7 +4,7 @@ import { ArrowLeft, CheckCircle, Circle, Clock } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import '../styles/guia.css';
-import { API_BACKEND } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 type PasoGuia = {
   titulo: string;
@@ -43,10 +43,7 @@ export default function GuiaPage() {
           throw new Error('ID inválido');
         }
 
-        const res = await fetch(`${API_BACKEND}/guia/obtener/${guiaId}/`);
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-
-        const data = await res.json();
+const data = await apiFetch(`/guia/obtener/${guiaId}/`);
         const raw = data?.result ?? data;
 
         const mapped: Guia = {

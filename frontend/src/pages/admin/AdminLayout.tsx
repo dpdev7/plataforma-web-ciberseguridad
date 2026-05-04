@@ -10,7 +10,8 @@ import {
   LogOut,
 } from 'lucide-react';
 import './admin.css';
-import { API_BACKEND } from '../../utils/api';
+import { apiFetch, setAuthToken } from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 
 interface UserProfileProps {
   user: string;
@@ -41,6 +42,7 @@ const navItems = [
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const { logout: authLogout } = useAuth();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<string | null>(null);
@@ -64,20 +66,12 @@ export default function AdminLayout() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(
-          `${API_BACKEND}/usuario/me/`,
-          {
-            method: 'GET',
-            credentials: 'include',
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.usuario.nombre);
-        } else {
-          setUser(null);
-        }
+const data = await apiFetch('/usuario/me/');
+if (data.authenticated) {
+  setUser(data.usuario.nombre);
+} else {
+  setUser(null);
+}
       } catch {
         setUser(null);
       }
@@ -89,13 +83,9 @@ export default function AdminLayout() {
   const closeSidebar = () => setSidebarOpen(false);
 
   const handleLogout = async () => {
-    await fetch(
-      `${API_BACKEND}/usuario/logout/`,
-      {
-        method: 'POST',
-        credentials: 'include',
-      }
-    );
+await apiFetch('/usuario/logout/', { method: 'POST' });
+authLogout();
+setAuthToken(null);
 
     setUser(null);
     closeSidebar();

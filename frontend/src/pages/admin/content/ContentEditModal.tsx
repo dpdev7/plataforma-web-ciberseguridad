@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Pencil } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
-import { API_BACKEND } from '../../../utils/api';
-
+import { apiFetch } from '../../../utils/api';
 interface Categoria {
   categoria_id: string;
   nombre: string;
@@ -19,18 +18,15 @@ export default function ContentEditModal({ recurso, onClose, onConfirm }: Props)
   const [form, setForm] = useState({ ...recurso });
 
   useEffect(() => {
-    fetch(`${API_BACKEND}/categoria/obtener/all/`, {
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setCategorias(data.result);
-        }
-      })
-      .catch((err) => {
-        console.log('CATEGORIAS ERROR:', err);
-      });
+apiFetch('/categoria/obtener/all/')
+  .then(data => {
+    if (data.success) {
+      setCategorias(data.result);
+    }
+  })
+  .catch((err) => {
+    console.log('CATEGORIAS ERROR:', err);
+  });
   }, []);
 
   const set = (key: string, value: unknown) =>

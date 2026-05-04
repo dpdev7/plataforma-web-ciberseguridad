@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
-import { API_BACKEND } from "../utils/api";
+import { API_BACKEND, setAuthToken } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
 
 type SubmitResult = {
   keepLoading?: boolean;
@@ -12,13 +13,12 @@ type SubmitResult = {
 const Login: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (data: Record<string, string>): Promise<SubmitResult> => {
     try {
       const response = await fetch(`${API_BACKEND}/usuario/login/`, {
-    
-      method: "POST",
-        credentials: "include",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -32,10 +32,11 @@ const Login: React.FC = () => {
         };
       }
 
-      localStorage.setItem("user_name", result.usuario.nombre);
+      // Guarda token en contexto y en apiFetch
+      login(result.token, result.usuario);
+      setAuthToken(result.token);
 
       setShowToast(true);
-
       setTimeout(() => {
         setShowToast(false);
         navigate("/home", { replace: true });
@@ -63,7 +64,6 @@ const Login: React.FC = () => {
           </div>
         </div>
       )}
-
       <AuthForm type="login" onSubmit={handleLogin} />
     </div>
   );

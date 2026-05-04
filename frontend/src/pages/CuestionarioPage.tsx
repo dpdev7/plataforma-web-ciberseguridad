@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import '../styles/cuestionario.css';
-import { API_BACKEND } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 // Tipos locales alineados con la respuesta del backend
 interface OpcionAPI {
@@ -49,20 +49,16 @@ export default function CuestionarioPage() {
     setError(null);
 
     // Trae todos y filtra el que coincide con el UUID del id
-    fetch(`${API_BACKEND}/cuestionario/obtener/all/`)
-      .then(res => {
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-        return res.json();
-      })
-      .then((data: any) => {
-        const encontrado = data.result.find((c: CuestionarioAPI) =>
-          c.cuestionario_id === id
-        );
-        if (!encontrado) throw new Error('Cuestionario no encontrado');
-        setCuestionario(encontrado);
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+apiFetch('/cuestionario/obtener/all/')
+  .then((data: any) => {
+    const encontrado = data.result.find((c: CuestionarioAPI) =>
+      c.cuestionario_id === id
+    );
+    if (!encontrado) throw new Error('Cuestionario no encontrado');
+    setCuestionario(encontrado);
+  })
+  .catch(err => setError(err.message))
+  .finally(() => setLoading(false));
   }, [id]);
 
   // Estados de carga

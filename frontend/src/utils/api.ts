@@ -1,13 +1,27 @@
-export const API_BACKEND = "https://backend-web-ciberseguridad.onrender.com";
+export const API_BACKEND = import.meta.env.VITE_API_URL_BACKEND;
+
+// Token en memoria — se setea desde AuthContext
+let _token: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  _token = token;
+}
 
 export const apiFetch = async (endpoint: string, options?: RequestInit) => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options?.headers as Record<string, string> || {}),
+  };
+
+  if (_token) {
+    headers['Authorization'] = `Bearer ${_token}`;
+  }
+
   const res = await fetch(`${API_BACKEND}${endpoint}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options?.headers || {}),
-    },
     ...options,
+    headers,
   });
-  return res.json();
+
+  const data = await res.json();  
+  return data;                     
 };

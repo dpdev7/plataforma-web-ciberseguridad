@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';  // 👈 agregar useEffect
+import { useState, useEffect } from 'react'; 
 import { X, BookOpen } from 'lucide-react';
 import type { Recurso, TipoRecurso } from '../../../types/adminContent';
-import { API_BACKEND } from '../../../utils/api';
-
+import { apiFetch } from '../../../utils/api';
 
 interface Categoria {
   categoria_id: string;
@@ -26,23 +25,19 @@ export default function ContentCreateModal({ onClose, onConfirm }: Props) {
     esPublico:   true,
   });
 
-  // 👇 Fetch de categorías reales
 useEffect(() => {
-  fetch(`${API_BACKEND}/categoria/obtener/all/`, {
-    credentials: 'include',
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        setCategorias(data.result);
-        if (data.result.length > 0) {
-          setForm(prev => ({ ...prev, categoria: data.result[0].categoria_id }));
-        }
+apiFetch('/categoria/obtener/all/')
+  .then(data => {
+    if (data.success) {
+      setCategorias(data.result);
+      if (data.result.length > 0) {
+        setForm(prev => ({ ...prev, categoria: data.result[0].categoria_id }));
       }
-    })
-    .catch((err) => {
-      console.log('CATEGORIAS ERROR:', err); 
-    });
+    }
+  })
+  .catch((err) => {
+    console.log('CATEGORIAS ERROR:', err);
+  });
 }, []);
 
   const set = (key: string, value: unknown) =>

@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { Trash2, X } from 'lucide-react';
-import { API_BACKEND } from '../../../utils/api';
+import { apiFetch } from '../../../utils/api';
 
 
 interface User {
@@ -28,14 +28,11 @@ export default function UserDeleteModal({ user, onClose, onConfirm }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BACKEND}/usuario/delete/${user.id}/`, {
+      await apiFetch(`/usuario/delete/${user.id}/`, {
         method: 'PATCH',
-        credentials: 'include',
       });
 
-      if (!res.ok) throw new Error('Error al eliminar');
-
-      onConfirm(); // 👈 actualiza el estado en UsersPage
+      onConfirm(); 
     } catch {
       setError('No se pudo eliminar el usuario. Intenta de nuevo.');
     } finally {
