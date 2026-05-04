@@ -1,14 +1,10 @@
-export const API_BACKEND = import.meta.env.VITE_API_URL_BACKEND;
+// Ya no apunta al backend directamente — usa el proxy de Vercel
+export const API_BACKEND = '/api';
 
-let _token: string | null = localStorage.getItem('auth_token');
+let _token: string | null = null;
 
 export function setAuthToken(token: string | null) {
   _token = token;
-  if (token) {
-    localStorage.setItem('auth_token', token);
-  } else {
-    localStorage.removeItem('auth_token');
-  }
 }
 
 export const apiFetch = async (endpoint: string, options?: RequestInit) => {
@@ -23,6 +19,7 @@ export const apiFetch = async (endpoint: string, options?: RequestInit) => {
 
   const res = await fetch(`${API_BACKEND}${endpoint}`, {
     ...options,
+    credentials: 'include',  // ← ahora funciona porque es mismo dominio
     headers,
   });
 

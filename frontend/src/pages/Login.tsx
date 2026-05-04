@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
-import { API_BACKEND, setAuthToken } from "../utils/api";
+import { setAuthToken } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 
 type SubmitResult = {
@@ -17,11 +17,12 @@ const Login: React.FC = () => {
 
   const handleLogin = async (data: Record<string, string>): Promise<SubmitResult> => {
     try {
-      const response = await fetch(`${API_BACKEND}/usuario/login/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+const response = await fetch('/api/usuario/login/', {
+  method:      "POST",
+  credentials: "include",  // ← importante
+  headers:     { "Content-Type": "application/json" },
+  body:        JSON.stringify(data),
+});
 
       const result = await response.json();
 

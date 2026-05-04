@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "https://backend-web-ciberseguridad.onrender.com/:path*"
+    }
   ]
 }
