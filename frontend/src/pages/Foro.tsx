@@ -357,19 +357,30 @@ export default function Foro() {
             </div>
             <p className="modal-subtitle">Comparte tu pregunta o conocimiento con la comunidad.</p>
 
-            <label className="campo-label">Título del Hilo</label>
+            <label className="campo-label">
+              Título del Hilo
+              <span className={`campo-contador ${titulo.length > 180 ? 'campo-contador--alerta' : ''}`}>
+                {titulo.length}/200
+              </span>
+            </label>
             <input
               className="campo-input"
               placeholder="Ej: ¿Cómo puedo mejorar la seguridad de mi red Wi-Fi?"
               value={titulo}
               onChange={e => setTitulo(e.target.value)}
+              maxLength={200}
             />
 
-            <label className="campo-label">Contenido del Hilo</label>
+            <label className="campo-label">
+              Contenido del Hilo
+              <span className={`campo-contador ${contenido.length > 4500 ? 'campo-contador--alerta' : ''}`}>
+                {contenido.length}/5000
+              </span>
+            </label>
             <div data-color-mode="dark" style={{ marginBottom: '16px' }}>
               <MDEditor
                 value={contenido}
-                onChange={v => setContenido(v || '')}
+                onChange={v => setContenido((v || '').slice(0, 5000))}
                 height={200}
                 preview="edit"
               />
@@ -382,17 +393,23 @@ export default function Foro() {
               onChange={e => setCategoriaHilo(e.target.value)}
             >
               <option value="">Selecciona una categoría</option>
-              {categorias.map(cat => (  // 👈 categorías dinámicas desde backend
+              {categorias.map(cat => (  
                 <option key={cat.id} value={cat.id}>{cat.label}</option>
               ))}
             </select>
 
-            <label className="campo-label">Etiquetas</label>
+            <label className="campo-label">
+              Etiquetas
+              <span className={`campo-contador ${etiquetasHilo.length > 90 ? 'campo-contador--alerta' : ''}`}>
+                {etiquetasHilo.length}/100
+              </span>
+            </label>
             <input
               className="campo-input"
               placeholder="Añade hasta 5 etiquetas (ej: phishing, malware, vpn)"
               value={etiquetasHilo}
               onChange={e => setEtiquetasHilo(e.target.value)}
+              maxLength={100}
             />
             <p className="campo-hint">Separa las etiquetas con comas.</p>
 
