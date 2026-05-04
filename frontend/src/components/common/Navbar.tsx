@@ -175,34 +175,87 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
               </>
             )}
 
-            {modalType === "edit" && (
-              <>
-                <h2>Editar perfil</h2>
-                <p className={styles.profileSubtitle}>Actualiza tu información personal.</p>
-                <div className={styles.profileCard}>
-                  <label>Nombre</label>
-                  <input type="text" defaultValue={user || ""} />
-                  <button className={styles.saveBtn}>Guardar cambios</button>
-                </div>
-              </>
-            )}
+{modalType === "edit" && (
+  <>
+    <h2>Editar perfil</h2>
+    <p className={styles.profileSubtitle}>Actualiza tu información personal.</p>
+    <div className={styles.profileCard}>
+      <label>Nombre</label>
+      <input
+        type="text"
+        id="edit-nombre"
+        defaultValue={user || ""}
+      />
+      <button
+        className={styles.saveBtn}
+        onClick={async () => {
+          const input = document.getElementById('edit-nombre') as HTMLInputElement;
+          const nombre = input?.value?.trim();
+          if (!nombre || !usuario) return;
+          await apiFetch(`/usuario/update/${usuario.id}/`, {
+            method: 'PATCH',
+            body: JSON.stringify({ nombre }),
+          });
+          setUser(nombre);
+          setShowProfileModal(false);
+          setModalType(null);
+        }}
+      >
+        Guardar cambios
+      </button>
+    </div>
+  </>
+)}
 
-            {modalType === "delete" && (
-              <div className={styles.deleteSection}>
-                <h3>Solicitar eliminación de cuenta</h3>
-                <p>Revisamos cada solicitud manualmente para evitar eliminaciones accidentales o no autorizadas.</p>
-                <select>
-                  <option>Selecciona un motivo</option>
-                  <option>Ya no uso la plataforma</option>
-                  <option>Problemas técnicos</option>
-                  <option>Privacidad</option>
-                  <option>Otro</option>
-                </select>
-                <textarea placeholder="Explícanos tu motivo..." />
-                <div className={styles.deleteWarning}>Esta solicitud será revisada por administradores.</div>
-                <button className={styles.deleteBtn}>Enviar solicitud</button>
-              </div>
-            )}
+{modalType === "delete" && (
+  <div className={styles.deleteSection}>
+    <h3>Solicitar eliminación de cuenta</h3>
+    <p>Revisamos cada solicitud manualmente para evitar eliminaciones accidentales.</p>
+    <select id="delete-motivo">
+      <option value="">Selecciona un motivo</option>
+      <option value="no_uso">Ya no uso la plataforma</option>
+      <option value="problemas_tec">Problemas técnicos</option>
+      <option value="privacidad">Privacidad</option>
+      <option value="otro">Otro</option>
+    </select>
+    <textarea id="delete-descripcion" placeholder="Explícanos tu motivo..." />
+    <div className={styles.deleteWarning}>
+      Esta solicitud será revisada por administradores.
+    </div>
+    <button
+      className={styles.deleteBtn}
+      onClick={async () => {
+        const motivo = (document.getElementById('delete-motivo') as HTMLSelectElement)?.value;
+        const descripcion = (document.getElementById('delete-descripcion') as HTMLTextAreaElement)?.value;
+        if (!motivo || !usuario) {
+          alert('Por favor selecciona un motivo');
+          return;
+        }
+        try {
+          const data = await apiFetch('/solicitud/crear/', {
+            method: 'POST',
+            body: JSON.stringify({
+              usuario_id:  usuario.id,
+              motivo,
+              descripcion: descripcion || '',
+            }),
+          });
+          if (data.success) {
+            alert('Solicitud enviada. Te notificaremos por correo.');
+            setShowProfileModal(false);
+            setModalType(null);
+          } else {
+            alert(data.message || 'Error al enviar la solicitud');
+          }
+        } catch {
+          alert('Error de conexión');
+        }
+      }}
+    >
+      Enviar solicitud
+    </button>
+  </div>
+)}
           </div>
         </div>
       )}

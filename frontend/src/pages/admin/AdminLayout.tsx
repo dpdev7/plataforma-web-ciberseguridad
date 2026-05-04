@@ -8,10 +8,12 @@ import {
   Menu,
   X,
   LogOut,
+  ClipboardList
 } from 'lucide-react';
 import './admin.css';
 import { apiFetch, setAuthToken } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+
 
 interface UserProfileProps {
   user: string;
@@ -35,9 +37,10 @@ const AdminUserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => (
 );
 
 const navItems = [
-  { to: '/admin/users', icon: <Users size={17} />, label: 'Usuarios' },
-  { to: '/admin/content', icon: <BookOpen size={17} />, label: 'Biblioteca' },
-  { to: '/admin/cuestionarios', icon: <HelpCircle size={17} />, label: 'Cuestionarios' },
+  { to: '/admin/users',        icon: <Users size={17} />,         label: 'Usuarios'      },
+  { to: '/admin/content',      icon: <BookOpen size={17} />,      label: 'Biblioteca'    },
+  { to: '/admin/cuestionarios',icon: <HelpCircle size={17} />,    label: 'Cuestionarios' },
+  { to: '/admin/solicitudes',  icon: <ClipboardList size={17} />, label: 'Solicitudes'   }, // ← nuevo
 ];
 
 export default function AdminLayout() {

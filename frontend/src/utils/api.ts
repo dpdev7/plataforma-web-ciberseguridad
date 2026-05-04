@@ -1,10 +1,25 @@
 export const API_BACKEND = import.meta.env.VITE_API_URL_BACKEND;
 
-// Token en memoria — se setea desde AuthContext
 let _token: string | null = null;
 
 export function setAuthToken(token: string | null) {
   _token = token;
+}
+
+// Renueva el access token usando el refresh token (cookie httpOnly)
+async function renovarToken(): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_BACKEND}/token/refresh/`, {
+      method:      'POST',
+      credentials: 'include',  // ← envía la cookie httpOnly
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    _token = data.token;
+    return data.token;
+  } catch {
+    return null;
+  }
 }
 
 export const apiFetch = async (endpoint: string, options?: RequestInit) => {
@@ -19,9 +34,23 @@ export const apiFetch = async (endpoint: string, options?: RequestInit) => {
 
   const res = await fetch(`${API_BACKEND}${endpoint}`, {
     ...options,
+    credentials: 'include',  // ← necesario para enviar la cookie en cada request
     headers,
   });
 
-  const data = await res.json();  
-  return data;                     
+  // Si el access token expiró, intenta renovarlo automáticamente
+  if (res.status === 401) {
+    const newToken = await renovarToken();
+    if (newToken) {
+      headers['Authorization'] = `Bearer ${newToken}`;
+      const retry = await fetch(`${API_BACKEND}${endpoint}`, {
+        ...options,
+        credentials: 'include',
+        headers,
+      });
+      return retry.json();
+    }
+  }
+
+  return res.json();
 };
