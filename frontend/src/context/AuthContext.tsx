@@ -21,51 +21,33 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token,   setToken]   = useState<string | null>(null);
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const [loading, setLoading] = useState(true); // ← evita flash de "no autenticado"
+  const [token,   setToken]   = useState<string | null>(() => localStorage.getItem('auth_token'));
+  const [usuario, setUsuario] = useState<Usuario | null>(() => {
+    const u = localStorage.getItem('auth_usuario');
+    return u ? JSON.parse(u) : null;
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Al cargar la app, intenta renovar el access token con la cookie
   useEffect(() => {
-    const init = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL_BACKEND}/token/refresh/`, {
-          method:      'POST',
-          credentials: 'include',
-        });
-        if (res.ok) {
-          const data = await res.json();
-          // También necesitamos el usuario — llamamos /me/
-          const me = await fetch(`${import.meta.env.VITE_API_URL_BACKEND}/usuario/me/`, {
-            headers: { Authorization: `Bearer ${data.token}` },
-          });
-          if (me.ok) {
-            const meData = await me.json();
-            setToken(data.token);
-            setUsuario(meData.usuario);
-            setAuthToken(data.token);
-          }
-        }
-      } catch {
-        // Sin sesión activa, no pasa nada
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    init();
+    const storedToken = localStorage.getItem('auth_token');
+    if (storedToken) {
+      setAuthToken(storedToken);
+    }
+    setLoading(false);
   }, []);
 
   const login = useCallback((token: string, usuario: Usuario) => {
     setToken(token);
     setUsuario(usuario);
     setAuthToken(token);
+    localStorage.setItem('auth_usuario', JSON.stringify(usuario));
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
     setUsuario(null);
     setAuthToken(null);
+    localStorage.removeItem('auth_usuario');
   }, []);
 
   return (

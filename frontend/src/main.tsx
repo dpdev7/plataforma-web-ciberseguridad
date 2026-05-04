@@ -7,7 +7,7 @@ import { useAuth } from './context/AuthContext';
 
 function Root() {
   const { loading } = useAuth();
-  if (loading) return null; // o un spinner
+  if (loading) return null;
   return <App />;
 }
 
