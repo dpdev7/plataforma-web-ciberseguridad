@@ -162,18 +162,18 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
           <div className={styles.profileModal}>
             <button className={styles.closeModal} onClick={() => { setShowProfileModal(false); setModalType(null); }}>✕</button>
 
-            {modalType === "view" && (
-              <>
-                <h2>Mi perfil</h2>
-                <p className={styles.profileSubtitle}>Consulta tu información registrada.</p>
-                <div className={styles.profileCard}>
-                  <label>Nombre</label>
-                  <input type="text" value={user || ""} readOnly />
-                  <label>Correo</label>
-                  <input type="email" value="usuario@email.com" readOnly />
-                </div>
-              </>
-            )}
+{modalType === "view" && (
+  <>
+    <h2>Mi perfil</h2>
+    <p className={styles.profileSubtitle}>Consulta tu información registrada.</p>
+    <div className={styles.profileCard}>
+      <label>Nombre</label>
+      <input type="text" value={usuario?.nombre || ""} readOnly />
+      <label>Correo</label>
+      <input type="email" value={usuario?.email || ""} readOnly />
+    </div>
+  </>
+)}
 
 {modalType === "edit" && (
   <>
