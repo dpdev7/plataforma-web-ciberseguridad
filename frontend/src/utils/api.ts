@@ -1,5 +1,7 @@
 // Ya no apunta al backend directamente — usa el proxy de Vercel
-export const API_BACKEND = '/api';
+export const API_BACKEND = import.meta.env.DEV 
+  ? import.meta.env.VITE_API_URL_BACKEND  // http://localhost:8000
+  : '/api';
 
 let _token: string | null = null;
 
