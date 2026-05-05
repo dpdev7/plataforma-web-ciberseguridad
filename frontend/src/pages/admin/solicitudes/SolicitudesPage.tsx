@@ -20,6 +20,38 @@ const MOTIVO_LABEL: Record<string, string> = {
   otro:          'Otro',
 };
 
+function DescripcionCell({ texto }: { texto: string }) {
+  const [expandida, setExpandida] = useState(false);
+  const MAX = 80;
+
+  if (!texto) return <span style={{ color: 'var(--text-dim)', fontSize: '13px' }}>—</span>;
+
+  const corta = texto.length > MAX;
+
+  return (
+    <div style={{ maxWidth: '250px', fontSize: '13px', color: 'var(--text-dim)' }}>
+      {expandida || !corta ? texto : `${texto.slice(0, MAX)}...`}
+      {corta && (
+        <button
+          onClick={() => setExpandida(prev => !prev)}
+          style={{
+            display: 'block',
+            marginTop: '4px',
+            background: 'transparent',
+            border: 'none',
+            color: '#3b82f6',
+            cursor: 'pointer',
+            fontSize: '12px',
+            padding: 0,
+          }}
+        >
+          {expandida ? 'Ver menos' : 'Ver más'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function SolicitudesPage() {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loading,     setLoading]     = useState(false);
@@ -95,16 +127,7 @@ export default function SolicitudesPage() {
                 </td>
                 <td>{MOTIVO_LABEL[s.motivo] ?? s.motivo}</td>
                 <td>
-                  <div style={{
-                    maxWidth: '250px',
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    color: 'var(--text-dim)',
-                    fontSize: '13px',
-                  }}>
-                    {s.descripcion || '—'}
-                  </div>
+                    <DescripcionCell texto={s.descripcion} />
                 </td>
                 <td style={{ fontSize: '13px', color: 'var(--text-dim)' }}>
                   {new Date(s.fecha).toLocaleDateString('es-CO', {
