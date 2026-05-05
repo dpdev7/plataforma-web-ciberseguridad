@@ -14,28 +14,55 @@
   --toc-width:     260px;
   --max-denuncia:  680px;
 
-  /* Escala tipográfica — un solo lugar para cambiar */
-  --fs-xs:   11px;
-  --fs-sm:   12px;
-  --fs-base: 15px;
-  --fs-md:   14px;
-  --fs-lg:   16px;
-  --fs-xl:   20px;
-  --fs-2xl:  26px;
-  --fs-3xl:  36px;
+  /* ─── Escala tipográfica con clamp() ──────────────────────
+     Usar rem (relativo a html 16px) en lugar de px fijos.
+     clamp(min, preferred, max) garantiza escala fluida sin
+     romperse por fontScale de MIUI ni por zoom del usuario.
+  ──────────────────────────────────────────────────────────── */
+  --fs-xs:   clamp(0.6875rem, 0.65rem + 0.18vw, 0.75rem);    /* ~11–12px */
+  --fs-sm:   clamp(0.75rem,   0.7rem  + 0.25vw, 0.875rem);   /* ~12–14px */
+  --fs-base: clamp(0.875rem,  0.82rem + 0.28vw, 1rem);       /* ~14–16px */
+  --fs-md:   clamp(0.8125rem, 0.78rem + 0.16vw, 0.9375rem);  /* ~13–15px */
+  --fs-lg:   clamp(0.9375rem, 0.88rem + 0.28vw, 1.125rem);   /* ~15–18px */
+  --fs-xl:   clamp(1.125rem,  1rem    + 0.6vw,  1.375rem);   /* ~18–22px */
+  --fs-2xl:  clamp(1.375rem,  1.1rem  + 1.4vw,  1.875rem);   /* ~22–30px */
+  --fs-3xl:  clamp(1.75rem,   1.2rem  + 2.8vw,  2.625rem);   /* ~28–42px */
 
-  /* Hero */
-  --fs-hero-h1: 38px;
-  --fs-hero-p:  16px;
+  /* Hero — clamp asegura tamaños razonables en cualquier pantalla */
+  --fs-hero-h1: clamp(1.375rem, 0.8rem + 2.9vw, 2.5rem);    /* ~22–40px */
+  --fs-hero-p:  clamp(0.875rem, 0.8rem + 0.38vw, 1.125rem); /* ~14–18px */
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── Reset + text-size-adjust ────────────────────────────────
+   -webkit-text-size-adjust: 100% es CRUCIAL para MIUI/Android:
+   impide que el motor de render auto-escale fuentes cuando el
+   layout cambia de orientación o el viewport es inusual.
+   text-size-adjust: none también bloquea el comportamiento
+   propio de cada fabricante (Samsung, Xiaomi, Huawei).
+──────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* BASE */
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ─── BASE ──────────────────────────────────────────────────── */
 .home {
   background-color: var(--bg-base);
   min-height: 100vh;
   width: 100%;
+  /* overflow-x: hidden previene scroll horizontal cuando el
+     sidebar o contenido desborda levemente en pantallas pequeñas */
+  overflow-x: hidden;
   color: var(--text-primary);
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: var(--fs-base);
@@ -48,14 +75,18 @@
   line-height: 1;
 }
 
-/* LAYOUT PRINCIPAL */
+
+/* ─── LAYOUT PRINCIPAL ─────────────────────────────────────── */
 .doc-layout {
   display: flex;
   padding-top: var(--navbar-height);
   min-height: 100vh;
+  /* Clave: evita que el sidebar desborde horizontalmente en MIUI */
+  overflow-x: hidden;
 }
 
-/* SIDEBAR TOC */
+
+/* ─── SIDEBAR TOC ──────────────────────────────────────────── */
 .toc-sidebar {
   position: fixed;
   top: var(--navbar-height);
@@ -120,7 +151,7 @@
   padding: 7px 10px;
   border-radius: 6px;
   color: var(--text-muted);
-  font-size: 13.5px;
+  font-size: 0.84375rem; /* ~13.5px en rem, inmune a fontScale */
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
   border: none;
@@ -147,22 +178,28 @@
 }
 
 .toc-articulo:hover  { border-color: #aac4ed; }
-.toc-articulo-titulo { font-size: 12.5px; color: var(--text-primary); line-height: 1.4; margin: 0 0 4px; }
-.toc-articulo-tiempo { font-size: 11.5px; color: rgba(59,131,246,.75); margin: 0; }
+.toc-articulo-titulo { font-size: 0.78125rem; color: var(--text-primary); line-height: 1.4; margin: 0 0 4px; }
+.toc-articulo-tiempo { font-size: 0.71875rem; color: rgba(59,131,246,.75); margin: 0; }
 
+/* ─── Overlay del drawer ────────────────────────────────────
+   display: none por defecto. Se activa en mobile vía JS (.open)
+   backdrop-filter con fallback: si el browser no soporta blur
+   (algunos WebView de MIUI), el fondo semiopaco sigue siendo visible
+──────────────────────────────────────────────────────────────── */
 .toc-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  /* Fallback sólido PRIMERO para MIUI WebView que no soporta backdrop-filter */
+  background-color: rgba(0, 0, 0, 0.65);
   z-index: 89;
+  /* backdrop-filter como mejora progresiva — solo si el browser lo soporta */
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
 
-/* ============================================
-   CONTENIDO PRINCIPAL
-============================================= */
+
+/* ─── CONTENIDO PRINCIPAL ──────────────────────────────────── */
 .doc-content {
   margin-left: var(--toc-width);
   flex: 1;
@@ -202,9 +239,8 @@
   max-width: 640px;
 }
 
-/* ============================================
-   HERO
-============================================= */
+
+/* ─── HERO ──────────────────────────────────────────────────── */
 .hero {
   position: relative;
   background-size: cover;
@@ -220,12 +256,14 @@
   overflow: hidden;
 }
 
+/* backdrop-filter con fallback opaco (crítico para MIUI) */
 .hero-overlay {
   position: absolute;
   inset: 0;
+  /* Fallback visible si backdrop-filter no está soportado */
+  background-color: rgba(10, 18, 28, 0.72);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  background-color: rgba(10, 18, 28, 0.55);
 }
 
 .hero::after {
@@ -269,9 +307,8 @@
   text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 
-/* ============================================
-   FUNDAMENTOS
-============================================= */
+
+/* ─── FUNDAMENTOS ───────────────────────────────────────────── */
 .fundamentos-section { padding-top: 0; padding-bottom: 0; }
 
 .fundamentos-inner {
@@ -282,7 +319,7 @@
 }
 
 .fundamentos-texto h2 {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 800;
   color: #f1f5f9;
   margin-bottom: 16px;
@@ -340,11 +377,10 @@
 
 .fundamentos-step-body   { padding: 6px 0 24px; }
 .fundamentos-step-titulo { font-weight: 700; font-size: var(--fs-md); color: var(--text-primary); margin: 0 0 4px; }
-.fundamentos-step-desc   { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin: 0; }
+.fundamentos-step-desc   { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.55; margin: 0; }
 
-/* ============================================
-   ESTADÍSTICAS
-============================================= */
+
+/* ─── ESTADÍSTICAS ──────────────────────────────────────────── */
 .estadisticas-caja {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -362,11 +398,10 @@
 .estadistica-item:first-child { border-left: none; padding-left: 0; }
 .estadistica-numero           { color: var(--accent); font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -0.02em; }
 .estadistica-label            { color: white; font-weight: 600; font-size: var(--fs-md); margin: 4px 0 2px; }
-.estadistica-desc             { color: var(--text-muted); font-size: 12.5px; line-height: 1.5; }
+.estadistica-desc             { color: var(--text-muted); font-size: 0.78125rem; line-height: 1.5; }
 
-/* ============================================
-   CARDS — clases compartidas
-============================================= */
+
+/* ─── CARDS ─────────────────────────────────────────────────── */
 .icon-wrap {
   display: flex;
   align-items: center;
@@ -390,30 +425,31 @@
 
 .card-item:hover { border-color: var(--accent); transform: translateY(-3px); }
 .card-titulo     { font-weight: 600; font-size: var(--fs-md); margin: 0 0 3px; color: var(--text-primary); }
-.card-desc       { color: var(--text-muted); font-size: 13px; margin: 0; line-height: 1.5; }
+.card-desc       { color: var(--text-muted); font-size: 0.8125rem; margin: 0; line-height: 1.5; }
 
-/* ============================================
-   AMENAZAS
-============================================= */
+
+/* ─── AMENAZAS ──────────────────────────────────────────────── */
 .amenazas-wrapper {
   max-width: min(920px, 100%);
   width: 100%;
   margin: 0 auto;
 }
 
+/* ─── CORRECCIÓN CLAVE: Eliminado subgrid (grid-template-rows: subgrid)
+   subgrid tiene soporte limitado en Chromium < 117 y WebViews de MIUI.
+   Reemplazado por CSS Grid estándar de 2 columnas con flex en cada col.
+──────────────────────────────────────────────────────────────── */
 .amenazas-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(6, auto);
   gap: 10px 20px;
+  align-items: start;
 }
 
 .amenazas-col {
-  display: grid;
-  grid-row: 1 / -1;
-  grid-template-rows: subgrid;
-  gap: 0;
-  row-gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -460,9 +496,8 @@
 
 .amenazas-cta-wrap   { display: flex; justify-content: center; margin-top: 24px; }
 
-/* ============================================
-   RECURSOS
-============================================= */
+
+/* ─── RECURSOS ──────────────────────────────────────────────── */
 .recursos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -503,12 +538,12 @@
 }
 
 .tarjeta-titulo { color: #fff; font-size: var(--fs-base); font-weight: 700; margin-bottom: 6px; }
-.tarjeta-texto  { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-top: 6px; }
+.tarjeta-texto  { color: var(--text-muted); font-size: 0.8125rem; line-height: 1.6; margin-top: 6px; }
 
 .tarjeta-link {
   display: inline-block;
   margin-top: 14px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--accent);
   text-decoration: none;
@@ -522,9 +557,8 @@
   text-underline-offset: 3px;
 }
 
-/* ============================================
-   DENUNCIA
-============================================= */
+
+/* ─── DENUNCIA ──────────────────────────────────────────────── */
 .denuncia-caja {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -539,7 +573,6 @@
   gap: 16px;
 }
 
-/* Ícono decorativo opcional encima del título */
 .denuncia-icono {
   display: flex;
   align-items: center;
@@ -565,9 +598,8 @@
   margin-top: 4px;
 }
 
-/* ============================================
-   BOTONES GLOBALES
-============================================= */
+
+/* ─── BOTONES ───────────────────────────────────────────────── */
 .btn-primario {
   background-color: var(--accent);
   color: white;
@@ -630,35 +662,37 @@
 
 .home-footer-wrapper { margin-left: var(--toc-width); }
 
-/* ============================================
-   ANIMACIONES DE ENTRADA
-============================================= */
+
+/* ─── ANIMACIONES ───────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.hero-content         { animation: fadeUp 0.7s ease both; }
-#conceptos            { animation: fadeUp 0.6s ease 0.10s both; }
-#estadisticas         { animation: fadeUp 0.6s ease 0.15s both; }
-#amenazas             { animation: fadeUp 0.6s ease 0.20s both; }
-#recursos             { animation: fadeUp 0.6s ease 0.25s both; }
-#denuncia             { animation: fadeUp 0.6s ease 0.30s both; }
+/* prefers-reduced-motion: respeta configuración de accesibilidad */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-content  { animation: fadeUp 0.7s ease both; }
+  #conceptos     { animation: fadeUp 0.6s ease 0.10s both; }
+  #estadisticas  { animation: fadeUp 0.6s ease 0.15s both; }
+  #amenazas      { animation: fadeUp 0.6s ease 0.20s both; }
+  #recursos      { animation: fadeUp 0.6s ease 0.25s both; }
+  #denuncia      { animation: fadeUp 0.6s ease 0.30s both; }
+}
 
 .estadistica-item {
   transition: transform 0.2s;
 }
 .estadistica-item:hover { transform: translateY(-3px); }
 
-/* ============================================
+
+/* ============================================================
    RESPONSIVE — Tablet grande (≤1100px)
-   Sidebar más estrecho, grid 4→2 columnas
-============================================= */
+============================================================ */
 @media (max-width: 1100px) {
   :root {
     --toc-width: 220px;
-    --fs-hero-h1: 32px;
-    --fs-hero-p:  15px;
+    --fs-hero-h1: clamp(1.25rem, 0.9rem + 1.75vw, 2rem);
+    --fs-hero-p:  clamp(0.8125rem, 0.75rem + 0.31vw, 1rem);
   }
 
   .doc-section       { padding: 0 40px; }
@@ -666,114 +700,108 @@
   .fundamentos-inner { gap: 40px; }
 }
 
-/* ============================================
+
+/* ============================================================
    RESPONSIVE — Tablet (≤860px)
-   Fundamentos colapsa a 1 columna
-============================================= */
+============================================================ */
 @media (max-width: 860px) {
   :root {
-    --fs-hero-h1: 28px;
-    --fs-hero-p:  14px;
-    --fs-2xl: 22px;
+    --fs-hero-h1: clamp(1.125rem, 0.8rem + 1.62vw, 1.75rem);
+    --fs-hero-p:  clamp(0.8125rem, 0.76rem + 0.25vw, 0.9375rem);
+    --fs-2xl: clamp(1.25rem, 1rem + 1.25vw, 1.5rem);
   }
 
   .fundamentos-inner    { grid-template-columns: 1fr; gap: 32px; }
   .fundamentos-timeline { padding-top: 0; }
-  .fundamentos-texto h2 { font-size: 22px; }
+  .fundamentos-texto h2 { font-size: clamp(1.1875rem, 1rem + 0.94vw, 1.375rem); }
 }
 
-/* ============================================
+
+/* ============================================================
    RESPONSIVE — Mobile (≤768px)
-   Drawer lateral, tipografía base 13px
-============================================= */
+   Drawer lateral, tipografía fluida
+============================================================ */
 @media (max-width: 768px) {
-  /* --- Escala tipográfica mobile --- */
   :root {
-    --fs-base:    13px;
-    --fs-md:      13px;
-    --fs-lg:      14px;
-    --fs-xl:      17px;
-    --fs-2xl:     19px;
-    --fs-3xl:     26px;
-    --fs-hero-h1: 22px;
-    --fs-hero-p:  13px;
+    --fs-base:    clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
+    --fs-md:      clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
+    --fs-lg:      clamp(0.875rem,  0.84rem + 0.18vw, 0.9375rem);
+    --fs-xl:      clamp(1.0625rem, 0.96rem + 0.5vw,  1.125rem);
+    --fs-2xl:     clamp(1.125rem,  1rem    + 0.62vw,  1.25rem);
+    --fs-3xl:     clamp(1.5rem,    1.2rem  + 1.5vw,   1.75rem);
+    --fs-hero-h1: clamp(1.1875rem, 0.9rem  + 1.44vw,  1.5rem);
+    --fs-hero-p:  clamp(0.8125rem, 0.77rem + 0.21vw,  0.875rem);
   }
 
-  body { padding-bottom: 0; } /* no sirve de nada en este layout */
-
-  /* El contenido debe terminar por encima del bottom-nav fijo (~60px) */
+  /* ─── padding-bottom con fallback seguro para Android sin notch ─── */
   .doc-content {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    /* env(safe-area-inset-bottom, 0px): el segundo argumento es el
+       fallback cuando la variable no está definida (Android sin notch).
+       Sin fallback, algunos Xiaomi calculan mal el valor y rompen el layout */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* --- Layout: sidebar → drawer --- */
+  /* Layout: sidebar → drawer */
   .doc-content         { margin-left: 0; }
   .home-footer-wrapper { margin-left: 0; }
   .toc-sidebar         { transform: translateX(-100%); width: 280px; }
   .toc-sidebar.open    { transform: translateX(0); }
   .toc-overlay         { display: block; }
 
-  /* --- Secciones --- */
+  /* Secciones */
   .doc-section { padding: 0 18px; margin-bottom: 48px; }
 
-  /* --- Hero --- */
+  /* Hero */
   .hero         { min-height: 260px; }
   .hero-content { padding: 36px 20px 32px; }
 
-  /* --- Fundamentos --- */
-  .fundamentos-texto h2 { font-size: 19px; }
+  /* Fundamentos */
+  .fundamentos-texto h2 { font-size: clamp(1.125rem, 0.9rem + 1.12vw, 1.3125rem); }
   .fundamentos-inner    { gap: 28px; }
 
-  /* --- Estadísticas --- */
+  /* Estadísticas */
   .estadisticas-caja  { padding: 24px 20px; }
   .estadisticas-grid  { grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
-  /* --- Recursos --- */
+  /* Recursos */
   .recursos-grid   { grid-template-columns: 1fr; gap: 12px; }
   .recurso-tarjeta { padding: 24px 20px 20px; }
   .tarjeta-icono   { width: 48px; height: 48px; margin: 0 auto 14px; }
 
-  /* --- Amenazas: reset subgrid → flex columna --- */
+  /* Amenazas: 2 columnas → 1 columna, flex ya no necesita subgrid */
   .amenazas-wrapper { margin: 0; width: 100%; }
   .amenazas-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
     gap: 10px;
   }
   .amenazas-col {
     grid-column: 1;
-    grid-row: auto;
-    grid-template-rows: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
 
-  /* --- Denuncia: más espacio lateral, caja no tan ancha --- */
+  /* Denuncia */
   #denuncia.doc-section { padding: 0 20px; }
 
   .denuncia-caja {
     padding: 28px 22px 32px;
     border-radius: 12px;
-    gap: 0;              /* controlamos los espacios con margin en cada hijo */
+    gap: 0;
     max-width: 100%;
     margin: 0;
   }
 
   .denuncia-caja h2 {
-    font-size: 15px;
+    font-size: clamp(0.9375rem, 0.86rem + 0.38vw, 1.0625rem);
     line-height: 1.35;
     margin-bottom: 12px;
   }
 
   .denuncia-caja p {
-    font-size: 12.5px;
+    font-size: 0.78125rem;
     line-height: 1.75;
     color: var(--text-muted);
-    margin-bottom: 20px;   /* separa texto de botones */
+    margin-bottom: 20px;
   }
 
-  /* --- Botones apilados, ancho completo dentro de la caja --- */
   .denuncia-botones {
     flex-direction: column;
     gap: 10px;
@@ -785,19 +813,20 @@
     width: 100%;
     padding: 13px 16px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     letter-spacing: 0.01em;
   }
 }
 
-/* ============================================
+
+/* ============================================================
    RESPONSIVE — Mobile pequeño (≤480px)
-============================================= */
+============================================================ */
 @media (max-width: 480px) {
   :root {
-    --fs-hero-h1: 19px;
-    --fs-hero-p:  13px;
-    --fs-3xl:     24px;
+    --fs-hero-h1: clamp(1.0625rem, 0.86rem + 1vw, 1.25rem);
+    --fs-hero-p:  clamp(0.75rem, 0.72rem + 0.16vw, 0.8125rem);
+    --fs-3xl:     clamp(1.375rem, 1.1rem + 1.38vw, 1.625rem);
   }
 
   .doc-section { padding: 0 14px; }
