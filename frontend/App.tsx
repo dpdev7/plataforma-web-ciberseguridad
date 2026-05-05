@@ -30,6 +30,7 @@ import UsersPage              from './src/pages/admin/users/UsersPage';
 import ContentPage            from './src/pages/admin/content/ContentPage';
 import AdminCuestionariosPage from './src/pages/admin/cuestionarios/CuestionariosPage';
 import SolicitudesPage from './src/pages/admin/solicitudes/SolicitudesPage';
+import PublicacionesPage from './src/pages/admin/publicaciones/PublicacionesPage';
 
 
 import NotFound from './src/pages/NotFound';
@@ -81,6 +82,7 @@ function AppContent() {
           <Route path="content"       element={<ContentPage />} />
           <Route path="cuestionarios" element={<AdminCuestionariosPage />} />
           <Route path="solicitudes"   element={<SolicitudesPage />} />
+          <Route path="publicaciones" element={<PublicacionesPage />} />
         </Route>
 
 

@@ -1,15 +1,6 @@
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import {
-  Users,
-  Home,
-  BookOpen,
-  HelpCircle,
-  Menu,
-  X,
-  LogOut,
-  ClipboardList
-} from 'lucide-react';
+import { Users, Home, BookOpen, HelpCircle, Menu, X, LogOut, ClipboardList, MessageSquare } from 'lucide-react';
 import './admin.css';
 import { apiFetch, setAuthToken } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
@@ -40,7 +31,8 @@ const navItems = [
   { to: '/admin/users',        icon: <Users size={17} />,         label: 'Usuarios'      },
   { to: '/admin/content',      icon: <BookOpen size={17} />,      label: 'Biblioteca'    },
   { to: '/admin/cuestionarios',icon: <HelpCircle size={17} />,    label: 'Cuestionarios' },
-  { to: '/admin/solicitudes',  icon: <ClipboardList size={17} />, label: 'Solicitudes'   }, // ← nuevo
+  { to: '/admin/solicitudes',  icon: <ClipboardList size={17} />, label: 'Solicitudes'   }, 
+  { to: '/admin/publicaciones', icon: <MessageSquare size={17} />,  label: 'Publicaciones' },
 ];
 
 export default function AdminLayout() {
