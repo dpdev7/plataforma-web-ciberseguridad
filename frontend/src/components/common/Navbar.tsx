@@ -58,6 +58,97 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout, onOpenProfile
   );
 };
 
+function DeleteForm({ usuario, onClose, styles }: {
+  usuario: any;
+  onClose: () => void;
+  styles: any;
+}) {
+  const [motivo,      setMotivo]      = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [enviando,    setEnviando]    = useState(false);
+
+  const MAX_DESC = 300;
+
+  const handleEnviar = async () => {
+    if (!motivo || !usuario) {
+      alert('Por favor selecciona un motivo');
+      return;
+    }
+    setEnviando(true);
+    try {
+      const data = await apiFetch('/solicitud/crear/', {
+        method: 'POST',
+        body: JSON.stringify({
+          usuario_id:  usuario.id,
+          motivo,
+          descripcion: descripcion || '',
+        }),
+      });
+      if (data.success) {
+        alert('Solicitud enviada. Te notificaremos por correo.');
+        onClose();
+      } else {
+        alert(data.message || 'Error al enviar la solicitud');
+      }
+    } catch {
+      alert('Error de conexión');
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  return (
+    <div className={styles.deleteSection}>
+      <h3>Solicitar eliminación de cuenta</h3>
+      <p>Revisamos cada solicitud manualmente para evitar eliminaciones accidentales.</p>
+
+      <select
+        value={motivo}
+        onChange={e => setMotivo(e.target.value)}
+        disabled={enviando}
+      >
+        <option value="">Selecciona un motivo</option>
+        <option value="no_uso">Ya no uso la plataforma</option>
+        <option value="problemas_tec">Problemas técnicos</option>
+        <option value="privacidad">Privacidad</option>
+        <option value="otro">Otro</option>
+      </select>
+
+      <div style={{ position: 'relative', marginTop: '12px' }}>
+        <textarea
+          className={styles.deleteTextarea}
+          placeholder="Explícanos tu motivo..."
+          value={descripcion}
+          onChange={e => setDescripcion(e.target.value.slice(0, MAX_DESC))}
+          disabled={enviando}
+        />
+        <span style={{
+          position: 'absolute',
+          bottom: '8px',
+          right: '10px',
+          fontSize: '11px',
+          color: descripcion.length >= MAX_DESC ? '#e74444' : '#94a3b8',
+        }}>
+          {descripcion.length}/{MAX_DESC}
+        </span>
+      </div>
+
+      <div className={styles.deleteWarning}>
+        Esta solicitud será revisada por administradores.
+      </div>
+
+      <button
+        className={styles.deleteBtn}
+        onClick={handleEnviar}
+        disabled={enviando}
+        style={{ opacity: enviando ? 0.7 : 1, cursor: enviando ? 'not-allowed' : 'pointer' }}
+      >
+        {enviando ? 'Enviando solicitud...' : 'Enviar solicitud'}
+      </button>
+    </div>
+  );
+}
+
 export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
   const navigate  = useNavigate();
   const location  = useLocation();
@@ -208,53 +299,11 @@ export default function Navbar({ onMenuToggle, menuOpen }: NavbarProps) {
 )}
 
 {modalType === "delete" && (
-  <div className={styles.deleteSection}>
-    <h3>Solicitar eliminación de cuenta</h3>
-    <p>Revisamos cada solicitud manualmente para evitar eliminaciones accidentales.</p>
-    <select id="delete-motivo">
-      <option value="">Selecciona un motivo</option>
-      <option value="no_uso">Ya no uso la plataforma</option>
-      <option value="problemas_tec">Problemas técnicos</option>
-      <option value="privacidad">Privacidad</option>
-      <option value="otro">Otro</option>
-    </select>
-    <textarea id="delete-descripcion" placeholder="Explícanos tu motivo..." />
-    <div className={styles.deleteWarning}>
-      Esta solicitud será revisada por administradores.
-    </div>
-    <button
-      className={styles.deleteBtn}
-      onClick={async () => {
-        const motivo = (document.getElementById('delete-motivo') as HTMLSelectElement)?.value;
-        const descripcion = (document.getElementById('delete-descripcion') as HTMLTextAreaElement)?.value;
-        if (!motivo || !usuario) {
-          alert('Por favor selecciona un motivo');
-          return;
-        }
-        try {
-          const data = await apiFetch('/solicitud/crear/', {
-            method: 'POST',
-            body: JSON.stringify({
-              usuario_id:  usuario.id,
-              motivo,
-              descripcion: descripcion || '',
-            }),
-          });
-          if (data.success) {
-            alert('Solicitud enviada. Te notificaremos por correo.');
-            setShowProfileModal(false);
-            setModalType(null);
-          } else {
-            alert(data.message || 'Error al enviar la solicitud');
-          }
-        } catch {
-          alert('Error de conexión');
-        }
-      }}
-    >
-      Enviar solicitud
-    </button>
-  </div>
+  <DeleteForm
+    usuario={usuario}
+    onClose={() => { setShowProfileModal(false); setModalType(null); }}
+    styles={styles}
+  />
 )}
           </div>
         </div>

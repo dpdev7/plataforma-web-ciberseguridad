@@ -323,6 +323,20 @@
   background: #b91c1c;
 }
 
+.deleteTextarea {
+  min-height: 100px;
+  resize: none;
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid #2b333e;
+  color: white;
+  padding: 12px;
+  padding-bottom: 28px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .navbar { padding: 0 16px; }
