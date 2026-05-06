@@ -1,14 +1,10 @@
 // Página principal de CyberGuard.
 // Responsabilidades de este archivo:
-//   1. Rastrear qué sección está visible (activeSection)
-//   2. Configurar el IntersectionObserver para el TOC
-//   3. Componer todos los sub-componentes en orden
-//
-// Todo el contenido visual vive en components/home/.
-// Todos los datos estáticos viven en constants/homeData.tsx.
-// Estado menuOpen para controlar el drawer mobile del TocSidebar.
+//  1. Rastrear qué sección está visible (activeSection)
+//  2. Configurar el IntersectionObserver para el TOC
+//  3. Componer todos los sub-componentes en orden
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import '../styles/Home.css';
 import { TOC_ITEMS } from '../constants/homeData';
 
@@ -26,6 +22,7 @@ function Home() {
   const [activeSection, setActiveSection] = useState('introduccion');
   const [menuOpen, setMenuOpen] = useState(false); // Estado del drawer mobile
 
+  // IntersectionObserver para destacar sección actual en el TOC
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,24 +30,28 @@ function Home() {
           if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { rootMargin: '-30% 0px -60% 0px' }
+      { rootMargin: '-30% 0px -60% 0px' } // Ajustado para detectar bien la sección central
     );
+    
     TOC_ITEMS.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
+    
     return () => observer.disconnect();
   }, []);
 
-  // Bloquea el scroll del body cuando el drawer está abierto en mobile
+  // Bloquea scroll del body cuando el drawer está abierto en mobile
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  const scrollTo = (id: string) => {
+  // Scroll suave al hacer clic en TOC
+  const scrollTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
+    setMenuOpen(false); // Cierra el drawer al seleccionar sección
+  }, []);
 
   return (
     <div className="home">
@@ -66,6 +67,14 @@ function Home() {
           isOpen={menuOpen}
           onClose={() => setMenuOpen(false)}
         />
+        
+        {/* Overlay para cerrar drawer al hacer clic fuera */}
+        <div 
+            className={`toc-overlay ${menuOpen ? 'open' : ''}`} 
+            onClick={() => setMenuOpen(false)}
+            style={{ display: menuOpen ? 'block' : 'none' }}
+        />
+
         <main className="doc-content">
           <HeroSection />
           <FundamentosSection />
@@ -76,9 +85,6 @@ function Home() {
         </main>
       </div>
 
-      {/* Wrapper exclusivo de Home: empuja el footer a la derecha
-          del sidebar TOC. En otras páginas (AuthForm, etc.) el Footer
-          se usa directamente sin este wrapper. */}
       <div className="home-footer-wrapper">
         <Footer />
       </div>

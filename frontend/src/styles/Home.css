@@ -1,45 +1,32 @@
 /* VARIABLES GLOBALES */
 :root {
-  --bg-base:       #0f161d;
-  --bg-surface:    #131c26;
-  --bg-card:       #192633;
-  --border:        #1e3a5f;
+  --bg-base: #0f161d;
+  --bg-surface: #131c26;
+  --bg-card: #192633;
+  --border: #1e3a5f;
   --border-subtle: #2b333e;
-  --text-primary:  #e2e8f0;
-  --text-muted:    #94a3b8;
-  --text-dim:      #475569;
-  --accent:        #3b82f6;
-  --accent-dark:   #1173D4;
+  --text-primary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #475569;
+  --accent: #3b82f6;
+  --accent-dark: #1173D4;
   --navbar-height: 57px;
-  --toc-width:     260px;
-  --max-denuncia:  680px;
+  --toc-width: 260px;
+  --max-denuncia: 680px;
 
-  /* ─── Escala tipográfica con clamp() ──────────────────────
-     Usar rem (relativo a html 16px) en lugar de px fijos.
-     clamp(min, preferred, max) garantiza escala fluida sin
-     romperse por fontScale de MIUI ni por zoom del usuario.
-  ──────────────────────────────────────────────────────────── */
-  --fs-xs:   clamp(0.6875rem, 0.65rem + 0.18vw, 0.75rem);    /* ~11–12px */
-  --fs-sm:   clamp(0.75rem,   0.7rem  + 0.25vw, 0.875rem);   /* ~12–14px */
-  --fs-base: clamp(0.875rem,  0.82rem + 0.28vw, 1rem);       /* ~14–16px */
-  --fs-md:   clamp(0.8125rem, 0.78rem + 0.16vw, 0.9375rem);  /* ~13–15px */
-  --fs-lg:   clamp(0.9375rem, 0.88rem + 0.28vw, 1.125rem);   /* ~15–18px */
-  --fs-xl:   clamp(1.125rem,  1rem    + 0.6vw,  1.375rem);   /* ~18–22px */
-  --fs-2xl:  clamp(1.375rem,  1.1rem  + 1.4vw,  1.875rem);   /* ~22–30px */
-  --fs-3xl:  clamp(1.75rem,   1.2rem  + 2.8vw,  2.625rem);   /* ~28–42px */
+  --fs-xs: clamp(0.6875rem, 0.65rem + 0.18vw, 0.75rem);
+  --fs-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --fs-base: clamp(0.875rem, 0.82rem + 0.28vw, 1rem);
+  --fs-md: clamp(0.8125rem, 0.78rem + 0.16vw, 0.9375rem);
+  --fs-lg: clamp(0.9375rem, 0.88rem + 0.28vw, 1.125rem);
+  --fs-xl: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  --fs-2xl: clamp(1.375rem, 1.1rem + 1.4vw, 1.875rem);
+  --fs-3xl: clamp(1.75rem, 1.2rem + 2.8vw, 2.625rem);
 
-  /* Hero — clamp asegura tamaños razonables en cualquier pantalla */
-  --fs-hero-h1: clamp(1.375rem, 0.8rem + 2.9vw, 2.5rem);    /* ~22–40px */
-  --fs-hero-p:  clamp(0.875rem, 0.8rem + 0.38vw, 1.125rem); /* ~14–18px */
+  --fs-hero-h1: clamp(1.375rem, 0.8rem + 2.9vw, 2.5rem);
+  --fs-hero-p: clamp(0.875rem, 0.8rem + 0.38vw, 1.125rem);
 }
 
-/* ─── Reset + text-size-adjust ────────────────────────────────
-   -webkit-text-size-adjust: 100% es CRUCIAL para MIUI/Android:
-   impide que el motor de render auto-escale fuentes cuando el
-   layout cambia de orientación o el viewport es inusual.
-   text-size-adjust: none también bloquea el comportamiento
-   propio de cada fabricante (Samsung, Xiaomi, Huawei).
-──────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -54,14 +41,10 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-/* ─── BASE ──────────────────────────────────────────────────── */
 .home {
   background-color: var(--bg-base);
   min-height: 100vh;
   width: 100%;
-  /* overflow-x: hidden previene scroll horizontal cuando el
-     sidebar o contenido desborda levemente en pantallas pequeñas */
   overflow-x: hidden;
   color: var(--text-primary);
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -70,23 +53,30 @@ html {
 }
 
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  user-select: none;
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
   line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+  white-space: nowrap;
+  direction: ltr;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-
-/* ─── LAYOUT PRINCIPAL ─────────────────────────────────────── */
 .doc-layout {
   display: flex;
   padding-top: var(--navbar-height);
   min-height: 100vh;
-  /* Clave: evita que el sidebar desborde horizontalmente en MIUI */
   overflow-x: hidden;
 }
 
-
-/* ─── SIDEBAR TOC ──────────────────────────────────────────── */
 .toc-sidebar {
   position: fixed;
   top: var(--navbar-height);
@@ -122,14 +112,18 @@ html {
   font-weight: 600;
   letter-spacing: 0.05em;
 }
+
 .toc-footer-icon {
   font-size: var(--fs-lg);
   color: var(--accent);
   opacity: 0.7;
 }
 
-.toc-sidebar::-webkit-scrollbar       { width: 4px; }
-.toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.toc-sidebar::-webkit-scrollbar { width: 4px; }
+.toc-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
 
 .toc-header {
   font-size: var(--fs-xs);
@@ -142,7 +136,11 @@ html {
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.toc-nav { display: flex; flex-direction: column; gap: 2px; }
+.toc-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
 .toc-item {
   display: flex;
@@ -151,7 +149,7 @@ html {
   padding: 7px 10px;
   border-radius: 6px;
   color: var(--text-muted);
-  font-size: 0.84375rem; /* ~13.5px en rem, inmune a fontScale */
+  font-size: 0.84375rem;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
   border: none;
@@ -161,11 +159,15 @@ html {
   line-height: 1.4;
 }
 
-.toc-item:hover  { background-color: #1e2e3e; color: var(--text-primary); }
+.toc-item:hover { background-color: #1e2e3e; color: var(--text-primary); }
 .toc-item.active { background-color: #1a3150; color: var(--accent); font-weight: 600; }
-.toc-item-icon   { font-size: 17px; flex-shrink: 0; opacity: 0.8; }
+.toc-item-icon { font-size: 17px; flex-shrink: 0; opacity: 0.8; }
 
-.toc-divider { height: 1px; background: var(--border-subtle); margin: 14px 0; }
+.toc-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 14px 0;
+}
 
 .toc-articulo {
   background-color: var(--bg-card);
@@ -177,29 +179,29 @@ html {
   transition: border-color 0.15s;
 }
 
-.toc-articulo:hover  { border-color: #aac4ed; }
-.toc-articulo-titulo { font-size: 0.78125rem; color: var(--text-primary); line-height: 1.4; margin: 0 0 4px; }
-.toc-articulo-tiempo { font-size: 0.71875rem; color: rgba(59,131,246,.75); margin: 0; }
+.toc-articulo:hover { border-color: #aac4ed; }
+.toc-articulo-titulo {
+  font-size: 0.78125rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0 0 4px;
+}
+.toc-articulo-tiempo {
+  font-size: 0.71875rem;
+  color: rgba(59,131,246,.75);
+  margin: 0;
+}
 
-/* ─── Overlay del drawer ────────────────────────────────────
-   display: none por defecto. Se activa en mobile vía JS (.open)
-   backdrop-filter con fallback: si el browser no soporta blur
-   (algunos WebView de MIUI), el fondo semiopaco sigue siendo visible
-──────────────────────────────────────────────────────────────── */
 .toc-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  /* Fallback sólido PRIMERO para MIUI WebView que no soporta backdrop-filter */
   background-color: rgba(0, 0, 0, 0.65);
   z-index: 89;
-  /* backdrop-filter como mejora progresiva — solo si el browser lo soporta */
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
 
-
-/* ─── CONTENIDO PRINCIPAL ──────────────────────────────────── */
 .doc-content {
   margin-left: var(--toc-width);
   flex: 1;
@@ -239,8 +241,6 @@ html {
   max-width: 640px;
 }
 
-
-/* ─── HERO ──────────────────────────────────────────────────── */
 .hero {
   position: relative;
   background-size: cover;
@@ -256,11 +256,9 @@ html {
   overflow: hidden;
 }
 
-/* backdrop-filter con fallback opaco (crítico para MIUI) */
 .hero-overlay {
   position: absolute;
   inset: 0;
-  /* Fallback visible si backdrop-filter no está soportado */
   background-color: rgba(10, 18, 28, 0.72);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -272,9 +270,9 @@ html {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(to right,  var(--bg-base) 0%, transparent 18%),
-    linear-gradient(to left,   var(--bg-base) 0%, transparent 18%),
-    linear-gradient(to top,    var(--bg-base) 0%, transparent 30%),
+    linear-gradient(to right, var(--bg-base) 0%, transparent 18%),
+    linear-gradient(to left, var(--bg-base) 0%, transparent 18%),
+    linear-gradient(to top, var(--bg-base) 0%, transparent 30%),
     linear-gradient(to bottom, var(--bg-base) 0%, transparent 12%);
   z-index: 1;
 }
@@ -307,9 +305,10 @@ html {
   text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 
-
-/* ─── FUNDAMENTOS ───────────────────────────────────────────── */
-.fundamentos-section { padding-top: 0; padding-bottom: 0; }
+.fundamentos-section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
 
 .fundamentos-inner {
   display: grid;
@@ -327,9 +326,9 @@ html {
   line-height: 1.25;
 }
 
-.fundamentos-desc                     { color: var(--text-muted); font-size: var(--fs-base); line-height: 1.75; }
+.fundamentos-desc { color: var(--text-muted); font-size: var(--fs-base); line-height: 1.75; }
 .fundamentos-desc + .fundamentos-desc { margin-top: 12px; }
-.fundamentos-cta                      { margin-top: 28px; }
+.fundamentos-cta { margin-top: 28px; }
 
 .fundamentos-timeline {
   list-style: none;
@@ -365,7 +364,11 @@ html {
   flex-shrink: 0;
 }
 
-.fundamentos-step-icon { font-size: 18px; color: var(--accent); opacity: 0.85; }
+.fundamentos-step-icon {
+  font-size: 18px;
+  color: var(--accent);
+  opacity: 0.85;
+}
 
 .fundamentos-step-line {
   width: 2px;
@@ -375,12 +378,22 @@ html {
   margin: 4px 0;
 }
 
-.fundamentos-step-body   { padding: 6px 0 24px; }
-.fundamentos-step-titulo { font-weight: 700; font-size: var(--fs-md); color: var(--text-primary); margin: 0 0 4px; }
-.fundamentos-step-desc   { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.55; margin: 0; }
+.fundamentos-step-body {
+  padding: 6px 0 24px;
+}
+.fundamentos-step-titulo {
+  font-weight: 700;
+  font-size: var(--fs-md);
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+.fundamentos-step-desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
 
-
-/* ─── ESTADÍSTICAS ──────────────────────────────────────────── */
 .estadisticas-caja {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -394,14 +407,32 @@ html {
   gap: 32px;
 }
 
-.estadistica-item             { border-left: 2px solid var(--border); padding-left: 20px; }
-.estadistica-item:first-child { border-left: none; padding-left: 0; }
-.estadistica-numero           { color: var(--accent); font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -0.02em; }
-.estadistica-label            { color: white; font-weight: 600; font-size: var(--fs-md); margin: 4px 0 2px; }
-.estadistica-desc             { color: var(--text-muted); font-size: 0.78125rem; line-height: 1.5; }
+.estadistica-item {
+  border-left: 2px solid var(--border);
+  padding-left: 20px;
+}
+.estadistica-item:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+.estadistica-numero {
+  color: var(--accent);
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.estadistica-label {
+  color: white;
+  font-weight: 600;
+  font-size: var(--fs-md);
+  margin: 4px 0 2px;
+}
+.estadistica-desc {
+  color: var(--text-muted);
+  font-size: 0.78125rem;
+  line-height: 1.5;
+}
 
-
-/* ─── CARDS ─────────────────────────────────────────────────── */
 .icon-wrap {
   display: flex;
   align-items: center;
@@ -423,22 +454,29 @@ html {
   transition: border-color 0.2s, transform 0.2s;
 }
 
-.card-item:hover { border-color: var(--accent); transform: translateY(-3px); }
-.card-titulo     { font-weight: 600; font-size: var(--fs-md); margin: 0 0 3px; color: var(--text-primary); }
-.card-desc       { color: var(--text-muted); font-size: 0.8125rem; margin: 0; line-height: 1.5; }
+.card-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+.card-titulo {
+  font-weight: 600;
+  font-size: var(--fs-md);
+  margin: 0 0 3px;
+  color: var(--text-primary);
+}
+.card-desc {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  margin: 0;
+  line-height: 1.5;
+}
 
-
-/* ─── AMENAZAS ──────────────────────────────────────────────── */
 .amenazas-wrapper {
   max-width: min(920px, 100%);
   width: 100%;
   margin: 0 auto;
 }
 
-/* ─── CORRECCIÓN CLAVE: Eliminado subgrid (grid-template-rows: subgrid)
-   subgrid tiene soporte limitado en Chromium < 117 y WebViews de MIUI.
-   Reemplazado por CSS Grid estándar de 2 columnas con flex en cada col.
-──────────────────────────────────────────────────────────────── */
 .amenazas-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -474,30 +512,57 @@ html {
 
 .amenaza-card-body {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 16px 20px 20px;
   background: linear-gradient(
     to top,
-    rgba(9,18,28,1)   45%,
+    rgba(9,18,28,1) 45%,
     rgba(9,18,28,0.6) 75%,
-    transparent       100%
+    transparent 100%
   );
   z-index: 1;
 }
 
-.amenaza-card-titulo { font-size: var(--fs-lg); font-weight: 700; color: #f8fafc; margin: 0 0 3px; }
-.amenaza-card-desc   { font-size: var(--fs-sm); color: var(--text-muted); margin: 0; line-height: 1.4; }
+.amenaza-card-titulo {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 3px;
+}
+.amenaza-card-desc {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
 
-.amenaza-icono-wrap  { width: 44px; height: 44px; min-width: 44px; border-radius: 8px; }
-.consejo-check-wrap  { width: 28px; height: 28px; min-width: 28px; margin-top: 2px; }
+.amenaza-icono-wrap {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 8px;
+}
+.consejo-check-wrap {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  margin-top: 2px;
+}
 
 .amenaza-item,
-.consejo-item        { padding: 14px 16px; gap: 14px; }
+.consejo-item {
+  padding: 14px 16px;
+  gap: 14px;
+}
 
-.amenazas-cta-wrap   { display: flex; justify-content: center; margin-top: 24px; }
+.amenazas-cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
 
-
-/* ─── RECURSOS ──────────────────────────────────────────────── */
 .recursos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -516,7 +581,10 @@ html {
   align-items: center;
 }
 
-.recurso-tarjeta:hover { border-color: var(--accent); transform: translateY(-3px); }
+.recurso-tarjeta:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
 
 .tarjeta-icono {
   color: var(--accent);
@@ -537,8 +605,18 @@ html {
   text-align: center;
 }
 
-.tarjeta-titulo { color: #fff; font-size: var(--fs-base); font-weight: 700; margin-bottom: 6px; }
-.tarjeta-texto  { color: var(--text-muted); font-size: 0.8125rem; line-height: 1.6; margin-top: 6px; }
+.tarjeta-titulo {
+  color: #fff;
+  font-size: var(--fs-base);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.tarjeta-texto {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin-top: 6px;
+}
 
 .tarjeta-link {
   display: inline-block;
@@ -557,8 +635,6 @@ html {
   text-underline-offset: 3px;
 }
 
-
-/* ─── DENUNCIA ──────────────────────────────────────────────── */
 .denuncia-caja {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -586,8 +662,18 @@ html {
   flex-shrink: 0;
 }
 
-.denuncia-caja h2 { font-size: var(--fs-xl); font-weight: 700; color: #f1f5f9; line-height: 1.3; }
-.denuncia-caja p  { color: var(--text-muted); max-width: 440px; line-height: 1.7; font-size: var(--fs-md); }
+.denuncia-caja h2 {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.3;
+}
+.denuncia-caja p {
+  color: var(--text-muted);
+  max-width: 440px;
+  line-height: 1.7;
+  font-size: var(--fs-md);
+}
 
 .denuncia-botones {
   display: flex;
@@ -598,8 +684,6 @@ html {
   margin-top: 4px;
 }
 
-
-/* ─── BOTONES ───────────────────────────────────────────────── */
 .btn-primario {
   background-color: var(--accent);
   color: white;
@@ -618,8 +702,13 @@ html {
   transition: background-color 0.15s, transform 0.1s;
 }
 
-.btn-primario:hover  { background-color: var(--accent-dark); transform: translateY(-1px); }
-.btn-primario:active { transform: translateY(0); }
+.btn-primario:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+.btn-primario:active {
+  transform: translateY(0);
+}
 
 .btn-secundario {
   background-color: transparent;
@@ -637,8 +726,14 @@ html {
   transition: border-color 0.15s, color 0.15s, transform 0.1s;
 }
 
-.btn-secundario:hover  { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-.btn-secundario:active { transform: translateY(0); }
+.btn-secundario:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+.btn-secundario:active {
+  transform: translateY(0);
+}
 
 .btn-denuncia-secundario {
   background-color: rgba(59,130,246,.10);
@@ -657,128 +752,111 @@ html {
   transition: background-color 0.15s, transform 0.1s;
 }
 
-.btn-denuncia-secundario:hover  { background-color: rgba(59,130,246,.2); transform: translateY(-1px); }
-.btn-denuncia-secundario:active { transform: translateY(0); }
-
-.home-footer-wrapper { margin-left: var(--toc-width); }
-
-
-/* ─── ANIMACIONES ───────────────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(22px); }
-  to   { opacity: 1; transform: translateY(0); }
+.btn-denuncia-secundario:hover {
+  background-color: rgba(59,130,246,.2);
+  transform: translateY(-1px);
+}
+.btn-denuncia-secundario:active {
+  transform: translateY(0);
 }
 
-/* prefers-reduced-motion: respeta configuración de accesibilidad */
+.home-footer-wrapper {
+  margin-left: var(--toc-width);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .hero-content  { animation: fadeUp 0.7s ease both; }
-  #conceptos     { animation: fadeUp 0.6s ease 0.10s both; }
-  #estadisticas  { animation: fadeUp 0.6s ease 0.15s both; }
-  #amenazas      { animation: fadeUp 0.6s ease 0.20s both; }
-  #recursos      { animation: fadeUp 0.6s ease 0.25s both; }
-  #denuncia      { animation: fadeUp 0.6s ease 0.30s both; }
+  .hero-content { animation: fadeUp 0.7s ease both; }
+  #conceptos { animation: fadeUp 0.6s ease 0.10s both; }
+  #estadisticas { animation: fadeUp 0.6s ease 0.15s both; }
+  #amenazas { animation: fadeUp 0.6s ease 0.20s both; }
+  #recursos { animation: fadeUp 0.6s ease 0.25s both; }
+  #denuncia { animation: fadeUp 0.6s ease 0.30s both; }
 }
 
 .estadistica-item {
   transition: transform 0.2s;
 }
-.estadistica-item:hover { transform: translateY(-3px); }
+.estadistica-item:hover {
+  transform: translateY(-3px);
+}
 
-
-/* ============================================================
-   RESPONSIVE — Tablet grande (≤1100px)
-============================================================ */
 @media (max-width: 1100px) {
   :root {
     --toc-width: 220px;
     --fs-hero-h1: clamp(1.25rem, 0.9rem + 1.75vw, 2rem);
-    --fs-hero-p:  clamp(0.8125rem, 0.75rem + 0.31vw, 1rem);
+    --fs-hero-p: clamp(0.8125rem, 0.75rem + 0.31vw, 1rem);
   }
 
-  .doc-section       { padding: 0 40px; }
+  .doc-section { padding: 0 40px; }
   .estadisticas-grid { grid-template-columns: repeat(2, 1fr); }
   .fundamentos-inner { gap: 40px; }
 }
 
-
-/* ============================================================
-   RESPONSIVE — Tablet (≤860px)
-============================================================ */
 @media (max-width: 860px) {
   :root {
     --fs-hero-h1: clamp(1.125rem, 0.8rem + 1.62vw, 1.75rem);
-    --fs-hero-p:  clamp(0.8125rem, 0.76rem + 0.25vw, 0.9375rem);
+    --fs-hero-p: clamp(0.8125rem, 0.76rem + 0.25vw, 0.9375rem);
     --fs-2xl: clamp(1.25rem, 1rem + 1.25vw, 1.5rem);
   }
 
-  .fundamentos-inner    { grid-template-columns: 1fr; gap: 32px; }
+  .fundamentos-inner { grid-template-columns: 1fr; gap: 32px; }
   .fundamentos-timeline { padding-top: 0; }
-  .fundamentos-texto h2 { font-size: clamp(1.1875rem, 1rem + 0.94vw, 1.375rem); }
+  .fundamentos-texto h2 {
+    font-size: clamp(1.1875rem, 1rem + 0.94vw, 1.375rem);
+  }
 }
 
-
-/* ============================================================
-   RESPONSIVE — Mobile (≤768px)
-   Drawer lateral, tipografía fluida
-============================================================ */
 @media (max-width: 768px) {
   :root {
-    --fs-base:    clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
-    --fs-md:      clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
-    --fs-lg:      clamp(0.875rem,  0.84rem + 0.18vw, 0.9375rem);
-    --fs-xl:      clamp(1.0625rem, 0.96rem + 0.5vw,  1.125rem);
-    --fs-2xl:     clamp(1.125rem,  1rem    + 0.62vw,  1.25rem);
-    --fs-3xl:     clamp(1.5rem,    1.2rem  + 1.5vw,   1.75rem);
-    --fs-hero-h1: clamp(1.1875rem, 0.9rem  + 1.44vw,  1.5rem);
-    --fs-hero-p:  clamp(0.8125rem, 0.77rem + 0.21vw,  0.875rem);
+    --fs-base: clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
+    --fs-md: clamp(0.8125rem, 0.78rem + 0.16vw, 0.875rem);
+    --fs-lg: clamp(0.875rem, 0.84rem + 0.18vw, 0.9375rem);
+    --fs-xl: clamp(1.0625rem, 0.96rem + 0.5vw, 1.125rem);
+    --fs-2xl: clamp(1.125rem, 1rem + 0.62vw, 1.25rem);
+    --fs-3xl: clamp(1.5rem, 1.2rem + 1.5vw, 1.75rem);
+    --fs-hero-h1: clamp(1.1875rem, 0.9rem + 1.44vw, 1.5rem);
+    --fs-hero-p: clamp(0.8125rem, 0.77rem + 0.21vw, 0.875rem);
   }
 
-  /* ─── padding-bottom con fallback seguro para Android sin notch ─── */
   .doc-content {
-    /* env(safe-area-inset-bottom, 0px): el segundo argumento es el
-       fallback cuando la variable no está definida (Android sin notch).
-       Sin fallback, algunos Xiaomi calculan mal el valor y rompen el layout */
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Layout: sidebar → drawer */
-  .doc-content         { margin-left: 0; }
+  .doc-content { margin-left: 0; }
   .home-footer-wrapper { margin-left: 0; }
-  .toc-sidebar         { transform: translateX(-100%); width: 280px; }
-  .toc-sidebar.open    { transform: translateX(0); }
-  .toc-overlay         { display: block; }
+  .toc-sidebar { transform: translateX(-100%); width: 280px; }
+  .toc-sidebar.open { transform: translateX(0); }
+  .toc-overlay { display: block; }
 
-  /* Secciones */
   .doc-section { padding: 0 18px; margin-bottom: 48px; }
 
-  /* Hero */
-  .hero         { min-height: 260px; }
+  .hero { min-height: 260px; }
   .hero-content { padding: 36px 20px 32px; }
 
-  /* Fundamentos */
-  .fundamentos-texto h2 { font-size: clamp(1.125rem, 0.9rem + 1.12vw, 1.3125rem); }
-  .fundamentos-inner    { gap: 28px; }
+  .fundamentos-texto h2 {
+    font-size: clamp(1.125rem, 0.9rem + 1.12vw, 1.3125rem);
+  }
+  .fundamentos-inner { gap: 28px; }
 
-  /* Estadísticas */
-  .estadisticas-caja  { padding: 24px 20px; }
-  .estadisticas-grid  { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .estadisticas-caja { padding: 24px 20px; }
+  .estadisticas-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
-  /* Recursos */
-  .recursos-grid   { grid-template-columns: 1fr; gap: 12px; }
+  .recursos-grid { grid-template-columns: 1fr; gap: 12px; }
   .recurso-tarjeta { padding: 24px 20px 20px; }
-  .tarjeta-icono   { width: 48px; height: 48px; margin: 0 auto 14px; }
+  .tarjeta-icono { width: 48px; height: 48px; margin: 0 auto 14px; }
 
-  /* Amenazas: 2 columnas → 1 columna, flex ya no necesita subgrid */
   .amenazas-wrapper { margin: 0; width: 100%; }
   .amenazas-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  .amenazas-col {
-    grid-column: 1;
-  }
+  .amenazas-col { grid-column: 1; }
 
-  /* Denuncia */
   #denuncia.doc-section { padding: 0 20px; }
 
   .denuncia-caja {
@@ -808,6 +886,7 @@ html {
     width: 100%;
     margin-top: 0;
   }
+
   .denuncia-botones .btn-primario,
   .denuncia-botones .btn-denuncia-secundario {
     width: 100%;
@@ -818,23 +897,20 @@ html {
   }
 }
 
-
-/* ============================================================
-   RESPONSIVE — Mobile pequeño (≤480px)
-============================================================ */
 @media (max-width: 480px) {
   :root {
     --fs-hero-h1: clamp(1.0625rem, 0.86rem + 1vw, 1.25rem);
-    --fs-hero-p:  clamp(0.75rem, 0.72rem + 0.16vw, 0.8125rem);
-    --fs-3xl:     clamp(1.375rem, 1.1rem + 1.38vw, 1.625rem);
+    --fs-hero-p: clamp(0.75rem, 0.72rem + 0.16vw, 0.8125rem);
+    --fs-3xl: clamp(1.375rem, 1.1rem + 1.38vw, 1.625rem);
   }
 
   .doc-section { padding: 0 14px; }
 
-  .hero         { min-height: 220px; }
+  .hero { min-height: 220px; }
   .hero-content { padding: 28px 16px 24px; }
 
   .estadisticas-grid { grid-template-columns: 1fr; gap: 0; }
+
   .estadistica-item {
     border-left: none;
     padding-left: 0;
@@ -842,10 +918,14 @@ html {
     padding-top: 18px;
     margin-top: 4px;
   }
-  .estadistica-item:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .estadistica-item:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
 
   .amenaza-card-header { height: 150px; }
 
   #denuncia.doc-section { padding: 0 16px; }
-  .denuncia-caja        { padding: 28px 20px; }
+  .denuncia-caja { padding: 28px 20px; }
 }
