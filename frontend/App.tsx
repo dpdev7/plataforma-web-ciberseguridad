@@ -1,39 +1,46 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-
-
-// Auth
-import Login                from './src/pages/Login';
-import Register             from './src/pages/Register';
-import ResetPassword        from './src/pages/ResetPassword';
-import ResetPasswordConfirm from './src/pages/ResetPasswordConfirm';
-import VerifyEmail          from './src/pages/VerifyEmail';
-
-
-// Main
-import Home         from './src/pages/Home';
-import Amenazas     from './src/pages/Amenazas';
-import Herramientas from './src/pages/Herramientas';
-import Foro         from './src/pages/Foro';
-import Hilo         from './src/pages/Hilo';
+import LazyRoute from './src/routes/LazyRoute';
+import { lazyPage } from './src/routes/lazyPage';
 import BottomNav    from './src/components/common/BottomNav';
-import Biblioteca       from './src/pages/Biblioteca';
-import ArticuloPage     from './src/pages/ArticuloPage';
-import GuiaPage         from './src/pages/GuiaPage';
-import CuestionarioPage from './src/pages/CuestionarioPage';
-import ResultadosPage   from './src/pages/ResultadosPage';
-
-
-// Admin
 import AdminGuard             from './src/components/AdminGuard';
-import AdminLayout            from './src/pages/admin/AdminLayout';
-import UsersPage              from './src/pages/admin/users/UsersPage';
-import ContentPage            from './src/pages/admin/content/ContentPage';
-import AdminCuestionariosPage from './src/pages/admin/cuestionarios/CuestionariosPage';
-import SolicitudesPage from './src/pages/admin/solicitudes/SolicitudesPage';
-import PublicacionesPage from './src/pages/admin/publicaciones/PublicacionesPage';
+import {
+  preloadAdminContent,
+  preloadAdminCuestionarios,
+  preloadAdminLayout,
+  preloadAdminPublicaciones,
+  preloadAdminSolicitudes,
+  preloadAdminUsers,
+  preloadBiblioteca,
+  preloadCuestionario,
+  preloadForo,
+  preloadGuia,
+  preloadHilo,
+} from './src/routes/routePreloaders';
 
+const Login = lazyPage(() => import('./src/pages/Login'));
+const Register = lazyPage(() => import('./src/pages/Register'));
+const ResetPassword = lazyPage(() => import('./src/pages/ResetPassword'));
+const ResetPasswordConfirm = lazyPage(() => import('./src/pages/ResetPasswordConfirm'));
+const VerifyEmail = lazyPage(() => import('./src/pages/VerifyEmail'));
 
-import NotFound from './src/pages/NotFound';
+const Home = lazyPage(() => import('./src/pages/Home'));
+const Amenazas = lazyPage(() => import('./src/pages/Amenazas'));
+const Herramientas = lazyPage(() => import('./src/pages/Herramientas'));
+const Foro = lazyPage(() => import('./src/pages/Foro'));
+const Hilo = lazyPage(() => import('./src/pages/Hilo'));
+const Biblioteca = lazyPage(() => import('./src/pages/Biblioteca'));
+const ArticuloPage = lazyPage(() => import('./src/pages/ArticuloPage'));
+const GuiaPage = lazyPage(() => import('./src/pages/GuiaPage'));
+const CuestionarioPage = lazyPage(() => import('./src/pages/CuestionarioPage'));
+const ResultadosPage = lazyPage(() => import('./src/pages/ResultadosPage'));
+const NotFound = lazyPage(() => import('./src/pages/NotFound'));
+
+const AdminLayout = lazyPage(() => import('./src/pages/admin/AdminLayout'));
+const UsersPage = lazyPage(() => import('./src/pages/admin/users/UsersPage'));
+const ContentPage = lazyPage(() => import('./src/pages/admin/content/ContentPage'));
+const AdminCuestionariosPage = lazyPage(() => import('./src/pages/admin/cuestionarios/CuestionariosPage'));
+const SolicitudesPage = lazyPage(() => import('./src/pages/admin/solicitudes/SolicitudesPage'));
+const PublicacionesPage = lazyPage(() => import('./src/pages/admin/publicaciones/PublicacionesPage'));
 
 
 // AppContent vive dentro de BrowserRouter para poder usar useLocation.
@@ -53,40 +60,40 @@ function AppContent() {
 
 
         {/* Main */}
-        <Route path="/home"         element={<Home />} />
-        <Route path="/amenazas"     element={<Amenazas />} />
-        <Route path="/herramientas" element={<Herramientas />} />
-        <Route path="/foro"         element={<Foro />} />
-        <Route path="/foro/:id"     element={<Hilo />} />
-        <Route path="/biblioteca"                             element={<Biblioteca />} />
-        <Route path="/biblioteca/articulo/:id"                element={<ArticuloPage />} />
-        <Route path="/biblioteca/guia/:id"                    element={<GuiaPage />} />
-        <Route path="/biblioteca/cuestionario/:id"            element={<CuestionarioPage />} />
-        <Route path="/biblioteca/cuestionario/:id/resultados" element={<ResultadosPage />} />
+        <Route path="/home"         element={<LazyRoute component={Home} />} />
+        <Route path="/amenazas"     element={<LazyRoute component={Amenazas} />} />
+        <Route path="/herramientas" element={<LazyRoute component={Herramientas} />} />
+        <Route path="/foro"         element={<LazyRoute component={Foro} preload={preloadForo} />} />
+        <Route path="/foro/:id"     element={<LazyRoute component={Hilo} preload={({ params }) => preloadHilo(params.id)} />} />
+        <Route path="/biblioteca"                             element={<LazyRoute component={Biblioteca} preload={preloadBiblioteca} />} />
+        <Route path="/biblioteca/articulo/:id"                element={<LazyRoute component={ArticuloPage} />} />
+        <Route path="/biblioteca/guia/:id"                    element={<LazyRoute component={GuiaPage} preload={({ params }) => preloadGuia(params.id)} />} />
+        <Route path="/biblioteca/cuestionario/:id"            element={<LazyRoute component={CuestionarioPage} preload={preloadCuestionario} />} />
+        <Route path="/biblioteca/cuestionario/:id/resultados" element={<LazyRoute component={ResultadosPage} />} />
 
 
         {/* Auth */}
-        <Route path="/login"                  element={<Login />} />
-        <Route path="/register"               element={<Register />} />
-        <Route path="/reset-password"         element={<ResetPassword />} />
-        <Route path="/reset-password-confirm" element={<ResetPasswordConfirm />} />
-        <Route path="/verify-email"           element={<VerifyEmail />} />
+        <Route path="/login"                  element={<LazyRoute component={Login} />} />
+        <Route path="/register"               element={<LazyRoute component={Register} />} />
+        <Route path="/reset-password"         element={<LazyRoute component={ResetPassword} />} />
+        <Route path="/reset-password-confirm" element={<LazyRoute component={ResetPasswordConfirm} />} />
+        <Route path="/verify-email"           element={<LazyRoute component={VerifyEmail} />} />
 
 
         {/* Admin — AdminGuard protege el acceso solo a usuarios administradores.
             AdminLayout maneja su propio header móvil con hamburguesa y drawer,
             sin depender del Navbar ni del BottomNav del sitio principal. */}
-        <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
-          <Route index                element={<UsersPage />} />
-          <Route path="users"         element={<UsersPage />} />
-          <Route path="content"       element={<ContentPage />} />
-          <Route path="cuestionarios" element={<AdminCuestionariosPage />} />
-          <Route path="solicitudes"   element={<SolicitudesPage />} />
-          <Route path="publicaciones" element={<PublicacionesPage />} />
+        <Route path="/admin" element={<AdminGuard><LazyRoute component={AdminLayout} preload={preloadAdminLayout} /></AdminGuard>}>
+          <Route index                element={<LazyRoute component={UsersPage} preload={preloadAdminUsers} />} />
+          <Route path="users"         element={<LazyRoute component={UsersPage} preload={preloadAdminUsers} />} />
+          <Route path="content"       element={<LazyRoute component={ContentPage} preload={preloadAdminContent} />} />
+          <Route path="cuestionarios" element={<LazyRoute component={AdminCuestionariosPage} preload={preloadAdminCuestionarios} />} />
+          <Route path="solicitudes"   element={<LazyRoute component={SolicitudesPage} preload={preloadAdminSolicitudes} />} />
+          <Route path="publicaciones" element={<LazyRoute component={PublicacionesPage} preload={preloadAdminPublicaciones} />} />
         </Route>
 
 
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<LazyRoute component={NotFound} />} />
       </Routes>
 
       {/* BottomNav solo se renderiza en rutas del sitio principal.

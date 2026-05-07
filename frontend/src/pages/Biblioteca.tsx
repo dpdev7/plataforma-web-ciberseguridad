@@ -13,7 +13,7 @@ import ArticlesList from '../components/biblioteca/ArticlesList';
 import QuizzesList from '../components/biblioteca/QuizzesList';
 import heroBiblioteca from '../assets/images/cyber-library.webp';
 import '../styles/biblioteca.css';
-import { API_BACKEND } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 
 type TemaSidebar = {
@@ -58,10 +58,7 @@ export default function Biblioteca() {
 
     const fetchCategorias = async () => {
       try {
-        const response = await fetch(`${API_BACKEND}/categoria/obtener/all/`);
-        if (!response.ok) throw new Error(`Error ${response.status}`);
-
-        const data = await response.json();
+        const data = await apiFetch('/categoria/obtener/all/');
         const categorias = Array.isArray(data?.result) ? data.result : [];
 
         const categoriasMapeadas: TemaSidebar[] = categorias.map((categoria: any) => ({
@@ -99,11 +96,7 @@ export default function Biblioteca() {
     setError(null);
 
     const fetchCuestionarios = () =>
-      fetch(`${API_BACKEND}/cuestionario/obtener/all/`)
-        .then((r) => {
-          if (!r.ok) throw new Error(`Error ${r.status}`);
-          return r.json();
-        })
+      apiFetch('/cuestionario/obtener/all/')
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
             (c: any): Recurso => ({
@@ -121,15 +114,11 @@ export default function Biblioteca() {
         );
 
     const fetchRecursos = (tipo?: string) =>
-      fetch(
-        `${API_BACKEND}/categoria/recurso-edu/obtener/all/${
+      apiFetch(
+        `/categoria/recurso-edu/obtener/all/${
           tipo ? `?tipo_recurso=${encodeURIComponent(tipo)}` : ''
         }`
       )
-        .then((r) => {
-          if (!r.ok) throw new Error(`Error ${r.status}`);
-          return r.json();
-        })
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
             (r: any): Recurso => ({
