@@ -6,8 +6,9 @@
   align-items: center;
   justify-content: center;
   background-color: #0a0f14;
-  padding: 1rem;
+  padding: 1.5rem 1rem;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .loadingOverlay {
@@ -59,15 +60,21 @@
 }
 
 .card {
-  width: 100%;
-  max-width: 420px;
+  width: min(100%, 390px);
+  max-width: 390px;
   background: rgba(19, 28, 38, 0.8);
   backdrop-filter: blur(24px);
   border: 1px solid #2d3748;
   border-radius: 16px;
-  padding: 2.5rem;
+  padding: 1.7rem 1.6rem 1.35rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   position: relative;
+  box-sizing: border-box;
+  margin: auto;
+}
+
+.registerCard {
+  margin-bottom: 52px;
 }
 
 .backButton {
@@ -103,37 +110,37 @@
 
 .header {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.9rem;
 }
 
 .iconWrapper {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: 46px;
+  height: 46px;
   background: rgba(17, 115, 212, 0.1);
   border-radius: 12px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.55rem;
   border: 1px solid rgba(17, 115, 212, 0.2);
   box-shadow: 0 0 20px rgba(17, 115, 212, 0.1);
 }
 
 .icon {
-  width: 32px;
-  height: 32px;
+  width: 23px;
+  height: 23px;
   color: #1173d4;
 }
 
 .title {
-  font-size: 1.8rem;
+  font-size: 1.45rem;
   font-weight: 800;
   color: #ffffff;
   margin: 0 0 0.5rem 0;
 }
 
 .subtitle {
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   color: #9ca3af;
 }
 
@@ -151,7 +158,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 0.72rem;
 }
 
 .forgotContainer {
@@ -173,7 +180,7 @@
 
 .button {
   width: 100%;
-  padding: 0.95rem;
+  padding: 0.72rem;
   background: #1173d4;
   color: white;
   border: none;
@@ -181,14 +188,14 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 0.75rem;
+  margin-top: 0.25rem;
   transition: all 0.2s ease;
   box-shadow: 0 4px 14px 0 rgba(17, 115, 212, 0.39);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 52px;
+  min-height: 44px;
 }
 
 .button:hover {
@@ -225,7 +232,7 @@
 
 .footerCard {
   text-align: center;
-  margin-top: 1.25rem;
+  margin-top: 0.75rem;
   color: #9ca3af;
   font-size: 0.9rem;
 }
@@ -314,8 +321,13 @@
   }
 
   .card {
+    width: min(100%, calc(100vw - 2rem));
     padding: 2rem 1.25rem 1.5rem;
     border-radius: 12px;
+  }
+
+  .registerCard {
+    margin: auto;
   }
 
   .header {
@@ -393,6 +405,7 @@
   }
 
   .card {
+    width: min(100%, calc(100vw - 1.5rem));
     padding: 1.75rem 1rem 1.25rem;
     border-radius: 10px;
   }

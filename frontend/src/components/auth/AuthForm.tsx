@@ -280,7 +280,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, onResend }) => {
         </div>
       )}
 
-      <div className={styles.card}>
+      <div className={`${styles.card} ${type === 'register' ? styles.registerCard : ''}`}>
         <button
           type="button"
           className={styles.backButton}
