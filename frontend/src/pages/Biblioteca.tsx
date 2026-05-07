@@ -65,28 +65,21 @@ export default function Biblioteca() {
         const data = await apiFetch('/categoria/obtener/all/');
         const categorias = Array.isArray(data?.result) ? data.result : [];
 
-        // ── CORRECCIÓN: usar nombre como id para que coincida con r.tema ──
+        // Usar nombre como id para que coincida con r.tema
         const categoriasMapeadas: TemaSidebar[] = categorias.map((categoria: any) => ({
           id: String(categoria.nombre ?? categoria.categoria_id ?? crypto.randomUUID()),
           label: String(categoria.nombre ?? 'General'),
         }));
 
-        if (!cancelled) {
-          setTemas(categoriasMapeadas);
-        }
+        if (!cancelled) setTemas(categoriasMapeadas);
       } catch (err) {
         console.error('Error al cargar categorías:', err);
-        if (!cancelled) {
-          setTemas([]);
-        }
+        if (!cancelled) setTemas([]);
       }
     };
 
     fetchCategorias();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
 
@@ -103,9 +96,7 @@ export default function Biblioteca() {
             (c: any): Recurso => ({
               id: String(c.cuestionario_id),
               tipo: 'cuestionario',
-              tema: String(
-                c.categoria?.nombre ?? c.tema?.nombre ?? c.tema ?? 'general'
-              ),
+              tema: String(c.categoria?.nombre ?? c.tema?.nombre ?? c.tema ?? 'general'),
               titulo: String(c.titulo ?? ''),
               descripcion: String(c.descripcion ?? ''),
               esPublico: Boolean(c.es_activo),
@@ -116,9 +107,7 @@ export default function Biblioteca() {
 
     const fetchRecursos = (tipo?: string) =>
       apiFetch(
-        `/categoria/recurso-edu/obtener/all/${
-          tipo ? `?tipo_recurso=${encodeURIComponent(tipo)}` : ''
-        }`
+        `/categoria/recurso-edu/obtener/all/${tipo ? `?tipo_recurso=${encodeURIComponent(tipo)}` : ''}`
       )
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
@@ -131,9 +120,7 @@ export default function Biblioteca() {
               urlRecurso: r.url_recurso ? String(r.url_recurso) : undefined,
               imagen: r.imagen ?? r.imagen_url ?? undefined,
               esPublico: Boolean(r.es_publico),
-              fechaPublicacion: r.fecha_publicacion
-                ? String(r.fecha_publicacion)
-                : undefined,
+              fechaPublicacion: r.fecha_publicacion ? String(r.fecha_publicacion) : undefined,
               tiempoLectura:
                 r.tiempo_lectura != null
                   ? Number(r.tiempo_lectura)
@@ -157,30 +144,22 @@ export default function Biblioteca() {
     }
 
     promise
-      .then((data) => {
-        if (!cancelled) setRecursos(data);
-      })
+      .then((data) => { if (!cancelled) setRecursos(data); })
       .catch((err) => {
         if (!cancelled) {
           setError(err.message ?? 'Error al cargar recursos');
           setRecursos([]);
         }
       })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+      .finally(() => { if (!cancelled) setLoading(false); });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [tipoActivo]);
 
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
 
@@ -189,21 +168,28 @@ export default function Biblioteca() {
   }, [tipoActivo, temaActivo, busqueda, vista, porPagina]);
 
 
+  // Conteo filtrado por tipo activo
   const conteoPorTema = useMemo(
     () =>
-      recursos.reduce<Record<string, number>>((acc, r) => {
-        acc[r.tema] = (acc[r.tema] ?? 0) + 1;
-        return acc;
-      }, {}),
-    [recursos]
+      recursos
+        .filter((r) => tipoActivo === 'all' || r.tipo === tipoActivo)
+        .reduce<Record<string, number>>((acc, r) => {
+          acc[r.tema] = (acc[r.tema] ?? 0) + 1;
+          return acc;
+        }, {}),
+    [recursos, tipoActivo]
   );
 
 
-  // ── CORRECCIÓN: id === r.tema (nombre), comparación directa sin duplicados ──
+  // Solo categorías que tengan contenido del tipo activo, sin duplicados
   const temasSidebar = useMemo(() => {
-    const temasConRecursos = new Set(recursos.map((r) => r.tema));
+    const temasConRecursos = new Set(
+      recursos
+        .filter((r) => tipoActivo === 'all' || r.tipo === tipoActivo)
+        .map((r) => r.tema)
+    );
     return temas.filter((t) => temasConRecursos.has(t.id));
-  }, [temas, recursos]);
+  }, [temas, recursos, tipoActivo]);
 
 
   const filtrados = useMemo(() => {
@@ -229,16 +215,21 @@ export default function Biblioteca() {
 
   const paginados = useMemo(() => {
     const inicio = (paginaActual - 1) * porPagina;
-    const fin = inicio + porPagina;
-    return filtrados.slice(inicio, fin);
+    return filtrados.slice(inicio, inicio + porPagina);
   }, [filtrados, paginaActual, porPagina]);
 
 
   useEffect(() => {
-    if (paginaActual > totalPaginas) {
-      setPaginaActual(totalPaginas);
-    }
+    if (paginaActual > totalPaginas) setPaginaActual(totalPaginas);
   }, [paginaActual, totalPaginas]);
+
+
+  // Si el tema activo ya no existe al cambiar tipo, resetear automáticamente
+  useEffect(() => {
+    if (temaActivo !== 'all' && !temasSidebar.find((t) => t.id === temaActivo)) {
+      setTemaActivo('all');
+    }
+  }, [temasSidebar, temaActivo]);
 
 
   const panelLabel =
@@ -246,10 +237,8 @@ export default function Biblioteca() {
       ? 'Todos los recursos'
       : TIPOS.find((t) => t.id === tipoActivo)?.label ?? '';
 
-
   const temaActivoLabel =
     temasSidebar.find((t) => t.id === temaActivo)?.label ?? temaActivo;
-
 
   const limpiarFiltros = () => {
     setTemaActivo('all');
@@ -257,18 +246,15 @@ export default function Biblioteca() {
     setPaginaActual(1);
   };
 
-
   const aplicarTipo = (tipo: TipoContenido | 'all') => {
     setTipoActivo(tipo);
     setMenuOpen(false);
   };
 
-
   const aplicarTema = (tema: string) => {
     setTemaActivo(tema);
     setMenuOpen(false);
   };
-
 
   const renderContenido = () => {
     if (vista === 'list') {
@@ -280,20 +266,13 @@ export default function Biblioteca() {
     return <FeaturedGrid recursos={paginados} onLimpiar={limpiarFiltros} />;
   };
 
-
   const numerosPagina = useMemo(() => {
     const total = totalPaginas;
     const actual = paginaActual;
 
-    if (total <= 5) {
-      return Array.from({ length: total }, (_, i) => i + 1);
-    }
-
+    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
     if (actual <= 3) return [1, 2, 3, 4, 5];
-    if (actual >= total - 2) {
-      return [total - 4, total - 3, total - 2, total - 1, total];
-    }
-
+    if (actual >= total - 2) return [total - 4, total - 3, total - 2, total - 1, total];
     return [actual - 2, actual - 1, actual, actual + 1, actual + 2];
   }, [paginaActual, totalPaginas]);
 
@@ -518,9 +497,7 @@ export default function Biblioteca() {
                       type="button"
                       className="biblioteca__mobile-page-btn"
                       disabled={paginaActual === 1}
-                      onClick={() =>
-                        setPaginaActual((p) => Math.max(1, p - 1))
-                      }
+                      onClick={() => setPaginaActual((p) => Math.max(1, p - 1))}
                     >
                       ← Anterior
                     </button>
