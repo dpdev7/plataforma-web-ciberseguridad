@@ -1078,7 +1078,7 @@
     transition: transform 0.28s ease;
     background: var(--bg-surface);
     border-right: 1px solid var(--border-subtle);
-    overflow: hidden;
+    overflow-x: clip;
     will-change: transform;
   }
 
