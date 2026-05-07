@@ -21,24 +21,15 @@
   box-sizing: border-box;
 }
 
-.admin-layout h1,
-.admin-layout h2,
-.admin-layout h3,
-.admin-layout h4,
-.admin-layout h5,
-.admin-layout h6,
-.admin-layout p {
+.admin-layout :where(h1, h2, h3, h4, h5, h6, p) {
   margin: 0;
 }
 
-.admin-layout button,
-.admin-layout input,
-.admin-layout select,
-.admin-layout textarea {
+.admin-layout :where(button, input, select, textarea) {
   font: inherit;
 }
 
-.admin-layout button {
+.admin-layout :where(button) {
   background: none;
   border: none;
   padding: 0;
