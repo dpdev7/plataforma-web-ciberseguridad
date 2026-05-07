@@ -348,11 +348,16 @@ const eliminarHilo = async () => {
             Comentarios ({publicacion.comentarios.length})
           </h2>
 
-          <div style={{ marginBottom: '12px' }}>
+          <div className="comentarios-orden">
+            <label htmlFor="orden-comentarios" className="comentarios-orden__label">
+              Ordenar comentarios
+            </label>
             <select
+              id="orden-comentarios"
               value={ordenComentarios}
               onChange={(e) => setOrdenComentarios(e.target.value as 'recientes' | 'antiguos')}
               className="campo-select"
+              aria-label="Ordenar comentarios"
             >
               <option value="recientes">Más recientes primero</option>
               <option value="antiguos">Más antiguos primero</option>

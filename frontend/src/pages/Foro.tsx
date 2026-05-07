@@ -253,6 +253,14 @@ export default function Foro() {
                 <li
                   className={`sidebar-item ${!categoriaFiltro ? 'sidebar-item--active' : ''}`}
                   onClick={() => setCategoriaFiltro('')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setCategoriaFiltro('');
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <span className="material-symbols-outlined">apps</span>
                   Todas
@@ -262,6 +270,14 @@ export default function Foro() {
                     key={cat.id}
                     className={`sidebar-item ${categoriaFiltro === cat.id ? 'sidebar-item--active' : ''}`}
                     onClick={() => setCategoriaFiltro(cat.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setCategoriaFiltro(cat.id);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                   >
                     <span className="material-symbols-outlined">
                       {ICONOS[cat.id] ?? 'label'}  {/* 👈 ícono por id */}
@@ -274,6 +290,29 @@ export default function Foro() {
           </aside>
 
           <div className="foro-main">
+            <div className="foro-categoria-mobile">
+              <label htmlFor="foro-categoria-select" className="foro-categoria-mobile__label">
+                Categoría
+              </label>
+              <div className="foro-categoria-mobile__select-wrap">
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  category
+                </span>
+                <select
+                  id="foro-categoria-select"
+                  className="foro-categoria-mobile__select"
+                  value={categoriaFiltro}
+                  onChange={e => setCategoriaFiltro(e.target.value)}
+                  aria-label="Filtrar hilos por categoría"
+                >
+                  <option value="">Todas las categorías</option>
+                  {categorias.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="foro-busqueda-wrap">
               <span className="material-symbols-outlined foro-busqueda-icon">search</span>
               <input
@@ -281,6 +320,7 @@ export default function Foro() {
                 placeholder="Buscar en el panel de comunidad"
                 value={busqueda}
                 onChange={e => setBusqueda(e.target.value)}
+                aria-label="Buscar hilos en el panel de comunidad"
               />
             </div>
 
