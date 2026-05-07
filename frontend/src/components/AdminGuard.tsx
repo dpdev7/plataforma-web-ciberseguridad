@@ -13,8 +13,9 @@ interface Props {
 }
 
 export default function AdminGuard({ children }: Props) {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, loading } = useAuth();
 
+  if (loading)          return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (!isAdmin)         return <Navigate to="/home"  replace />;
 
