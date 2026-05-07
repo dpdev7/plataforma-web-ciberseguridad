@@ -4,10 +4,12 @@
 ============================================= */
 
 
+
 :root {
   --bottom-nav-height: 64px;
   --bottom-nav-safe-space: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
 }
+
 
 
 /* ── Layout base ─────────────────────────── */
@@ -21,6 +23,7 @@
 }
 
 
+
 .biblioteca__body {
   display: flex;
   flex: 1;
@@ -29,10 +32,12 @@
 }
 
 
+
 .biblioteca__sidebar-shell {
   width: 0;
   flex-shrink: 0;
 }
+
 
 
 .biblioteca__content {
@@ -42,6 +47,7 @@
   display: flex;
   flex-direction: column;
 }
+
 
 
 /* ── Sidebar ─────────────────────────────── */
@@ -62,9 +68,11 @@
 }
 
 
+
 .bib-sidebar::-webkit-scrollbar {
   width: 4px;
 }
+
 
 
 .bib-sidebar::-webkit-scrollbar-thumb {
@@ -73,10 +81,12 @@
 }
 
 
+
 .biblioteca__mobile-sidebar-header,
 .biblioteca__mobile-backdrop {
   display: none;
 }
+
 
 
 .biblioteca__mobile-close {
@@ -88,6 +98,7 @@
   justify-content: center;
   cursor: pointer;
 }
+
 
 
 .bib-sidebar__header {
@@ -102,11 +113,13 @@
 }
 
 
+
 .bib-sidebar__nav {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 
 
 .bib-sidebar__divider {
@@ -116,6 +129,7 @@
   border: none;
   margin: 14px 0;
 }
+
 
 
 .bib-sidebar__btn {
@@ -138,10 +152,12 @@
 }
 
 
+
 .bib-sidebar__btn:hover {
   background: #1e2e3e;
   color: var(--text-primary);
 }
+
 
 
 .bib-sidebar__btn--active {
@@ -149,6 +165,7 @@
   color: var(--accent);
   font-weight: 600;
 }
+
 
 
 .bib-sidebar__btn--active::before {
@@ -163,9 +180,11 @@
 }
 
 
+
 .bib-sidebar__icon {
   display: none;
 }
+
 
 
 .bib-sidebar__btn-label {
@@ -176,12 +195,14 @@
 }
 
 
+
 .bib-sidebar__count {
   font-size: 11px;
   color: var(--text-dim);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
+
 
 
 /* ── Hero ────────────────────────────────── */
@@ -199,12 +220,14 @@
 }
 
 
+
 .biblioteca__hero-overlay {
   position: absolute;
   inset: 0;
   backdrop-filter: blur(4px);
   background-color: rgba(10, 18, 28, 0.6);
 }
+
 
 
 .biblioteca__hero::after {
@@ -221,12 +244,14 @@
 }
 
 
+
 .biblioteca__hero-body {
   position: relative;
   z-index: 2;
   padding: 44px 48px 40px;
   width: min(100%, 680px);
 }
+
 
 
 .biblioteca__hero-body h1 {
@@ -240,9 +265,11 @@
 }
 
 
+
 .biblioteca__hero-body h1 span {
   color: var(--accent);
 }
+
 
 
 .biblioteca__hero-body p {
@@ -254,12 +281,14 @@
 }
 
 
+
 /* ── Buscador ────────────────────────────── */
 .biblioteca__search {
   max-width: 460px;
   margin: 0 auto;
   position: relative;
 }
+
 
 
 .biblioteca__search-icon {
@@ -270,6 +299,7 @@
   color: var(--text-dim);
   pointer-events: none;
 }
+
 
 
 .biblioteca__search-input {
@@ -287,9 +317,11 @@
 }
 
 
+
 .biblioteca__search-input::placeholder {
   color: var(--text-dim);
 }
+
 
 
 .biblioteca__search-input:focus {
@@ -298,12 +330,14 @@
 }
 
 
+
 /* ── Sección principal ───────────────────── */
 .biblioteca__section {
   padding: 0 40px 48px;
   width: 100%;
   box-sizing: border-box;
 }
+
 
 
 .biblioteca__section-header {
@@ -317,11 +351,13 @@
 }
 
 
+
 .biblioteca__section-left {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
+
 
 
 .biblioteca__section-right {
@@ -330,6 +366,7 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+
 
 
 .biblioteca__section-label {
@@ -343,6 +380,7 @@
 }
 
 
+
 .biblioteca__section-title {
   font-size: 22px;
   font-weight: 700;
@@ -352,11 +390,13 @@
 }
 
 
+
 .biblioteca__result-count {
   font-size: 13px;
   color: var(--text-dim);
   font-variant-numeric: tabular-nums;
 }
+
 
 
 .biblioteca__chip {
@@ -376,9 +416,11 @@
 }
 
 
+
 .biblioteca__chip:hover {
   background: rgba(59, 130, 246, 0.18);
 }
+
 
 
 .biblioteca__chip-remove {
@@ -391,6 +433,7 @@
   align-items: center;
   justify-content: center;
 }
+
 
 
 /* ── Toolbar ─────────────────────────────── */
@@ -409,6 +452,7 @@
 }
 
 
+
 .biblioteca__toolbar-left,
 .biblioteca__toolbar-right {
   display: flex;
@@ -419,15 +463,18 @@
 }
 
 
+
 .biblioteca__toolbar-left {
   flex: 1 1 360px;
 }
+
 
 
 .biblioteca__toolbar-right {
   flex: 1 1 420px;
   justify-content: flex-end;
 }
+
 
 
 /* Oculto en desktop — el sidebar fijo ya cumple esa función */
@@ -451,11 +498,13 @@
 }
 
 
+
 .biblioteca__toolbar-filter-btn:hover {
   background: rgba(59, 130, 246, 0.14);
   border-color: rgba(59, 130, 246, 0.34);
   transform: translateY(-1px);
 }
+
 
 
 .biblioteca__rows-group {
@@ -468,12 +517,14 @@
 }
 
 
+
 .biblioteca__rows-label,
 .biblioteca__rows-suffix,
 .biblioteca__page-summary {
   font-size: 12px;
   color: var(--text-dim);
 }
+
 
 
 .biblioteca__rows-select {
@@ -492,10 +543,12 @@
 }
 
 
+
 .biblioteca__rows-select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
 }
+
 
 
 .biblioteca__view-switch {
@@ -504,6 +557,7 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
 
 
 .biblioteca__view-btn {
@@ -526,12 +580,14 @@
 }
 
 
+
 .biblioteca__view-btn:hover {
   border-color: #3b82f6;
   color: #eff6ff;
   background: #122844;
   transform: translateY(-1px);
 }
+
 
 
 .biblioteca__view-btn--active {
@@ -544,6 +600,7 @@
 }
 
 
+
 .biblioteca__desktop-pagination {
   display: inline-flex;
   align-items: center;
@@ -552,10 +609,12 @@
 }
 
 
+
 .biblioteca__page-summary {
   margin-right: 2px;
   white-space: nowrap;
 }
+
 
 
 .biblioteca__page-btn {
@@ -576,11 +635,13 @@
 }
 
 
+
 .biblioteca__page-btn:hover:not(:disabled) {
   background-color: #1e2e3e;
   color: var(--text-primary);
   border-color: var(--accent);
 }
+
 
 
 .biblioteca__page-btn--active {
@@ -591,16 +652,19 @@
 }
 
 
+
 .biblioteca__page-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
 
+
 /* ── Paginación móvil ────────────────────── */
 .biblioteca__mobile-pagination {
   display: none;
 }
+
 
 
 /* ── Grid / cards ────────────────────────── */
@@ -612,6 +676,7 @@
   align-items: stretch;
   grid-auto-rows: 1fr;
 }
+
 
 
 .bib-card {
@@ -628,15 +693,18 @@
 }
 
 
+
 .bib-card:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
 }
 
 
+
 .bib-card--wide {
   grid-column: span 1;
 }
+
 
 
 .bib-card__body {
@@ -646,6 +714,7 @@
   flex: 1;
   min-height: 0;
 }
+
 
 
 .bib-card__type {
@@ -662,6 +731,7 @@
 }
 
 
+
 .bib-card__dot {
   width: 3px;
   height: 3px;
@@ -670,12 +740,14 @@
 }
 
 
+
 .bib-card__time {
   color: var(--text-dim);
   font-weight: 500;
   text-transform: none;
   letter-spacing: 0;
 }
+
 
 
 .bib-card__title {
@@ -692,6 +764,7 @@
 }
 
 
+
 .bib-card__desc {
   font-size: 12.5px;
   color: var(--text-muted);
@@ -703,6 +776,7 @@
   -webkit-line-clamp: 2;
   overflow: hidden;
 }
+
 
 
 .bib-card__cta {
@@ -718,10 +792,12 @@
 }
 
 
+
 .bib-card__cta:hover {
   gap: 10px;
   color: #93c5fd;
 }
+
 
 
 /* ── Lista ───────────────────────────────── */
@@ -732,6 +808,7 @@
   gap: 10px;
   width: 100%;
 }
+
 
 
 .bib-row {
@@ -751,10 +828,12 @@
 }
 
 
+
 .bib-row:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
 }
+
 
 
 .bib-row__thumb {
@@ -771,6 +850,7 @@
 }
 
 
+
 .bib-row__thumb--icon {
   background: rgba(59, 130, 246, 0.08);
   border-color: rgba(59, 130, 246, 0.2);
@@ -778,9 +858,11 @@
 }
 
 
+
 .bib-row__body {
   min-width: 0;
 }
+
 
 
 .bib-row__label {
@@ -791,6 +873,7 @@
   color: var(--accent);
   margin-bottom: 4px;
 }
+
 
 
 .bib-row__title {
@@ -805,6 +888,7 @@
 }
 
 
+
 .bib-row__desc {
   font-size: 12px;
   color: var(--text-muted);
@@ -815,6 +899,7 @@
 }
 
 
+
 .bib-row__meta {
   text-align: right;
   flex-shrink: 0;
@@ -822,6 +907,7 @@
   color: var(--text-dim);
   white-space: nowrap;
 }
+
 
 
 /* ── Empty state ─────────────────────────── */
@@ -837,6 +923,7 @@
 }
 
 
+
 .bib-empty__title {
   font-size: 16px;
   font-weight: 700;
@@ -845,12 +932,14 @@
 }
 
 
+
 .bib-empty__desc {
   font-size: 13px;
   color: var(--text-muted);
   max-width: 34ch;
   margin-bottom: 16px;
 }
+
 
 
 .bib-empty__btn {
@@ -867,10 +956,12 @@
 }
 
 
+
 .bib-empty__btn:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
+
 
 
 /* ── Loading / Error ─────────────────────── */
@@ -880,6 +971,7 @@
   color: var(--text-dim);
   font-size: 14px;
 }
+
 
 
 .biblioteca__error {
@@ -892,11 +984,13 @@
 }
 
 
+
 .biblioteca__error p {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 4px;
 }
+
 
 
 .biblioteca__error small {
@@ -905,17 +999,18 @@
 }
 
 
+
 /* ── Large tablet ────────────────────────── */
 @media (max-width: 1200px) {
   .biblioteca__section {
     padding: 0 28px 40px;
   }
 
-
   .bib-featured {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 }
+
 
 
 /* ── Tablet ──────────────────────────────── */
@@ -924,31 +1019,25 @@
     width: 0;
   }
 
-
   .bib-sidebar {
     width: 180px;
   }
-
 
   .biblioteca__content {
     margin-left: 180px;
   }
 
-
   .biblioteca__hero-body {
     padding: 36px 28px;
   }
-
 
   .biblioteca__hero-body h1 {
     font-size: 28px;
   }
 
-
   .biblioteca__section {
     padding: 0 24px 36px;
   }
-
 
   .biblioteca__toolbar-left,
   .biblioteca__toolbar-right {
@@ -956,11 +1045,11 @@
     justify-content: space-between;
   }
 
-
   .biblioteca__desktop-pagination {
     margin-left: 0;
   }
 }
+
 
 
 /* ── Mobile ──────────────────────────────── */
@@ -969,40 +1058,43 @@
     padding-bottom: var(--bottom-nav-safe-space);
   }
 
-
   .biblioteca__body {
     display: block;
   }
 
-
+  /* FIX 1: overflow:hidden recorta el pixel sobrante que generaba
+     la franja negra en Android. will-change:transform fuerza
+     compositing en GPU y elimina el artefacto visual.
+     FIX 2: z-index:300 asegura que el sidebar se abra POR ENCIMA
+     del Navbar (que debe tener z-index ≤ 290 en móvil). */
   .biblioteca__sidebar-shell {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     width: min(300px, 84vw);
-    z-index: 210;
+    z-index: 300;
     transform: translateX(-100%);
     transition: transform 0.28s ease;
     background: var(--bg-surface);
     border-right: 1px solid var(--border-subtle);
+    overflow: hidden;
+    will-change: transform;
   }
-
 
   .biblioteca__sidebar-shell--open {
     transform: translateX(0);
   }
 
-
+  /* Backdrop justo debajo del sidebar (295 < 300) */
   .biblioteca__mobile-backdrop {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 205;
+    z-index: 295;
     background: rgba(0, 0, 0, 0.42);
     border: none;
   }
-
 
   .biblioteca__mobile-sidebar-header {
     display: flex;
@@ -1017,7 +1109,6 @@
     font-weight: 700;
   }
 
-
   .bib-sidebar {
     position: static;
     width: 100%;
@@ -1026,62 +1117,51 @@
     padding-top: 16px;
   }
 
-
   .biblioteca__content {
     margin-left: 0;
     width: 100%;
     padding-bottom: calc(var(--bottom-nav-safe-space) + 12px);
   }
 
-
   .biblioteca__section {
     padding: 0 18px calc(var(--bottom-nav-safe-space) + 24px);
   }
-
 
   .biblioteca__hero {
     min-height: 220px;
     margin-bottom: 18px;
   }
 
-
   .biblioteca__hero-body {
     padding: 32px 20px;
   }
 
-
   .biblioteca__hero-body h1 {
     font-size: 22px;
   }
-
 
   .biblioteca__hero-body p {
     font-size: 13px;
     margin-bottom: 16px;
   }
 
-
   .biblioteca__search {
     max-width: 100%;
   }
 
-
   .biblioteca__section-header {
     align-items: flex-start;
   }
-
 
   .biblioteca__section-right {
     width: 100%;
     justify-content: space-between;
   }
 
-
   .biblioteca__toolbar {
     padding: 12px;
     gap: 12px;
   }
-
 
   .biblioteca__toolbar-left,
   .biblioteca__toolbar-right {
@@ -1091,7 +1171,6 @@
     gap: 8px;
   }
 
-
   /* Mostrar botón Filtros solo en móvil */
   .biblioteca__toolbar-filter-btn {
     display: inline-flex;
@@ -1100,26 +1179,22 @@
     font-size: 12px;
   }
 
-
   .biblioteca__rows-group {
     margin-left: auto;
     padding-left: 0;
     gap: 8px;
   }
 
-
   .biblioteca__rows-label,
   .biblioteca__rows-suffix {
     display: none;
   }
-
 
   .biblioteca__rows-select {
     min-width: 68px;
     height: 38px;
     padding: 0 10px;
   }
-
 
   .biblioteca__view-switch {
     width: 100%;
@@ -1128,18 +1203,15 @@
     gap: 8px;
   }
 
-
   .biblioteca__view-btn {
     width: 100%;
     min-width: 0;
     flex: 1;
   }
 
-
   .biblioteca__desktop-pagination {
     display: none;
   }
-
 
   .biblioteca__mobile-pagination {
     display: grid;
@@ -1152,7 +1224,6 @@
     border: 1px solid rgba(59, 130, 246, 0.14);
     border-radius: 12px;
   }
-
 
   .biblioteca__mobile-page-btn {
     min-height: 44px;
@@ -1169,12 +1240,10 @@
     white-space: nowrap;
   }
 
-
   .biblioteca__mobile-page-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
-
 
   .biblioteca__mobile-page-indicator {
     font-size: 12px;
@@ -1183,40 +1252,33 @@
     white-space: nowrap;
   }
 
-
   .bib-featured {
     grid-template-columns: 1fr;
     padding-bottom: 8px;
   }
-
 
   .bib-list,
   .bib-list--grid {
     padding-bottom: 8px;
   }
 
-
   .bib-card {
     min-height: 124px;
   }
-
 
   .bib-row {
     grid-template-columns: 48px minmax(0, 1fr);
     align-items: start;
   }
 
-
   .bib-row__thumb {
     width: 48px;
     height: 48px;
   }
 
-
   .bib-row__meta {
     display: none;
   }
-
 
   .bib-row__title,
   .bib-row__desc {
@@ -1226,18 +1288,15 @@
     overflow: hidden;
   }
 
-
   .bib-row__title {
     line-clamp: 2;
     -webkit-line-clamp: 2;
   }
 
-
   .bib-row__desc {
     line-clamp: 2;
     -webkit-line-clamp: 2;
   }
-
 
   .bib-empty,
   .biblioteca__error,
@@ -1247,188 +1306,103 @@
 }
 
 
+
 /* ============================================
    ANIMACIONES BIBLIOTECA
 ============================================= */
 
-
-/* Fade general al cargar contenido principal */
 .biblioteca__content {
   animation: fadeContent 0.7s ease;
 }
 
-
 @keyframes fadeContent {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-
-/* Hero aparece suavemente */
 .biblioteca__hero {
   animation: heroReveal 1s ease;
 }
 
-
 @keyframes heroReveal {
-  from {
-    opacity: 0;
-    transform: scale(1.03);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.03); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-
-/* Título del hero */
 .biblioteca__hero-body h1 {
   animation: slideDownFade 0.8s ease;
 }
-
 
 .biblioteca__hero-body p,
 .biblioteca__search {
   animation: fadeUpSoft 1s ease;
 }
 
-
 @keyframes slideDownFade {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 
 @keyframes fadeUpSoft {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(15px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-
-/* Sidebar buttons */
 .bib-sidebar__btn {
-  transition: background 0.2s ease,
-              color 0.2s ease,
-              transform 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
-
 
 .bib-sidebar__btn:hover {
   transform: translateX(4px);
 }
 
-
-/* Toolbar */
 .biblioteca__toolbar {
   animation: fadeUpSoft 0.8s ease;
 }
 
-
-/* Cards animation on load */
 .bib-card,
 .bib-row {
   animation: cardFadeUp 0.6s ease;
   animation-fill-mode: both;
 }
 
-
-.bib-card:nth-child(1),
-.bib-row:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-
-.bib-card:nth-child(2),
-.bib-row:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-
-.bib-card:nth-child(3),
-.bib-row:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-
-.bib-card:nth-child(4),
-.bib-row:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-
-.bib-card:nth-child(5),
-.bib-row:nth-child(5) {
-  animation-delay: 0.5s;
-}
-
+.bib-card:nth-child(1), .bib-row:nth-child(1) { animation-delay: 0.1s; }
+.bib-card:nth-child(2), .bib-row:nth-child(2) { animation-delay: 0.2s; }
+.bib-card:nth-child(3), .bib-row:nth-child(3) { animation-delay: 0.3s; }
+.bib-card:nth-child(4), .bib-row:nth-child(4) { animation-delay: 0.4s; }
+.bib-card:nth-child(5), .bib-row:nth-child(5) { animation-delay: 0.5s; }
 
 @keyframes cardFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-
-/* Hover más bonito en cards */
 .bib-card:hover,
 .bib-row:hover {
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.12);
 }
 
-
-/* Input focus más dinámico */
 .biblioteca__search-input {
   transition: all 0.25s ease;
 }
-
 
 .biblioteca__search-input:focus {
   transform: scale(1.02);
 }
 
-
-/* Botones de paginación */
 .biblioteca__page-btn,
 .biblioteca__mobile-page-btn {
   transition: all 0.2s ease;
 }
-
 
 .biblioteca__page-btn:hover:not(:disabled),
 .biblioteca__mobile-page-btn:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
-
-/* Empty state */
 .bib-empty {
   animation: fadeUpSoft 0.7s ease;
 }
-
 
 /* ── Small mobile ────────────────────────── */
 @media (max-width: 480px) {
@@ -1436,67 +1410,54 @@
     padding: 0 14px calc(var(--bottom-nav-safe-space) + 20px);
   }
 
-
   .biblioteca__hero {
     min-height: 200px;
   }
-
 
   .biblioteca__hero-body {
     padding: 26px 14px;
   }
 
-
   .biblioteca__hero-body h1 {
     font-size: 20px;
   }
-
 
   .biblioteca__hero-body p {
     font-size: 12.5px;
     line-height: 1.6;
   }
 
-
   .biblioteca__section-title {
     font-size: 20px;
   }
-
 
   .biblioteca__result-count {
     font-size: 12px;
   }
 
-
   .biblioteca__chip {
     max-width: 100%;
   }
-
 
   .biblioteca__toolbar {
     border-radius: 10px;
   }
 
-
   .biblioteca__toolbar-left {
     align-items: center;
   }
-
 
   .biblioteca__toolbar-filter-btn {
     flex: 0 0 auto;
   }
 
-
   .biblioteca__rows-group {
     margin-left: auto;
   }
 
-
   .biblioteca__toolbar-right {
     justify-content: stretch;
   }
-
 
   .biblioteca__view-btn {
     min-height: 38px;
@@ -1504,12 +1465,10 @@
     font-size: 12px;
   }
 
-
   .biblioteca__mobile-pagination {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
-
 
   .biblioteca__mobile-page-indicator {
     grid-column: 1 / -1;
@@ -1517,44 +1476,36 @@
     margin-bottom: 2px;
   }
 
-
   .biblioteca__mobile-page-btn {
     min-height: 42px;
     font-size: 12px;
     padding: 0 10px;
   }
 
-
   .bib-card__body {
     padding: 12px 14px;
   }
-
 
   .bib-card__title {
     font-size: 13px;
   }
 
-
   .bib-card__desc {
     font-size: 12px;
   }
-
 
   .bib-row {
     padding: 10px 12px;
     gap: 10px;
   }
 
-
   .bib-row__label {
     font-size: 10px;
   }
 
-
   .bib-row__title {
     font-size: 12.5px;
   }
-
 
   .bib-row__desc {
     font-size: 11.5px;

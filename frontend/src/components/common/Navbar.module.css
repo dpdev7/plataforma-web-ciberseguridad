@@ -339,17 +339,20 @@
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .navbar { padding: 0 16px; }
+  .navbar {
+    padding: 0 16px;
+    z-index: 290; /* ← FIX: cede ante el sidebar (300) y backdrop (295) */
+  }
   .links { display: none; }
   .mobileActions { display: flex; }
   .hamburger { display: flex; }
   .userName { display: none; }
-  
+
   .logo {
-    margin-left: 12px; /* Espacio por defecto cuando hay hamburguesa */
+    margin-left: 12px;
   }
-  
+
   .logoNoMenu {
-    margin-left: 0 !important; /* Si showHamburger es false, el logo se pega al inicio */
+    margin-left: 0 !important;
   }
 }
