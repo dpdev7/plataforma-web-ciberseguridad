@@ -14,6 +14,37 @@
   font-size: 15px;
 }
 
+.admin-layout,
+.admin-layout * ,
+.admin-layout *::before,
+.admin-layout *::after {
+  box-sizing: border-box;
+}
+
+.admin-layout h1,
+.admin-layout h2,
+.admin-layout h3,
+.admin-layout h4,
+.admin-layout h5,
+.admin-layout h6,
+.admin-layout p {
+  margin: 0;
+}
+
+.admin-layout button,
+.admin-layout input,
+.admin-layout select,
+.admin-layout textarea {
+  font: inherit;
+}
+
+.admin-layout button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
 /* Wrapper derecho: aquí vive el offset lateral */
 .admin-main-shell {
   margin-left: 220px;
@@ -394,7 +425,7 @@
 }
 
 .admin-page__title {
-  margin-bottom: 1.5rem;
+  margin: 0 0 1.5rem;
   color: #f1f5f9;
   font-size: 26px;
   font-weight: 700;

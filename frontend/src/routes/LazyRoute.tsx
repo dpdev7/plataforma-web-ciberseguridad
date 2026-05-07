@@ -21,11 +21,39 @@ type PreloadRecord =
   | { status: 'error'; promise: Promise<void>; error: unknown };
 
 const preloadedRoutes = new Map<string, PreloadRecord>();
+const componentIds = new WeakMap<LazyPageComponent, number>();
+const preloadIds = new WeakMap<NonNullable<LazyRouteProps['preload']>, number>();
+let nextRoutePartId = 0;
+
+function getComponentId(component: LazyPageComponent) {
+  let id = componentIds.get(component);
+  if (!id) {
+    id = ++nextRoutePartId;
+    componentIds.set(component, id);
+  }
+  return id;
+}
+
+function getPreloadId(preload: LazyRouteProps['preload']) {
+  if (!preload) return 'none';
+
+  let id = preloadIds.get(preload);
+  if (!id) {
+    id = ++nextRoutePartId;
+    preloadIds.set(preload, id);
+  }
+  return id;
+}
 
 function RouteContent({ component: Component, preload }: LazyRouteProps) {
   const params = useParams();
   const location = useLocation();
-  const routeKey = `${location.pathname}:${JSON.stringify(params)}`;
+  const routeKey = [
+    location.pathname,
+    JSON.stringify(params),
+    getComponentId(Component),
+    getPreloadId(preload),
+  ].join(':');
   let record = preloadedRoutes.get(routeKey);
 
   if (!record) {

@@ -3,6 +3,20 @@
   line-height: 1.5;
   font-weight: 400;
 
+  --bg-base: #0f161d;
+  --bg-surface: #131c26;
+  --bg-card: #192633;
+  --border: #1e3a5f;
+  --border-subtle: #2b333e;
+  --text-primary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #475569;
+  --accent: #3b82f6;
+  --accent-dark: #1173d4;
+  --navbar-height: 57px;
+  --toc-width: 260px;
+  --max-denuncia: 680px;
+
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
@@ -79,8 +93,8 @@ a.btn-primario {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
   }
   a:hover {
     color: #3b82f6;

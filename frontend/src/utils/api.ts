@@ -4,7 +4,8 @@ export const API_BACKEND = import.meta.env.DEV
   : '/api';
 
 let _token: string | null = null;
-const getCache = new Map<string, Promise<unknown>>();
+const GET_CACHE_TTL_MS = 5000;
+const getCache = new Map<string, { promise: Promise<unknown>; expiresAt: number }>();
 
 export function setAuthToken(token: string | null) {
   _token = token;
@@ -14,10 +15,20 @@ export function setAuthToken(token: string | null) {
 export const apiFetch = async (endpoint: string, options?: RequestInit) => {
   const method = options?.method?.toUpperCase() ?? 'GET';
   const isGet = method === 'GET';
+  const skipCache = options?.cache === 'no-store' || options?.cache === 'reload';
   const cacheKey = `${_token ?? 'anon'}:${endpoint}`;
+  const cached = getCache.get(cacheKey);
 
-  if (isGet && getCache.has(cacheKey)) {
-    return getCache.get(cacheKey);
+  if (isGet && skipCache) {
+    getCache.delete(cacheKey);
+  }
+
+  if (isGet && !skipCache && cached && cached.expiresAt > Date.now()) {
+    return cached.promise;
+  }
+
+  if (isGet && cached) {
+    getCache.delete(cacheKey);
   }
 
   const headers: Record<string, string> = {
@@ -47,15 +58,19 @@ export const apiFetch = async (endpoint: string, options?: RequestInit) => {
     return data;
   });
 
-  if (isGet) {
-    getCache.set(cacheKey, request);
+  if (isGet && !skipCache) {
+    getCache.set(cacheKey, {
+      promise: request,
+      expiresAt: Date.now() + GET_CACHE_TTL_MS,
+    });
     request.catch(() => getCache.delete(cacheKey));
   }
 
   return request;
 };
 
-export const preloadApi = (endpoint: string) => apiFetch(endpoint);
+export const preloadApi = (endpoint: string, options?: RequestInit) =>
+  apiFetch(endpoint, options);
 
 export function invalidateApiCache(endpoint?: string) {
   if (!endpoint) {

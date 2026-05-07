@@ -12,9 +12,8 @@ import FeaturedGrid from '../components/biblioteca/FeaturedGrid';
 import ArticlesList from '../components/biblioteca/ArticlesList';
 import QuizzesList from '../components/biblioteca/QuizzesList';
 import heroBiblioteca from '../assets/images/cyber-library.webp';
-import '../styles/biblioteca.css';
 import { apiFetch } from '../utils/api';
-
+import '../styles/biblioteca.css';
 
 type TemaSidebar = {
   id: string;
@@ -46,19 +45,20 @@ export default function Biblioteca() {
 
   const [recursos, setRecursos] = useState<Recurso[]>([]);
   const [temas, setTemas] = useState<TemaSidebar[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [vista, setVista] = useState<'grid' | 'list'>('grid');
   const [paginaActual, setPaginaActual] = useState(1);
   const [porPagina, setPorPagina] = useState(9);
 
+
   useEffect(() => {
     let cancelled = false;
 
     const fetchCategorias = async () => {
       try {
-        const data = await apiFetch('/categoria/obtener/all/');
+        const data = await apiFetch('/categoria/obtener/all/', { cache: 'no-store' });
         const categorias = Array.isArray(data?.result) ? data.result : [];
 
         const categoriasMapeadas: TemaSidebar[] = categorias.map((categoria: any) => ({
@@ -96,7 +96,7 @@ export default function Biblioteca() {
     setError(null);
 
     const fetchCuestionarios = () =>
-      apiFetch('/cuestionario/obtener/all/')
+      apiFetch('/cuestionario/obtener/all/', { cache: 'no-store' })
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
             (c: any): Recurso => ({
@@ -117,7 +117,8 @@ export default function Biblioteca() {
       apiFetch(
         `/categoria/recurso-edu/obtener/all/${
           tipo ? `?tipo_recurso=${encodeURIComponent(tipo)}` : ''
-        }`
+        }`,
+        { cache: 'no-store' }
       )
         .then((data: any) =>
           (Array.isArray(data?.result) ? data.result : []).map(
@@ -293,6 +294,15 @@ export default function Biblioteca() {
 
     return [actual - 2, actual - 1, actual, actual + 1, actual + 2];
   }, [paginaActual, totalPaginas]);
+  console.log(loading);
+
+    if (loading) {
+      return (
+        <div className="foro-loading">
+          <div className="biblioteca__loading">Cargando recursos…</div>
+        </div>
+      );
+    }
 
   return (
     <div className="biblioteca">

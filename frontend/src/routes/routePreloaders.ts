@@ -5,9 +5,9 @@ const settle = (requests: Array<Promise<unknown> | unknown>) =>
 
 export const preloadBiblioteca = () =>
   settle([
-    preloadApi('/categoria/obtener/all/'),
-    preloadApi('/categoria/recurso-edu/obtener/all/'),
-    preloadApi('/cuestionario/obtener/all/'),
+    preloadApi('/categoria/obtener/all/', { cache: 'no-store' }),
+    preloadApi('/categoria/recurso-edu/obtener/all/', { cache: 'no-store' }),
+    preloadApi('/cuestionario/obtener/all/', { cache: 'no-store' }),
   ]);
 
 export const preloadForo = () =>
