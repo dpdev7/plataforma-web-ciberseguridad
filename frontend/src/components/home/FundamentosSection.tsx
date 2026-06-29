@@ -20,10 +20,9 @@ export default function FundamentosSection() {
             dispositivos personales hasta la seguridad de infraestructuras nacionales.
           </p>
           <p className="fundamentos-desc">
-            Se sostiene sobre tres principios clave: 
-            confidencialidad, integridad y disponibilidad, los cuales 
-            en conjunto garantizan que la información esté protegida,
-            sea confiable y siempre accesible para quienes la necesiten.
+            Se sostiene sobre tres principios clave — confidencialidad, integridad y
+            disponibilidad — que juntos garantizan que la información esté protegida,
+            sea confiable y siempre accesible para quienes la necesitan.
           </p>
           <p className="fundamentos-desc">
             En un mundo donde todo está conectado, cualquier persona o empresa puede
