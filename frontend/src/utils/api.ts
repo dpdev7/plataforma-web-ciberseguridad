@@ -3,7 +3,7 @@ export const API_BACKEND = import.meta.env.DEV
   ? import.meta.env.VITE_API_URL_BACKEND  // http://localhost:8000
   : '/api';
 
-  // token de autenticacion
+  // token de autenticacio...
 
 let _token: string | null = null;
 const GET_CACHE_TTL_MS = 5000;
