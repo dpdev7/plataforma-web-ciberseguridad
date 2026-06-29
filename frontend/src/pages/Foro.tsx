@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
-import { apiFetch } from '../utils/api';
+import { API_BACKEND } from '../utils/api';
 import '../styles/Foro.css';
 
 interface Usuario {
@@ -79,7 +79,8 @@ export default function Foro() {
   // Verificar autenticación
   useEffect(() => {
     window.scrollTo(0, 0);
-    apiFetch('/usuario/me/')
+    fetch(`${API_BACKEND}/usuario/me/`)
+    .then(res => res.json())
       .then(data => {
         if (data.authenticated) setUsuario(data.usuario);
       })
@@ -89,7 +90,8 @@ export default function Foro() {
 
   // Cargar categorías desde el backend  👈
   useEffect(() => {
-    apiFetch('/publicacion/categorias/')
+    fetch(`${API_BACKEND}/publicacion/categorias/`)
+      .then(res => res.json())
       .then(data => {
         if (data.success) setCategorias(data.result);
       })
@@ -108,7 +110,8 @@ export default function Foro() {
   // Cargar publicaciones
   useEffect(() => {
     if (!usuario) return;
-    apiFetch('/publicacion/all/')
+    fetch(`${API_BACKEND}/publicacion/all/`)
+      .then(res => res.json())
       .then(data => {
         if (data.success) { 
           const resultado = Array.isArray(data.result)
@@ -145,8 +148,9 @@ export default function Foro() {
     setEnviando(true);
     setError('');
     try {
-      const data = await apiFetch('/publicacion/crear/', {
+      const data = await fetch(`${API_BACKEND}/publicacion/crear/`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           titulo,
           contenido,
@@ -155,18 +159,19 @@ export default function Foro() {
           categoria: categoriaHilo !== '' ? categoriaHilo : null,  
         }),
       });
-      if (data.success) {
+      const result = await data.json();
+      if (result.success) {
         setMostrarModal(false);
         setTitulo('');
         setContenido('');
         setCategoriaHilo('');
         setPublicaciones(prev => [{
-          ...data.result,
+          ...result.result,
           usuario: esAnonima ? null : {
             usuario_id: usuario?.id ?? '',
             nombre:     usuario?.nombre,
           },
-          comentarios: data.result.comentarios ?? [],
+          comentarios: result.result.comentarios ?? [],
         }, ...prev]);
       } else {
         setError('Error al crear el hilo.');
