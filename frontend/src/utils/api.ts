@@ -1,6 +1,8 @@
 // Ya no apunta al backend directamente — usa el proxy de Vercel
 export const API_BACKEND =  import.meta.env.VITE_API_URL_BACKEND ?? "http://localhost:8000";
 
+  // token de autenticacion
+
 let _token: string | null = null;
 const GET_CACHE_TTL_MS = 5000;
 const getCache = new Map<string, { promise: Promise<unknown>; expiresAt: number }>();
