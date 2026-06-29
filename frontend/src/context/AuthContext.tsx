@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { setAuthToken } from '../utils/api';
+import { API_BACKEND, setAuthToken } from '../utils/api';
 
 interface Usuario {
   id: string;
@@ -29,29 +29,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 useEffect(() => {
   const init = async () => {
     try {
-      const res = await fetch('/api/token/refresh/', {
-        method:      'POST',
+      const res = await fetch(`${API_BACKEND}/usuario/me/`, {
         credentials: 'include',
       });
-      if (res.ok) {
-        const data = await res.json();
-        
-        // Primero setea el token
-        setAuthToken(data.token);
-        
-        // Luego llama /me/ con el token directamente en el header
-        const me = await fetch('/api/usuario/me/', {
-          credentials: 'include',
-          headers: { 'Authorization': `Bearer ${data.token}` },  // ← token directo
-        });
-
-        if (me.ok) {
-          const meData = await me.json();
-          if (meData.authenticated) {
-            setToken(data.token);
-            setUsuario(meData.usuario);
-          }
-        }
+      const data = await res.json();
+      
+      if (data.authenticated) {
+        setToken('cookie'); // placeholder
+        setUsuario(data.usuario);
       }
     } catch {
       // Sin sesión activa
